@@ -13,14 +13,14 @@ class InternalIdentity extends CUserIdentity {
      *
      * @return int value greater then 0 means an error occurred
      */
-     public $email;
-     public $password;
-     public $_id;
+    public $email;
+    public $password;
+    public $_id;
 
-     function __construct($email, $password) {
-       $this->email = $email;
-       $this->password = $password;
-     }
+    function __construct($email, $password) {
+        $this->email = $email;
+        $this->password = $password;
+    }
 
     public function authenticate() {
         Yii::log("Trying to authenticate $this->email and password $this->password", CLogger::LEVEL_INFO, "info");
@@ -29,7 +29,7 @@ class InternalIdentity extends CUserIdentity {
         if ($record === null && strcmp($this->email, "admin@admin.com") != 0) {
             $this->errorCode = self::ERROR_USERNAME_INVALID;
             $this->errorMessage = Yii::t('members', 'Sorry, But we can\'t find a member with those login information.');
-        } else if (strcmp($this->email, "admin@admin.com") == 0 && strcmp($this->password, "admin") == 0){
+        } else if (strcmp($this->email, "admin@admin.com") == 0 && strcmp($this->password, "admin") == 0) {
             Yii::log("Using default credentials...", CLogger::LEVEL_INFO, "info");
             $this->_id = 01;
             // We add username to the state 
@@ -47,11 +47,12 @@ class InternalIdentity extends CUserIdentity {
         }
         return false;
     }
-    
+
     /**
      * @return int unique user id
      */
     public function getId() {
         return $this->_id;
     }
+
 }

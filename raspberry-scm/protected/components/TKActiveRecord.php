@@ -7,8 +7,9 @@
  */
 
 class TKActiveRecord extends CActiveRecord {
+
     public $isView = false;
-    
+
     /**
      * We set if the record is a view
      * @param type $view
