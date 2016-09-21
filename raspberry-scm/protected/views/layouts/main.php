@@ -34,6 +34,7 @@
                         array('label' => 'About', 'url' => array('/site/page', 'view' => 'about')),
                         array('label' => 'Contact', 'url' => array('/site/contact')),
                         array('label' => 'Login', 'url' => array('/site/login'), 'visible' => Yii::app()->user->isGuest),
+                        array('label' => 'Users', 'url' => array('/User'), 'visible' => !Yii::app()->user->isGuest),
                         array('label' => 'UPS', 'url' => array('/ups'), 'visible' => !Yii::app()->user->isGuest),
                         array('label' => 'External Temperature', 'url' => array('/ExternalTemperature'), 'visible' => !Yii::app()->user->isGuest),
                         array('label' => 'Internal Temperature', 'url' => array('/InternalTemperature'), 'visible' => !Yii::app()->user->isGuest),
