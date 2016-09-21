@@ -1,0 +1,35 @@
+Header set Access-Control-Allow-Origin "*"
+# Compress JS/CSS/XML files
+<IfModule mod_deflate.c>
+AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/x-javascript
+</IfModule>
+
+# Disallow listing directories and files
+Options -Indexes
+
+# Disallow access to svn folders
+<FilesMatch "\.svn/.*">
+   order deny,allow
+   deny from all
+</FilesMatch>
+
+# Disallow access to htaccess file
+<Files .htaccess>
+order deny,allow
+deny from all
+</Files>
+
+# Rewrite Engine
+<IfModule mod_rewrite.c>
+RewriteEngine On
+
+RewriteCond %{REQUEST_FILENAME} \.(js|ico|gif|jpg|png|css|pdf|doc)$ [OR]
+RewriteCond %{REQUEST_FILENAME} favicon.ico$ [OR]
+RewriteCond %{REQUEST_FILENAME} -s [OR]
+RewriteCond %{REQUEST_FILENAME} -l [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+
+# Redirect all incoming urls to the application
+RewriteRule ^.*$ - [NC,L]
+RewriteRule ^.*$ index.php [NC,L]
+</IfModule>
