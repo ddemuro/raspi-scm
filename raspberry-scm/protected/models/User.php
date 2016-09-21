@@ -78,8 +78,8 @@ class User extends TKActiveRecord {
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('email, password', 'required'),
-            array('email, password', 'length', 'max' => 128),
+            array('email, role, password', 'required'),
+            array('email, role, password', 'length', 'max' => 128),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
             array('id, email, password', 'safe', 'on' => 'search'),
@@ -103,6 +103,7 @@ class User extends TKActiveRecord {
         return array(
             'id' => 'ID',
             'email' => 'Email',
+            'role' => 'Role',
             'password' => 'Password',
         );
     }
@@ -125,6 +126,7 @@ class User extends TKActiveRecord {
         $criteria = new CDbCriteria;
 
         $criteria->compare('id', $this->id);
+        $criteria->compare('role', $this->role, true);
         $criteria->compare('email', $this->email, true);
         $criteria->compare('password', $this->password, true);
 
