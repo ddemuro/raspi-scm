@@ -26,10 +26,10 @@ class InternalIdentity extends CUserIdentity {
         Yii::log("Trying to authenticate $this->email and password $this->password", CLogger::LEVEL_INFO, "info");
         $record = User::model()->findByAttributes(array('email' => $this->username));
         Yii::log("Record: $record", CLogger::LEVEL_INFO, "info");
-        if ($record === null) {
+        if ($record === null && strcmp($this->email, "admin@admin.com") != 0) {
             $this->errorCode = self::ERROR_USERNAME_INVALID;
             $this->errorMessage = Yii::t('members', 'Sorry, But we can\'t find a member with those login information.');
-        } else if (strcmp($this->email, "admin@admin.com") && strcmp($this->password, "admin")){
+        } else if (strcmp($this->email, "admin@admin.com") == 0 && strcmp($this->password, "admin") == 0){
             Yii::log("Using default credentials...", CLogger::LEVEL_INFO, "info");
             $this->_id = $record->id;
             $this->errorCode = self::ERROR_NONE;
