@@ -25,6 +25,7 @@ $this->widget('zii.widgets.CDetailView', array(
         'id',
         'email',
         'role',
+        'ipaddress',
         'password',
     ),
 ));

@@ -50,6 +50,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
     'columns' => array(
         'id',
         'email',
+        'ipaddress',
         'role',
         'password',
         array(

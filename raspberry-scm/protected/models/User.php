@@ -78,8 +78,8 @@ class User extends TKActiveRecord {
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('email, role, password', 'required'),
-            array('email, role, password', 'length', 'max' => 128),
+            array('email, role, ipaddress, password', 'required'),
+            array('email, role, ipaddress, password', 'length', 'max' => 128),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
             array('id, email, password', 'safe', 'on' => 'search'),
@@ -104,6 +104,7 @@ class User extends TKActiveRecord {
             'id' => 'ID',
             'email' => 'Email',
             'role' => 'Role',
+            'ipaddress' => 'IP Address',
             'password' => 'Password',
         );
     }
@@ -127,6 +128,7 @@ class User extends TKActiveRecord {
 
         $criteria->compare('id', $this->id);
         $criteria->compare('role', $this->role, true);
+        $criteria->compare('ipaddress', $this->ipaddress, true);
         $criteria->compare('email', $this->email, true);
         $criteria->compare('password', $this->password, true);
 
