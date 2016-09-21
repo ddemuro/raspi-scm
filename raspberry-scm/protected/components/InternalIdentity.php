@@ -15,7 +15,7 @@ class InternalIdentity extends CUserIdentity {
      */
      public $email;
      public $password;
-     public $id;
+     public $_id;
 
      function __construct($email, $password) {
        $this->email = $email;
