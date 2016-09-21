@@ -78,8 +78,9 @@ class User extends TKActiveRecord {
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('email, role, ipaddress, password', 'required'),
+            array('email, role, password', 'required'),
             array('email, role, ipaddress, password', 'length', 'max' => 128),
+            array('ipaddress', 'length', 'max' => 16),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
             array('id, email, password', 'safe', 'on' => 'search'),
