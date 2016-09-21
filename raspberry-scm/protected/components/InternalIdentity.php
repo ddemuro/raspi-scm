@@ -31,13 +31,11 @@ class InternalIdentity extends CUserIdentity {
             $this->errorMessage = Yii::t('members', 'Sorry, But we can\'t find a member with those login information.');
         } else if (strcmp($this->email, "admin@admin.com") == 0 && strcmp($this->password, "admin") == 0){
             Yii::log("Using default credentials...", CLogger::LEVEL_INFO, "info");
-            $this->_id = $record->id;
-            $this->errorCode = self::ERROR_NONE;
             $this->_id = 01;
             // We add username to the state 
-            $this->setState('username', $record->username);
-            $this->setState('email', $record->email);
+            $this->setState('email', $this->email);
             $this->setState('id', 01);
+            $this->errorCode = self::ERROR_NONE;
             return true;
         } else if ($record->password !== $record->hashPassword($this->password, $record->username)) {
             $this->errorCode = self::ERROR_PASSWORD_INVALID;
