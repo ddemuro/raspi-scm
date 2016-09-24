@@ -25,9 +25,6 @@ if (function_exists('xcache_isset') &&
     $fastCache = false;
 }
 
-// Current active domain
-$current_domain = CURRENT_ACTIVE_DOMAIN;
-
 // uncomment the following to define a path alias
 // Yii::setPathOfAlias('local','path/to/local-folder');
 // This is the main Web application configuration. Any writable
@@ -36,11 +33,12 @@ return array(
     'basePath' => dirname(__FILE__) . DIRECTORY_SEPARATOR . '..',
     'name' => 'Raspberry Remote Management System',
     // preloading 'log' component
-    'preload' => array('log', 'session', 'db', 'cache','phpseclib'),
+    'preload' => array('log', 'session', 'db', 'cache', 'phpseclib'),
     // autoloading model and component classes
     'import' => array(
         'application.models.*',
         'application.components.*',
+        'application.extensions.*',
     ),
     'modules' => array(
         // uncomment the following to enable the Gii tool
