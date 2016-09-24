@@ -57,6 +57,10 @@ return array(
                 ),
             ),
         ),
+        'functions' => array('class' => 'application.components.Functions',),
+        'TemperatureController' => array('class' => 'application.components.TemperatureController',),
+        'RelayController' => array('class' => 'application.components.RelayController',),
+        'InfraredManager' => array('class' => 'application.components.InfraredManager',),
     ),
     // application-level parameters that can be accessed
     // using Yii::app()->params['paramName']
@@ -72,10 +76,4 @@ return array(
         'max_temp' => '31',
         'min_temp' => '16',
     ),
-    'components' => array(
-        'functions' => array('class' => 'application.components.Functions',),
-        'TemperatureController' => array('class' => 'application.components.TemperatureController',),
-        'RelayController' => array('class' => 'application.components.RelayController',),
-        'InfraredManager' => array('class' => 'application.components.InfraredManager',),
-        ),
 );
