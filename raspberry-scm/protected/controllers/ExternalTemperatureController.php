@@ -57,7 +57,7 @@ class ExternalTemperatureController extends Controller {
      * Displays a particular model.
      * @param integer $id the ID of the model to be displayed
      */
-    public function actionView($id) {
+    public function actionViewAll() {
         $model = Setting::model()->findAll('setting_id=:sett', array(':sett' => 'external_temp_sensor_pin'));
         $temps = array();
         foreach($model as $pin){
