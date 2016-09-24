@@ -93,7 +93,7 @@ class RelayChangesController extends Controller {
 
         $this->render('update', array(
             'model' => $model,
-            '$actions' => $actions,
+            'actions' => $actions,
         ));
     }
 
