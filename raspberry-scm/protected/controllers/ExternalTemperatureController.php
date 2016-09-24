@@ -63,7 +63,7 @@ class ExternalTemperatureController extends Controller {
         foreach($model as $pin){
             $res = Yii::app()->TemperatureController->getHumidityTemp($pin->setting, $pin->extended);
             Yii::log("Setting information: $pin->setting, Temperature Information: " + var_dump($res));
-            if($res == NULL || count($res <= 1)){
+            if($res == NULL || count($res <= 1){
                 Yii::log("Error loading temperature information, skipping...");
                 continue;
             }

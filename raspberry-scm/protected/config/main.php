@@ -36,7 +36,7 @@ return array(
     'basePath' => dirname(__FILE__) . DIRECTORY_SEPARATOR . '..',
     'name' => 'Raspberry Remote Management System',
     // preloading 'log' component
-    'preload' => array('log', 'session', 'db', 'cache'),
+    'preload' => array('log', 'session', 'db', 'cache','phpseclib'),
     // autoloading model and component classes
     'import' => array(
         'application.models.*',
@@ -100,6 +100,7 @@ return array(
         'TemperatureController' => array('class' => 'application.components.TemperatureController',),
         'RelayController' => array('class' => 'application.components.RelayController',),
         'InfraredManager' => array('class' => 'application.components.InfraredManager',),
+        'RootElevator' => array('class' => 'application.components.RootElevator',),
     ),
     // application-level parameters that can be accessed
     // using Yii::app()->params['paramName']
@@ -114,5 +115,6 @@ return array(
         'infrared_prog' => 'irsend',
         'max_temp' => '31',
         'min_temp' => '16',
+        'rootpwd' => 'xxxxxx',
     ),
 );

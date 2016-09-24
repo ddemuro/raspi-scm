@@ -30,7 +30,7 @@ class TemperatureController extends CApplicationComponent {
             return NULL;
         }
         do {
-            $res = shell_exec("$tempprog -MJP $datapin $extended 2>&1");
+            $res = Yii::app()->RootElevator->executeRoot("$tempprog -MJP $datapin $extended 2>&1", false);
         } while(strcmp($res, "Error") ==0);
         $this->debug("Humidity Temp Return: $res");
         str_replace(" ", "", $res);
@@ -51,7 +51,7 @@ class TemperatureController extends CApplicationComponent {
             return NULL;
         }
         do {
-            $res = shell_exec("$tempprog -MJP $datapin $extended 2>&1");
+            $res = Yii::app()->RootElevator->executeRoot("$tempprog -MJP $datapin $extended 2>&1", false);
         } while(strcmp($res, "Error") ==0);
         $this->debug("Temperature Return: $res");
         str_replace(" ", "", $res);
@@ -72,7 +72,7 @@ class TemperatureController extends CApplicationComponent {
             return NULL;
         }
         do {
-            $res = shell_exec("$tempprog -MJP $datapin $extended 2>&1");
+            $res = Yii::app()->RootElevator->executeRoot("$tempprog -MJP $datapin $extended 2>&1", false);
         } while(strcmp($res, "Error") ==0);
         $this->debug("Humidity Return: $res");
         str_replace(" ", "", $res);
@@ -92,6 +92,7 @@ class TemperatureController extends CApplicationComponent {
             Yii::log('No temperature sensor configured, cannot sense inernally...', CLogger::LEVEL_ERROR, "info");
             return NULL;
         }
+        $res = Yii::app()->RootElevator->executeRoot("$tempprog 2>&1", false);
         $res = shell_exec("$tempprog 2>&1");
         $this->debug("Internal Temperature Return: $res");
         $f2 = substr($res, 0, 2);
