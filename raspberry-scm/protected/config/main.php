@@ -1,5 +1,33 @@
 <?php
 
+// Sort cache options
+$caches = array();
+$fastCache = true;
+
+// Sort the type of cache to use
+if (function_exists('xcache_isset') &&
+        ini_get('xcache.size') != 0 &&
+        ini_get('xcache.mmap_path') != '/dev/zero') {
+    // Using XCache
+    $caches = array('class' => 'CXCache');
+} else if (extension_loaded('apc')) {
+    // Using APC
+    $caches = array('class' => 'CApcCache');
+} else if (function_exists('eaccelerator_get')) {
+    // Using Eaccelerator
+    $caches = array('class' => 'CEAcceleratorCache');
+} else if (function_exists('zend_shm_cache_store')) {
+    // Using ZendDataCache
+    $caches = array('class' => 'CZendDataCache');
+} else {
+    // Using File Cache - fallback
+    $caches = array('class' => 'CFileCache');
+    $fastCache = false;
+}
+
+// Current active domain
+$current_domain = CURRENT_ACTIVE_DOMAIN;
+
 // uncomment the following to define a path alias
 // Yii::setPathOfAlias('local','path/to/local-folder');
 // This is the main Web application configuration. Any writable
@@ -8,7 +36,7 @@ return array(
     'basePath' => dirname(__FILE__) . DIRECTORY_SEPARATOR . '..',
     'name' => 'Raspberry Remote Management System',
     // preloading 'log' component
-    'preload' => array('log'),
+    'preload' => array('log', 'session', 'db', 'cache'),
     // autoloading model and component classes
     'import' => array(
         'application.models.*',
@@ -48,12 +76,23 @@ return array(
             'class' => 'CLogRouter',
             'routes' => array(
                 array(
-                    'class' => 'CFileLogRoute',
-                    'levels' => 'error, warning, info',
-                ),
-                // uncomment the following to show log messages on web pages
-                array(
                     'class' => 'CWebLogRoute',
+                    'enabled' => true,
+                    'levels' => 'info',
+                ),
+                array(
+                    'class' => 'CProfileLogRoute',
+                    'enabled' => false,
+                ),
+                array(
+                    'logFile' => 'traceDebug.log',
+                    'class' => 'CFileLogRoute',
+                    'levels' => 'error,info, warning',
+                ),
+                array(
+                    'class' => 'application.extensions.yiidebugtb.XWebDebugRouter',
+                    'config' => 'alignLeft, opaque, runInDebug, fixedPos, collapsed, yamlStyle',
+                    'levels' => 'error, warning, trace, profile, info',
                 ),
             ),
         ),
