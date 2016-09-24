@@ -22,7 +22,7 @@ class TemperatureController extends CApplicationComponent {
      * @param type $datapin
      * @return type
      */
-    public function getHumidityTemp($datapin){
+    public function getHumidityTemp($datapin, $extended){
         $tempprog = Yii::app()->functions->yiiparam('external_sensor_program', NULL);
         $this->debug("DataPin: $datapin, Program: $tempprog");
         if($tempprog == NULL){
@@ -30,7 +30,7 @@ class TemperatureController extends CApplicationComponent {
             return NULL;
         }
         do {
-            $res = shell_exec("$tempprog -MJP $datapin");
+            $res = shell_exec("$tempprog -MJP $datapin $extended");
         } while(strcmp($res, "Error") ==0);
         $this->debug("HumidityTemp Return: $res");
         $respli = explode(" ", $res);
@@ -42,7 +42,7 @@ class TemperatureController extends CApplicationComponent {
      * @param type $datapin
      * @return type
      */
-    public function getTemperature($datapin){
+    public function getTemperature($datapin, $extended){
         $tempprog = Yii::app()->functions->yiiparam('external_sensor_program', NULL);
         $this->debug("DataPin: $datapin, Program: $tempprog");
         if($tempprog == NULL){
@@ -50,7 +50,7 @@ class TemperatureController extends CApplicationComponent {
             return NULL;
         }
         do {
-            $res = shell_exec("$tempprog -MJP $datapin");
+            $res = shell_exec("$tempprog -MJP $datapin $extended");
         } while(strcmp($res, "Error") ==0);
         $this->debug("Temperature Return: $res");
         $respli = explode(" ", $res);
@@ -62,7 +62,7 @@ class TemperatureController extends CApplicationComponent {
      * @param type $datapin
      * @return type
      */
-    public function getHumidity($datapin){
+    public function getHumidity($datapin, $extended){
         $tempprog = Yii::app()->functions->yiiparam('external_sensor_program', NULL);
         $this->debug("DataPin: $datapin, Program: $tempprog");
         if($tempprog == NULL){
@@ -70,7 +70,7 @@ class TemperatureController extends CApplicationComponent {
             return NULL;
         }
         do {
-            $res = shell_exec("$tempprog  -MJP $datapin");
+            $res = shell_exec("$tempprog -MJP $datapin $extended");
         } while(strcmp($res, "Error") ==0);
         $this->debug("Humidity Return: $res");
         $respli = explode(" ", $res);
