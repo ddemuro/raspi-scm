@@ -6,9 +6,14 @@
  */
 class TemperatureController extends CApplicationComponent {
     
-    public function debug($datapin, $program){
+    /**
+     * If we're running in debug, we want to log the input.
+     * @param type $datapin
+     * @param type $tempprog
+     */
+    public function debug($datapin, $tempprog){
         if(YII_DEBUG === TRUE){
-            Yii::log("DataPin: $datapin, Program: $temoprog", CLogger::LEVEL_ERROR, "info");
+            Yii::log("DataPin: $datapin, Program: $tempprog", CLogger::LEVEL_ERROR, "info");
         }
     }
     
@@ -18,14 +23,14 @@ class TemperatureController extends CApplicationComponent {
      * @return type
      */
     public function getHumidityTemp($datapin){
-        $temoprog = Yii::app()->functions->yiiparam('external_sensor_program', NULL);
-        $this->debug($datapin, $temoprog);
-        if($temoprog == NULL){
+        $tempprog = Yii::app()->functions->yiiparam('external_sensor_program', NULL);
+        $this->debug($datapin, $tempprog);
+        if($tempprog == NULL){
             Yii::log('No temperature sensor configured, cannot sense externally...', CLogger::LEVEL_ERROR, "info");
             return NULL;
         }
         do {
-            $res = shell_exec("$temoprog -MJP $datapin");
+            $res = shell_exec("$tempprog -MJP $datapin");
         } while(strcmp($res, "Error") ==0);
         $respli = explode(" ", $res);
         return$respli;        
@@ -37,14 +42,14 @@ class TemperatureController extends CApplicationComponent {
      * @return type
      */
     public function getTemperature($datapin){
-        $temoprog = Yii::app()->functions->yiiparam('external_sensor_program', NULL);
-        $this->debug($datapin, $temoprog);
-        if($temoprog == NULL){
+        $tempprog = Yii::app()->functions->yiiparam('external_sensor_program', NULL);
+        $this->debug($datapin, $tempprog);
+        if($tempprog == NULL){
             Yii::log('No temperature sensor configured, cannot sense externally...', CLogger::LEVEL_ERROR, "info");
             return NULL;
         }
         do {
-            $res = shell_exec("$temoprog -MJP $datapin");
+            $res = shell_exec("$tempprog -MJP $datapin");
         } while(strcmp($res, "Error") ==0);
         $respli = explode(" ", $res);
         return[1];
@@ -56,14 +61,14 @@ class TemperatureController extends CApplicationComponent {
      * @return type
      */
     public function getHumidity($datapin){
-        $temoprog = Yii::app()->functions->yiiparam('external_sensor_program', NULL);
-        $this->debug($datapin, $temoprog);
-        if($temoprog == NULL){
+        $tempprog = Yii::app()->functions->yiiparam('external_sensor_program', NULL);
+        $this->debug($datapin, $tempprog);
+        if($tempprog == NULL){
             Yii::log('No temperature sensor configured, cannot sense externally...', CLogger::LEVEL_ERROR, "info");
             return NULL;
         }
         do {
-            $res = shell_exec("$temoprog  -MJP $datapin");
+            $res = shell_exec("$tempprog  -MJP $datapin");
         } while(strcmp($res, "Error") ==0);
         $respli = explode(" ", $res);
         return[0];
@@ -75,13 +80,13 @@ class TemperatureController extends CApplicationComponent {
      * @return type
      */
     public function getInternalCPUTemp(){
-        $temoprog = Yii::app()->functions->yiiparam('cpu_tmp', NULL);
-        $this->debug(-1, $temoprog);
-        if($temoprog == NULL){
+        $tempprog = Yii::app()->functions->yiiparam('cpu_tmp', NULL);
+        $this->debug(-1, $tempprog);
+        if($tempprog == NULL){
             Yii::log('No temperature sensor configured, cannot sense inernally...', CLogger::LEVEL_ERROR, "info");
             return NULL;
         }
-        $res = shell_exec($temoprog);
+        $res = shell_exec($tempprog);
         $f2 = substr($res, 0, 2);
         $l2 = substr($res, 2, 2);
         return "$f2.$l2";
