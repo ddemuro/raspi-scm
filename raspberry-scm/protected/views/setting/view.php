@@ -26,6 +26,7 @@ $this->widget('zii.widgets.CDetailView', array(
         'setting_id',
         'setting',
         'extended',
+        'comment',
     ),
 ));
 ?>

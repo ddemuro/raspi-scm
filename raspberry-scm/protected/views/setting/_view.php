@@ -20,6 +20,10 @@
     <b><?php echo CHtml::encode($data->getAttributeLabel('extended')); ?>:</b>
     <?php echo CHtml::encode($data->extended); ?>
     <br />
+    
+    <b><?php echo CHtml::encode($data->getAttributeLabel('comment')); ?>:</b>
+    <?php echo CHtml::encode($data->comment); ?>
+    <br />
 
 
 </div>

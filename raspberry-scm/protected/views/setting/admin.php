@@ -52,6 +52,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
         'setting_id',
         'setting',
         'extended',
+        'comment',
         array(
             'class' => 'CButtonColumn',
         ),

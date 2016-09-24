@@ -1,15 +1,13 @@
 <?php
 
 /**
- * This is the model class for table "setting".
+ * This is the model class for table "flags".
  *
- * The followings are the available columns in table 'setting':
- * @property integer $id
- * @property string $setting_id
- * @property string $setting
- * @property string $extended
+ * The followings are the available columns in table 'flags':
+ * @property string $date
+ * @property string $log
  */
-class Setting extends TKActiveRecord {
+class Flags extends TKActiveRecord {
 
     /**
      * Returns the static model of the specified AR class.
@@ -23,7 +21,7 @@ class Setting extends TKActiveRecord {
      * @return string the associated database table name
      */
     public function tableName() {
-        return 'setting';
+        return 'flags';
     }
 
     /**
@@ -33,11 +31,10 @@ class Setting extends TKActiveRecord {
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('setting_id, setting', 'required'),
-            array('setting_id, setting', 'length', 'max' => 255),
+            array('date, flag_name, status', 'required'),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
-            array('id, setting_id, setting, comment, extended', 'safe', 'on' => 'search'),
+            array('date, flag_name, status', 'safe', 'on' => 'search'),
         );
     }
 
@@ -56,12 +53,18 @@ class Setting extends TKActiveRecord {
      */
     public function attributeLabels() {
         return array(
-            'id' => 'ID',
-            'setting_id' => 'Setting',
-            'setting' => 'Setting',
-            'extended' => 'Extended',
-            'comment' => 'Comment',
+            'date' => 'Date',
+            'flag_name' => 'Flag Name',
+            'Status' => 'Flag Name',
         );
+    }
+    
+    /**
+     * Save date and password before saving
+     */
+    public function beforeSave() {
+        $this->date = date("Y-m-d H:i:s", time());
+        return parent::beforeSave();
     }
 
     /**
@@ -81,11 +84,9 @@ class Setting extends TKActiveRecord {
 
         $criteria = new CDbCriteria;
 
-        $criteria->compare('id', $this->id);
-        $criteria->compare('setting_id', $this->setting_id, true);
-        $criteria->compare('setting', $this->setting, true);
-        $criteria->compare('extended', $this->extended, true);
-        $criteria->compare('comment', $this->extended, true);
+        $criteria->compare('date', $this->date, true);
+        $criteria->compare('flag_name', $this->flag_name, true);
+        $criteria->compare('status', $this->status, true);
 
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
