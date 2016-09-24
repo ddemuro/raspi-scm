@@ -7,8 +7,9 @@ $this->breadcrumbs = array(
 );
 
 $this->menu = array(
-    array('label' => 'Create ExternalTemperature', 'url' => array('create')),
-    array('label' => 'Manage ExternalTemperature', 'url' => array('admin')),
+    array('label' => 'Create External Temperature', 'url' => array('create')),
+    array('label' => 'Manage External Temperature', 'url' => array('admin')),
+    array('label' => 'Show External Temperature', 'url' => array('show')),
 );
 ?>
 

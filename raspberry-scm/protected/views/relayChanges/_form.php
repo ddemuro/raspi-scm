@@ -34,8 +34,9 @@
     </div>
 
     <div class="row">
+        <?php echo $form->dropDownList($model, 'action', $actions); ?>
         <?php echo $form->labelEx($model, 'action'); ?>
-        <?php echo $form->textField($model, 'action'); ?>
+        <?php $categories = array(0 => 'Off', 1 => 'On', 2 => 'Pulse'); ?>
         <?php echo $form->error($model, 'action'); ?>
     </div>
 

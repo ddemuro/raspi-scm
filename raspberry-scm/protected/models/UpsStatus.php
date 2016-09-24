@@ -68,6 +68,14 @@ class UpsStatus extends TKActiveRecord {
     }
 
     /**
+     * Save date and password before saving
+     */
+    public function beforeSave() {
+        $this->date = date("Y-m-d H:i:s", time());
+        return parent::beforeSave();
+    }
+    
+    /**
      * Retrieves a list of models based on the current search/filter conditions.
      *
      * Typical usecase:

@@ -38,6 +38,14 @@ class InternalTemperature extends TKActiveRecord {
             array('date, temperature', 'safe', 'on' => 'search'),
         );
     }
+    
+    /**
+     * Save date and password before saving
+     */
+    public function beforeSave() {
+        $this->date = date("Y-m-d H:i:s", time());
+        return parent::beforeSave();
+    }
 
     /**
      * @return array relational rules.

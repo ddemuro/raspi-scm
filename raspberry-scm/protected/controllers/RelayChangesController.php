@@ -84,7 +84,7 @@ class RelayChangesController extends Controller {
 
         // Uncomment the following line if AJAX validation is needed
         // $this->performAjaxValidation($model);
-
+        $actions = array(0 => 'Off', 1 => 'On', 2 => 'Pulse');
         if (isset($_POST['RelayChanges'])) {
             $model->attributes = $_POST['RelayChanges'];
             if ($model->save())
@@ -93,6 +93,7 @@ class RelayChangesController extends Controller {
 
         $this->render('update', array(
             'model' => $model,
+            '$actions' => $actions,
         ));
     }
 
