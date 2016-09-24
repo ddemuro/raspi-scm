@@ -62,6 +62,7 @@ class ExternalTemperatureController extends Controller {
         $temps = array();
         foreach($model as $pin){
             $res = Yii::app()->TemperatureController->getHumidityTemp($pin->setting);
+            Yii::log("Setting information: $pin->ToString(), Temperature Information: var_dump($res))", $level, $category);
             $tempModel = new ExternalTemperature();
             $tempModel->temperature = $res[1];
             $tempModel->humidity = $res[0];
