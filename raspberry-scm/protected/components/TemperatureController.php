@@ -33,7 +33,8 @@ class TemperatureController extends CApplicationComponent {
             $res = shell_exec("$tempprog -MJP $datapin $extended");
         } while(strcmp($res, "Error") ==0);
         $this->debug("HumidityTemp Return: $res");
-        $respli = explode(" ", $res);
+        str_replace(" ", "", $res);
+        $respli = explode("%", $res);
         return$respli;        
     }
     
@@ -53,7 +54,8 @@ class TemperatureController extends CApplicationComponent {
             $res = shell_exec("$tempprog -MJP $datapin $extended");
         } while(strcmp($res, "Error") ==0);
         $this->debug("Temperature Return: $res");
-        $respli = explode(" ", $res);
+        str_replace(" ", "", $res);
+        $respli = explode("%", $res);
         return[1];
     }
     
@@ -73,7 +75,8 @@ class TemperatureController extends CApplicationComponent {
             $res = shell_exec("$tempprog -MJP $datapin $extended");
         } while(strcmp($res, "Error") ==0);
         $this->debug("Humidity Return: $res");
-        $respli = explode(" ", $res);
+        str_replace(" ", "", $res);
+        $respli = explode("%", $res);
         return[0];
     }
     
