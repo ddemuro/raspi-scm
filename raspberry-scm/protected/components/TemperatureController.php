@@ -6,8 +6,20 @@
  */
 class TemperatureController extends CApplicationComponent {
     
+    public function debug($datapin, $program){
+        if(YII_DEBUG === TRUE){
+            Yii::log("DataPin: $datapin, Program: $temoprog", CLogger::LEVEL_ERROR, "info");
+        }
+    }
+    
+    /**
+     * Gets Humidity and Temperature as array on DHT sensors.
+     * @param type $datapin
+     * @return type
+     */
     public function getHumidityTemp($datapin){
         $temoprog = Yii::app()->functions->yiiparam('external_sensor_program', NULL);
+        $this->debug($datapin, $temoprog);
         if($temoprog == NULL){
             Yii::log('No temperature sensor configured, cannot sense externally...', CLogger::LEVEL_ERROR, "info");
             return NULL;
@@ -26,6 +38,7 @@ class TemperatureController extends CApplicationComponent {
      */
     public function getTemperature($datapin){
         $temoprog = Yii::app()->functions->yiiparam('external_sensor_program', NULL);
+        $this->debug($datapin, $temoprog);
         if($temoprog == NULL){
             Yii::log('No temperature sensor configured, cannot sense externally...', CLogger::LEVEL_ERROR, "info");
             return NULL;
@@ -44,6 +57,7 @@ class TemperatureController extends CApplicationComponent {
      */
     public function getHumidity($datapin){
         $temoprog = Yii::app()->functions->yiiparam('external_sensor_program', NULL);
+        $this->debug($datapin, $temoprog);
         if($temoprog == NULL){
             Yii::log('No temperature sensor configured, cannot sense externally...', CLogger::LEVEL_ERROR, "info");
             return NULL;
@@ -62,6 +76,7 @@ class TemperatureController extends CApplicationComponent {
      */
     public function getInternalCPUTemp(){
         $temoprog = Yii::app()->functions->yiiparam('cpu_tmp', NULL);
+        $this->debug(-1, $temoprog);
         if($temoprog == NULL){
             Yii::log('No temperature sensor configured, cannot sense inernally...', CLogger::LEVEL_ERROR, "info");
             return NULL;
