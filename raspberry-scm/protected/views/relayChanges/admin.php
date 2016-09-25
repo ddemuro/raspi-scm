@@ -8,8 +8,8 @@ $this->breadcrumbs = array(
 );
 
 $this->menu = array(
-    array('label' => 'List RelayChanges', 'url' => array('index')),
-    array('label' => 'Create RelayChanges', 'url' => array('create')),
+    array('label' => 'List Relay Changes', 'url' => array('index')),
+    array('label' => 'Create Relay Changes', 'url' => array('create')),
 );
 
 Yii::app()->clientScript->registerScript('search', "

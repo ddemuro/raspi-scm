@@ -8,11 +8,11 @@ $this->breadcrumbs = array(
 );
 
 $this->menu = array(
-    array('label' => 'List InfraredEvents', 'url' => array('index')),
-    array('label' => 'Manage InfraredEvents', 'url' => array('admin')),
+    array('label' => 'List Infrared Events', 'url' => array('index')),
+    array('label' => 'Manage Infrared Events', 'url' => array('admin')),
 );
 ?>
 
-<h1>Create InfraredEvents</h1>
+<h1>Create Infrared Events</h1>
 
 <?php $this->renderPartial('_form', array('model' => $model)); ?>

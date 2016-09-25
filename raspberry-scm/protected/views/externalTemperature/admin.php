@@ -8,8 +8,8 @@ $this->breadcrumbs = array(
 );
 
 $this->menu = array(
-    array('label' => 'List ExternalTemperature', 'url' => array('index')),
-    array('label' => 'Create ExternalTemperature', 'url' => array('create')),
+    array('label' => 'List External Temperature', 'url' => array('index')),
+    array('label' => 'Create External Temperature', 'url' => array('create')),
 );
 
 Yii::app()->clientScript->registerScript('search', "

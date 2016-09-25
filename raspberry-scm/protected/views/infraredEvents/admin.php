@@ -8,8 +8,8 @@ $this->breadcrumbs = array(
 );
 
 $this->menu = array(
-    array('label' => 'List InfraredEvents', 'url' => array('index')),
-    array('label' => 'Create InfraredEvents', 'url' => array('create')),
+    array('label' => 'List Infrared Events', 'url' => array('index')),
+    array('label' => 'Create Infrared Events', 'url' => array('create')),
 );
 
 Yii::app()->clientScript->registerScript('search', "

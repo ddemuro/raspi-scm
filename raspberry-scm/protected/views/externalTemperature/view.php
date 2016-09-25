@@ -8,11 +8,11 @@ $this->breadcrumbs = array(
 );
 
 $this->menu = array(
-    array('label' => 'List ExternalTemperature', 'url' => array('index')),
-    array('label' => 'Create ExternalTemperature', 'url' => array('create')),
-    array('label' => 'Update ExternalTemperature', 'url' => array('update', 'id' => $model->date)),
-    array('label' => 'Delete ExternalTemperature', 'url' => '#', 'linkOptions' => array('submit' => array('delete', 'id' => $model->date), 'confirm' => 'Are you sure you want to delete this item?')),
-    array('label' => 'Manage ExternalTemperature', 'url' => array('admin')),
+    array('label' => 'List External Temperature', 'url' => array('index')),
+    array('label' => 'Create External Temperature', 'url' => array('create')),
+    array('label' => 'Update External Temperature', 'url' => array('update', 'id' => $model->date)),
+    array('label' => 'Delete External Temperature', 'url' => '#', 'linkOptions' => array('submit' => array('delete', 'id' => $model->date), 'confirm' => 'Are you sure you want to delete this item?')),
+    array('label' => 'Manage External Temperature', 'url' => array('admin')),
 );
 ?>
 

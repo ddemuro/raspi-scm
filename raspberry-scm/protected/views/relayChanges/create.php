@@ -8,11 +8,11 @@ $this->breadcrumbs = array(
 );
 
 $this->menu = array(
-    array('label' => 'List RelayChanges', 'url' => array('index')),
-    array('label' => 'Manage RelayChanges', 'url' => array('admin')),
+    array('label' => 'List Relay Changes', 'url' => array('index')),
+    array('label' => 'Manage Relay Changes', 'url' => array('admin')),
 );
 ?>
 
-<h1>Create RelayChanges</h1>
+<h1>Create Relay Changes</h1>
 
 <?php $this->renderPartial('_form', array('model' => $model)); ?>

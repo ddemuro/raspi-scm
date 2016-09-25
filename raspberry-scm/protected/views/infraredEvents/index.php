@@ -7,8 +7,8 @@ $this->breadcrumbs = array(
 );
 
 $this->menu = array(
-    array('label' => 'Create InfraredEvents', 'url' => array('create')),
-    array('label' => 'Manage InfraredEvents', 'url' => array('admin')),
+    array('label' => 'Create Infrared Events', 'url' => array('create')),
+    array('label' => 'Manage Infrared Events', 'url' => array('admin')),
 );
 ?>
 

@@ -8,15 +8,15 @@ $this->breadcrumbs = array(
 );
 
 $this->menu = array(
-    array('label' => 'List InfraredEvents', 'url' => array('index')),
-    array('label' => 'Create InfraredEvents', 'url' => array('create')),
-    array('label' => 'Update InfraredEvents', 'url' => array('update', 'id' => $model->date)),
-    array('label' => 'Delete InfraredEvents', 'url' => '#', 'linkOptions' => array('submit' => array('delete', 'id' => $model->date), 'confirm' => 'Are you sure you want to delete this item?')),
-    array('label' => 'Manage InfraredEvents', 'url' => array('admin')),
+    array('label' => 'List Infrared Events', 'url' => array('index')),
+    array('label' => 'Create Infrared Events', 'url' => array('create')),
+    array('label' => 'Update Infrared Events', 'url' => array('update', 'id' => $model->date)),
+    array('label' => 'Delete Infrared Events', 'url' => '#', 'linkOptions' => array('submit' => array('delete', 'id' => $model->date), 'confirm' => 'Are you sure you want to delete this item?')),
+    array('label' => 'Manage Infrared Events', 'url' => array('admin')),
 );
 ?>
 
-<h1>View InfraredEvents #<?php echo $model->date; ?></h1>
+<h1>View Infrared Events #<?php echo $model->date; ?></h1>
 
 <?php
 $this->widget('zii.widgets.CDetailView', array(

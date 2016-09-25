@@ -58,9 +58,9 @@
             <div class="clear"></div>
 
             <div id="footer">
-                Copyright &copy; <?php echo date('Y'); ?> by My Company.<br/>
+                Copyright &copy; <?php echo date('Y'); ?> by TakeLAN.<br/>
                 All Rights Reserved.<br/>
-                <?php echo Yii::powered(); ?>
+                www.takelan.com
             </div><!-- footer -->
 
         </div><!-- page -->

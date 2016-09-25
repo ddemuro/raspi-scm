@@ -8,11 +8,11 @@ $this->breadcrumbs = array(
 );
 
 $this->menu = array(
-    array('label' => 'List ExternalTemperature', 'url' => array('index')),
-    array('label' => 'Manage ExternalTemperature', 'url' => array('admin')),
+    array('label' => 'List External Temperature', 'url' => array('index')),
+    array('label' => 'Manage External Temperature', 'url' => array('admin')),
 );
 ?>
 
-<h1>Create ExternalTemperature</h1>
+<h1>Create External Temperature</h1>
 
 <?php $this->renderPartial('_form', array('model' => $model)); ?>

@@ -7,8 +7,8 @@ $this->breadcrumbs = array(
 );
 
 $this->menu = array(
-    array('label' => 'Create RelayChanges', 'url' => array('create')),
-    array('label' => 'Manage RelayChanges', 'url' => array('admin')),
+    array('label' => 'Create Relay Changes', 'url' => array('create')),
+    array('label' => 'Manage Relay Changes', 'url' => array('admin')),
 );
 ?>
 

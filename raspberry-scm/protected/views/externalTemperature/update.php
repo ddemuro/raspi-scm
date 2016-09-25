@@ -9,13 +9,13 @@ $this->breadcrumbs = array(
 );
 
 $this->menu = array(
-    array('label' => 'List ExternalTemperature', 'url' => array('index')),
-    array('label' => 'Create ExternalTemperature', 'url' => array('create')),
-    array('label' => 'View ExternalTemperature', 'url' => array('view', 'id' => $model->date)),
-    array('label' => 'Manage ExternalTemperature', 'url' => array('admin')),
+    array('label' => 'List External Temperature', 'url' => array('index')),
+    array('label' => 'Create External Temperature', 'url' => array('create')),
+    array('label' => 'View External Temperature', 'url' => array('view', 'id' => $model->date)),
+    array('label' => 'Manage External Temperature', 'url' => array('admin')),
 );
 ?>
 
-<h1>Update ExternalTemperature <?php echo $model->date; ?></h1>
+<h1>Update External Temperature <?php echo $model->date; ?></h1>
 
 <?php $this->renderPartial('_form', array('model' => $model)); ?>
