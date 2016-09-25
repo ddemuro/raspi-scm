@@ -75,7 +75,7 @@ class Functions extends CApplicationComponent {
         // As we send keep alives every minute, in the last 30 seconds he should be online
         $time = date("Y-m-d H:i:s", time() - 10);
         $existingFlags = Flags::model()->findAll('flag_name=:flgname', array(':flgname' => $name));
-        if ($existingFlags->count() > 0) {
+        if (count($existingFlags) > 0) {
             return false;
         } else {
             $newFlag = Flags();
