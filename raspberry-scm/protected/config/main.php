@@ -99,6 +99,7 @@ return array(
         'RelayController' => array('class' => 'application.components.RelayController',),
         'InfraredManager' => array('class' => 'application.components.InfraredManager',),
         'RootElevator' => array('class' => 'application.components.RootElevator',),
+        'phpseclib' => array('class' => 'ext.phpseclib.PhpSecLib'),
     ),
     // application-level parameters that can be accessed
     // using Yii::app()->params['paramName']
