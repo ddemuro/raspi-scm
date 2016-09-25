@@ -58,7 +58,7 @@ class CronCommand extends CConsoleCommand {
             $this->debug("Error checking with relay board..., check log...\n", false);
         }
         $flag = Yii::app()->functions->getFlag("internal_tmp");
-        if (strcmp("internal_tmp", $res) == 0 && $force != false) {
+        if ($res != NULL && strcmp("internal_tmp", $res) == 0 && $force != false) {
             return;
         }
         Yii::app()->functions->deleteFlag("internal_tmp");
@@ -82,7 +82,7 @@ class CronCommand extends CConsoleCommand {
                 $this->debug("Error processing temperature..., check log...\n", false);
             }
             $flag = Yii::app()->functions->getFlag("ex_tmp_$pin->setting");
-            if (strcmp("ex_tmp_$pin", $res) == 0 && $force != false) {
+            if ($flag != NULL && strcmp("ex_tmp_$pin->setting", $res) == 0 && $force != false) {
                 return;
             }
             Yii::app()->functions->deleteFlag("ex_tmp_$pin->setting");
