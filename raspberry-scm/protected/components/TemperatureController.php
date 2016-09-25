@@ -116,9 +116,7 @@ class TemperatureController extends CApplicationComponent {
         $this->debug("Internal GPU Temperature Return: $res");
         str_replace('temp=', '', $res);
         str_replace('\'C', '', $res);
-        $f2 = substr($res, 0, 2);
-        $l2 = substr($res, 2, 2);
-        return "$f2.$l2";
+        return $res;
     }
 
 }
