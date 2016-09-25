@@ -45,7 +45,7 @@ class InternalTemperatureController extends Controller {
      */
     public function actionViewStaticCPU() {
         $res = Yii::app()->TemperatureController->getInternalCPUTemp();
-        if($res == NULL || count($res) <= 1){
+        if($res == NULL){
             Yii::log("Error loading temperature information, skipping...");
             return NULL;
         }
@@ -62,7 +62,7 @@ class InternalTemperatureController extends Controller {
      */
     public function actionViewStaticGPU() {
         $res = Yii::app()->TemperatureController->getInternalGPUTemp();
-        if($res == NULL || count($res) <= 1){
+        if($res == NULL){
             Yii::log("Error loading temperature information, skipping...");
             return NULL;
         }
