@@ -61,7 +61,7 @@ class CronCommand extends CConsoleCommand {
         if ($res != NULL && strcmp("internal_tmp", $res) == 0 && $force != false) {
             return;
         }
-        Yii::app()->functions->deleteFlag("internal_tmp");
+        Yii::app()->functions->removeFlag("internal_tmp");
         Yii::app()->functions->writeFlag("internal_tmp", $res);
         $tempModel = new InternalTemperature();
         $tempModel->temperature = $res;
@@ -85,7 +85,7 @@ class CronCommand extends CConsoleCommand {
             if ($flag != NULL && strcmp("ex_tmp_$pin->setting", $res) == 0 && $force != false) {
                 return;
             }
-            Yii::app()->functions->deleteFlag("ex_tmp_$pin->setting");
+            Yii::app()->functions->removeFlag("ex_tmp_$pin->setting");
             Yii::app()->functions->writeFlag("ex_tmp_$pin->setting", $res);
             $tempModel = new ExternalTemperature();
             $tempModel->temperature = $res[1];
