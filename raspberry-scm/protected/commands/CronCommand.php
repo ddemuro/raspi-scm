@@ -78,8 +78,9 @@ class CronCommand extends CConsoleCommand {
     public function logExternalTemperature($force) {
         $model = Setting::model()->findAll('setting_id=:sett', array(':sett' => 'external_temp_sensor_pin'));
         foreach ($model as $pin) {
-            $this->debug("Checking with pin: $pin->setting and extended: $pin->extended \n", false);
             $res = Yii::app()->TemperatureController->getHumidityTemp($pin->setting, $pin->extended);
+            $vd = var_dump($res);
+            $this->debug("Checking with pin: $pin->setting and extended: $pin->extended. $vd \n", false);
             if ($res == NULL || count($res) <= 1) {
                 Yii::log("Error loading temperature information, skipping...");
                 continue;
