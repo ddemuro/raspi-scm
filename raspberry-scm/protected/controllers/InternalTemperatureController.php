@@ -50,7 +50,7 @@ class InternalTemperatureController extends Controller {
             return NULL;
         }
         $tempModel = new ExternalTemperature();
-        $tempModel->temperature = $res[1];
+        $tempModel->temperature = $res;
         $tempModel->date = date("Y-m-d H:i:s", time());  
         $this->render('_view', array(
             'model' => $tempModel,));
@@ -67,7 +67,7 @@ class InternalTemperatureController extends Controller {
             return NULL;
         }
         $tempModel = new ExternalTemperature();
-        $tempModel->temperature = $res[1];
+        $tempModel->temperature = $res;
         $tempModel->date = date("Y-m-d H:i:s", time());  
         $this->render('_view', array(
             'model' => $tempModel,));
