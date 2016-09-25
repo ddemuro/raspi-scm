@@ -93,11 +93,12 @@ class TemperatureController extends CApplicationComponent {
             return NULL;
         }
         $res = Yii::app()->RootElevator->executeRoot("$tempprog 2>&1", false);
-        $res = shell_exec("$tempprog 2>&1");
+        $res = shell_exec("cat $tempprog");
         $this->debug("Internal Temperature Return: $res");
-        $f2 = substr($res, 0, 2);
-        $l2 = substr($res, 2, 2);
-        return "$f2.$l2";
+        if(strlen($res[0] != 5)){
+            return NULL;
+        }
+        return $res[0] / 1000;
     }
 
     /**
@@ -113,8 +114,10 @@ class TemperatureController extends CApplicationComponent {
             return NULL;
         }
         $res = Yii::app()->RootElevator->executeRoot("$tempprog 2>&1", false);
-        $res = shell_exec("$tempprog 2>&1");
+        $res = shell_exec("$tempprog");
         $this->debug("Internal GPU Temperature Return: $res");
+        str_replace('temp=', '', $res);
+        str_replace('\'C', '', $res);
         $f2 = substr($res, 0, 2);
         $l2 = substr($res, 2, 2);
         return "$f2.$l2";
