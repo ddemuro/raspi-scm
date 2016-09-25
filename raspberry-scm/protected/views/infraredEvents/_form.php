@@ -2,6 +2,23 @@
 /* @var $this InfraredEventsController */
 /* @var $model InfraredEvents */
 /* @var $form CActiveForm */
+$categories = array(
+    // Turn ON and OFF AC.
+    0 => 'KEY_POWER',
+    // Change temp up on AC
+    1 => 'KEY_VOLUMEUP',
+    // Change temp on AC down
+    2 => 'KEY_VOLUMEDOWN',
+    // 
+    3 => 'KEY_T',
+    // Change Mode
+    4 => 'KEY_FN',
+    5 => 'KEY_BRIGHTNESSUP',
+    6 => 'KEY_BRIGHTNESSDOWN',
+    7 => 'KEY_BRIGHTNESS_ZERO',
+    8 => 'KEY_SLEEP',
+    9 => 'KEY_TIME',
+);
 ?>
 
 <div class="form">
