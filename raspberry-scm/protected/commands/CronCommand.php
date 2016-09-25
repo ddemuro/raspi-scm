@@ -67,7 +67,8 @@ class CronCommand extends CConsoleCommand {
         $tempModel->temperature = $res;
         $tempModel->date = date("Y-m-d H:i:s", time());
         $tempModel->save();
-        $this->debug("$tempModel->ToString()\n", false);
+        $str = $tempModel->ToString();
+        $this->debug("$str \n", false);
         unset($tempModel);
         unset($model);
         unset($res);
@@ -93,7 +94,8 @@ class CronCommand extends CConsoleCommand {
             $tempModel->date = date("Y-m-d H:i:s", time());
             $tempModel->log = "DataPIN=$pin->setting";
             $tempModel->save();
-            $this->debug("$tempModel->ToString()\n", false);
+            $str = $tempModel->ToString();
+            $this->debug("$str \n", false);
             unset($tempModel);
             unset($model);
             unset($res);
