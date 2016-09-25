@@ -60,7 +60,7 @@ class RelayController extends CApplicationComponent {
             else
                 return false;
         }
-        if ($toString == 1)
+        if ($toString)
             return $resp;
         $relay_info = array();
         foreach ($resp as $line) {

@@ -33,7 +33,7 @@ class TemperatureController extends CApplicationComponent {
             $res = Yii::app()->RootElevator->executeRoot("$tempprog -MJP $datapin $extended 2>&1", false);
         } while (strcmp($res[0], "Error ") == 0);
         $this->debug("Humidity Temp Return: $res");
-        str_replace(" ", "", $res);
+        str_replace(' ', '', $res);
         $respli = explode("%", $res);
         return$respli;
     }
@@ -54,7 +54,7 @@ class TemperatureController extends CApplicationComponent {
             $res = Yii::app()->RootElevator->executeRoot("$tempprog -MJP $datapin $extended 2>&1", false);
         } while (strcmp($res[0], "Error ") == 0);
         $this->debug("Temperature Return: $res");
-        str_replace(" ", "", $res);
+        str_replace(' ', '', $res);
         $respli = explode("%", $res);
         return[1];
     }
@@ -75,7 +75,7 @@ class TemperatureController extends CApplicationComponent {
             $res = Yii::app()->RootElevator->executeRoot("$tempprog -MJP $datapin $extended 2>&1", false);
         } while (strcmp($res[0], "Error ") == 0);
         $this->debug("Humidity Return: $res");
-        str_replace(" ", "", $res);
+        str_replace(' ', '', $res);
         $respli = explode("%", $res);
         return[0];
     }
