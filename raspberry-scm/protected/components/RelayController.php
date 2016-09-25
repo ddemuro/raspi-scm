@@ -61,7 +61,7 @@ class RelayController extends CApplicationComponent {
                 return false;
         }
         if ($toString)
-            return $resp;
+            return var_dump($resp);
         $relay_info = array();
         foreach ($resp as $line) {
             $pieces = explode(" ", $line);
