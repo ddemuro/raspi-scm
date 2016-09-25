@@ -100,4 +100,24 @@ class TemperatureController extends CApplicationComponent {
         return "$f2.$l2";
     }
 
+    /**
+     * Get humidity from sensors like DHT11
+     * @param type $datapin
+     * @return type
+     */
+    public function getInternalGPUTemp(){
+        $tempprog = Yii::app()->functions->yiiparam('gpu_tmp', NULL);
+        $this->debug("Program: $tempprog");
+        if($tempprog == NULL){
+            Yii::log('No temperature sensor configured, cannot sense inernally...', CLogger::LEVEL_ERROR, "info");
+            return NULL;
+        }
+        $res = Yii::app()->RootElevator->executeRoot("$tempprog 2>&1", false);
+        $res = shell_exec("$tempprog 2>&1");
+        $this->debug("Internal GPU Temperature Return: $res");
+        $f2 = substr($res, 0, 2);
+        $l2 = substr($res, 2, 2);
+        return "$f2.$l2";
+    }
+
 }

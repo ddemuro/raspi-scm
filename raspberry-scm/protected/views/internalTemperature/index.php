@@ -9,6 +9,8 @@ $this->breadcrumbs = array(
 $this->menu = array(
     array('label' => 'Create InternalTemperature', 'url' => array('create')),
     array('label' => 'Manage InternalTemperature', 'url' => array('admin')),
+    array('label' => 'Show CPU Temperature', 'url' => array('viewstaticcpu')),
+    array('label' => 'Show GPU Temperature', 'url' => array('viewstaticgpu')),
 );
 ?>
 

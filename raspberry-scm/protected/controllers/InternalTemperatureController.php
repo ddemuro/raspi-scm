@@ -40,6 +40,41 @@ class InternalTemperatureController extends Controller {
     }
 
     /**
+     * Displays a particular model.
+     * @param integer $id the ID of the model to be displayed
+     */
+    public function actionViewStaticCPU() {
+        $res = Yii::app()->TemperatureController->getInternalCPUTemp();
+        if($res == NULL || count($res) <= 1){
+            Yii::log("Error loading temperature information, skipping...");
+            return NULL;
+        }
+        $tempModel = new ExternalTemperature();
+        $tempModel->temperature = $res[1];
+        $tempModel->date = date("Y-m-d H:i:s", time());  
+        $this->render('_view', array(
+            'model' => $tempModel,));
+    }
+
+    /**
+     * Displays a particular model.
+     * @param integer $id the ID of the model to be displayed
+     */
+    public function actionViewStaticGPU() {
+        $res = Yii::app()->TemperatureController->getInternalGPUTemp();
+        if($res == NULL || count($res) <= 1){
+            Yii::log("Error loading temperature information, skipping...");
+            return NULL;
+        }
+        $tempModel = new ExternalTemperature();
+        $tempModel->temperature = $res[1];
+        $tempModel->date = date("Y-m-d H:i:s", time());  
+        $this->render('_view', array(
+            'model' => $tempModel,));
+    }
+
+    
+    /**
      * Updates a particular model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id the ID of the model to be updated

@@ -13,5 +13,4 @@
     <?php echo CHtml::encode($data->temperature); ?>
     <br />
 
-
 </div>
