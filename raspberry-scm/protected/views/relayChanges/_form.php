@@ -2,6 +2,7 @@
 /* @var $this RelayChangesController */
 /* @var $model RelayChanges */
 /* @var $form CActiveForm */
+$categories = array(0 => 'OFF', 1 => 'ON', 2 => 'PULSE');
 ?>
 
 <div class="form">
