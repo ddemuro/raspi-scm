@@ -31,6 +31,12 @@ return array(
     'name' => 'Raspberry Remote Management System',
     // preloading 'log' component
     'preload' => array('log', 'session', 'db', 'cache', 'phpseclib'),
+    // autoloading model and component classes
+    'import' => array(
+        'application.models.*',
+        'application.components.*',
+        'application.extensions.*',
+    ),
     // application components
     'components' => array(
         // database settings are configured in database.php
