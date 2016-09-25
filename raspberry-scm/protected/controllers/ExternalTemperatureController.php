@@ -71,7 +71,7 @@ class ExternalTemperatureController extends Controller {
             $tempModel->temperature = $res[1];
             $tempModel->humidity = $res[0];
             $tempModel->date = date("Y-m-d H:i:s", time());
-            $tempModel->log = "DataPIN=$pin";
+            $tempModel->log = "DataPIN = $pin->setting, Extended = $pin->extended";
             array_push($temps, $tempModel);
         }
         
