@@ -24,7 +24,25 @@ class InfraredEventsController extends Controller {
      */
     public function actionCreate() {
         $model = new InfraredEvents;
-
+        
+        $categories = array(
+            // Turn ON and OFF AC.
+            0 => 'KEY_POWER',
+            // Change temp up on AC
+            1 => 'KEY_VOLUMEUP',
+            // Change temp on AC down
+            2 => 'KEY_VOLUMEDOWN',
+            // 
+            3 => 'KEY_T',
+            // Change Mode
+            4 => 'KEY_FN',
+            5 => 'KEY_BRIGHTNESSUP',
+            6 => 'KEY_BRIGHTNESSDOWN',
+            7 => 'KEY_BRIGHTNESS_ZERO',
+            8 => 'KEY_SLEEP',
+            9 => 'KEY_TIME',
+        );
+        
         // Uncomment the following line if AJAX validation is needed
         // $this->performAjaxValidation($model);
 
@@ -36,6 +54,7 @@ class InfraredEventsController extends Controller {
 
         $this->render('create', array(
             'model' => $model,
+            'categories' => $categories,
         ));
     }
 
@@ -46,6 +65,24 @@ class InfraredEventsController extends Controller {
      */
     public function actionUpdate($id) {
         $model = $this->loadModel($id);
+        
+        $categories = array(
+            // Turn ON and OFF AC.
+            0 => 'KEY_POWER',
+            // Change temp up on AC
+            1 => 'KEY_VOLUMEUP',
+            // Change temp on AC down
+            2 => 'KEY_VOLUMEDOWN',
+            // 
+            3 => 'KEY_T',
+            // Change Mode
+            4 => 'KEY_FN',
+            5 => 'KEY_BRIGHTNESSUP',
+            6 => 'KEY_BRIGHTNESSDOWN',
+            7 => 'KEY_BRIGHTNESS_ZERO',
+            8 => 'KEY_SLEEP',
+            9 => 'KEY_TIME',
+        );
 
         // Uncomment the following line if AJAX validation is needed
         // $this->performAjaxValidation($model);
@@ -58,6 +95,7 @@ class InfraredEventsController extends Controller {
 
         $this->render('update', array(
             'model' => $model,
+            'categories' => $categories,
         ));
     }
 

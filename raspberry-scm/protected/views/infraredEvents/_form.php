@@ -35,7 +35,7 @@
 
     <div class="row">
         <?php echo $form->labelEx($model, 'event'); ?>
-        <?php echo $form->textField($model, 'event', array('size' => 60, 'maxlength' => 255)); ?>
+        <?php echo $form->dropDownList($model, 'event', $categories); ?>
         <?php echo $form->error($model, 'event'); ?>
     </div>
 

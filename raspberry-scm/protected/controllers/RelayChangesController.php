@@ -24,7 +24,7 @@ class RelayChangesController extends Controller {
      */
     public function actionCreate() {
         $model = new RelayChanges;
-
+        $categories = array(0 => 'OFF', 1 => 'ON', 2 => 'PULSE');
         // Uncomment the following line if AJAX validation is needed
         // $this->performAjaxValidation($model);
 
@@ -36,6 +36,7 @@ class RelayChangesController extends Controller {
 
         $this->render('create', array(
             'model' => $model,
+            'categories' => $categories,
         ));
     }
 
@@ -49,11 +50,11 @@ class RelayChangesController extends Controller {
 
         // Uncomment the following line if AJAX validation is needed
         // $this->performAjaxValidation($model);
-        $actions = array(0 => 'Off', 1 => 'On', 2 => 'Pulse');
+        $categories = array(0 => 'OFF', 1 => 'ON', 2 => 'PULSE');
         if (isset($_POST['RelayChanges'])) {
             $model->attributes = $_POST['RelayChanges'];
             if ($model->save())
-                $this->redirect(array('view', 'id' => $model->date));
+                $this->redirect(array('view', 'id' => $model->date, 'categories' => $categories));
         }
 
         $this->render('update', array(
