@@ -97,7 +97,8 @@ class TemperatureController extends CApplicationComponent {
         if(strlen($res[0] != 5)){
             return NULL;
         }
-        return $res[0] / 1000;
+        $res = $res[0] / 1000;
+        return $res;
     }
 
     /**
@@ -114,8 +115,8 @@ class TemperatureController extends CApplicationComponent {
         }
         $res = Yii::app()->RootElevator->executeRoot("$tempprog", false);
         $this->debug("Internal GPU Temperature Return: $res");
-        str_replace('temp=', '', $res);
-        str_replace('\'C', '', $res);
+        $res = str_replace('temp=', '', $res);
+        $res = str_replace("'C", '', $res);
         return $res;
     }
 
