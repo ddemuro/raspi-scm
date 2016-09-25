@@ -17,7 +17,7 @@ class ExternalTemperatureController extends Controller {
             'model' => $this->loadModel($id),
         ));
     }
-    
+
     /**
      * Displays a particular model.
      * @param integer $id the ID of the model to be displayed
@@ -25,10 +25,10 @@ class ExternalTemperatureController extends Controller {
     public function actionViewAll() {
         $model = Setting::model()->findAll('setting_id=:sett', array(':sett' => 'external_temp_sensor_pin'));
         $temps = array();
-        foreach($model as $pin){
+        foreach ($model as $pin) {
             $res = Yii::app()->TemperatureController->getHumidityTemp($pin->setting, $pin->extended);
             Yii::log("Setting information: $pin->setting, Temperature Information: " + var_dump($res));
-            if($res == NULL || count($res) <= 1){
+            if ($res == NULL || count($res) <= 1) {
                 Yii::log("Error loading temperature information, skipping...");
                 continue;
             }
@@ -39,7 +39,7 @@ class ExternalTemperatureController extends Controller {
             $tempModel->log = "DataPIN = $pin->setting, Extended = $pin->extended";
             array_push($temps, $tempModel);
         }
-        
+
         $this->render('_view', array(
             'model' => $temps,
             'multi' => true,

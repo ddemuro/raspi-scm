@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PhpSecLib.php
  *
@@ -89,180 +90,140 @@
  * echo $ssh->getLog();
  *
  */
+class PhpSecLib extends CApplicationComponent {
 
-class PhpSecLib extends CApplicationComponent
-{
-
-    public function init()
-    {
+    public function init() {
         set_include_path(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'classes' . PATH_SEPARATOR . get_include_path());
         // Preload the crypt_random_string function to prevent the Crypt_Random class error (Math/BigInteger.php - line 3064)
         require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . 'Crypt' . DIRECTORY_SEPARATOR . 'Random.php');
-        Yii::registerAutoloader(array("PhpSecLib","autoload"));
+        Yii::registerAutoloader(array("PhpSecLib", "autoload"));
     }
-    
-    public static function autoload($class)
-    {
+
+    public static function autoload($class) {
         $file = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . str_replace("_", DIRECTORY_SEPARATOR, $class) . '.php';
-        if(is_file($file))
-        {
+        if (is_file($file)) {
             require_once($file);
             return true;
-        }
-        elseif($class === 'File_ASN1_Element')
-        {
+        } elseif ($class === 'File_ASN1_Element') {
             require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . 'File' . DIRECTORY_SEPARATOR . 'ASN1.php');
             return true;
-        }
-        elseif($class === 'System_SSH_Agent')
-        {
+        } elseif ($class === 'System_SSH_Agent') {
             require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . 'System' . DIRECTORY_SEPARATOR . 'SSH_Agent.php');
             return true;
         }
         return false;
     }
-    
-    public function createAES($mode = "CRYPT_AES_MODE_CBC")
-    {
-        if(is_string($mode))
-        {
-            if(!defined($mode))
-            {
+
+    public function createAES($mode = "CRYPT_AES_MODE_CBC") {
+        if (is_string($mode)) {
+            if (!defined($mode)) {
                 $this->preload("Crypt_AES");
             }
             $mode = constant($mode);
         }
         return new Crypt_AES($mode);
     }
-    
-    public function createBigInteger($x = 0, $base = 10)
-    {
+
+    public function createBigInteger($x = 0, $base = 10) {
         return new Math_BigInteger($x, $base);
     }
-    
-    public function createBlowfish($mode = "CRYPT_BLOWFISH_MODE_CBC")
-    {
-        if(is_string($mode))
-        {
-            if(!defined($mode))
-            {
+
+    public function createBlowfish($mode = "CRYPT_BLOWFISH_MODE_CBC") {
+        if (is_string($mode)) {
+            if (!defined($mode)) {
                 $this->preload("Crypt_Blowfish");
             }
             $mode = constant($mode);
         }
         return new Crypt_Blowfish($mode);
     }
-    
-    public function createDES($mode = "CRYPT_DES_MODE_CBC")
-    {
-        if(is_string($mode))
-        {
-            if(!defined($mode))
-            {
+
+    public function createDES($mode = "CRYPT_DES_MODE_CBC") {
+        if (is_string($mode)) {
+            if (!defined($mode)) {
                 $this->preload("Crypt_DES");
             }
             $mode = constant($mode);
         }
         return new Crypt_DES($mode);
     }
-    
-    public function createRC2($mode = "CRYPT_RC2_MODE_CBC")
-    {
-        if(is_string($mode))
-        {
-            if(!defined($mode))
-            {
+
+    public function createRC2($mode = "CRYPT_RC2_MODE_CBC") {
+        if (is_string($mode)) {
+            if (!defined($mode)) {
                 $this->preload("Crypt_RC2");
             }
             $mode = constant($mode);
         }
         return new Crypt_RC2($mode);
     }
-    
-    public function createRC4()
-    {
+
+    public function createRC4() {
         return new Crypt_RC4();
     }
-    
-    public function createRijndael($mode = "CRYPT_RIJNDAEL_MODE_CBC")
-    {
-        if(is_string($mode))
-        {
-            if(!defined($mode))
-            {
+
+    public function createRijndael($mode = "CRYPT_RIJNDAEL_MODE_CBC") {
+        if (is_string($mode)) {
+            if (!defined($mode)) {
                 $this->preload("Crypt_Rijndael");
             }
             $mode = constant($mode);
         }
         return new Crypt_Rijndael($mode);
     }
-    
-    public function createRSA()
-    {
+
+    public function createRSA() {
         return new Crypt_RSA();
     }
-    
-    public function createSFTP($host, $port = 22, $timeout = 10)
-    {
+
+    public function createSFTP($host, $port = 22, $timeout = 10) {
         return new Net_SFTP($host, $port, $timeout);
     }
-    
-    public function createSSH2($host, $port = 22, $timeout = 10)
-    {
+
+    public function createSSH2($host, $port = 22, $timeout = 10) {
         return new Net_SSH2($host, $port, $timeout);
     }
 
-    public function createSystemSSHAgent()
-    {
+    public function createSystemSSHAgent() {
         return new System_SSH_Agent();
     }
-    
-    public function createTripleDES($mode = "CRYPT_DES_MODE_CBC")
-    {
-        if(is_string($mode))
-        {
-            if(!defined($mode))
-            {
+
+    public function createTripleDES($mode = "CRYPT_DES_MODE_CBC") {
+        if (is_string($mode)) {
+            if (!defined($mode)) {
                 $this->preload("Crypt_TripleDES");
             }
             $mode = constant($mode);
         }
         return new Crypt_TripleDES($mode);
     }
-    
-    public function createTwofish($mode = "CRYPT_TWOFISH_MODE_CBC")
-    {
-        if(is_string($mode))
-        {
-            if(!defined($mode))
-            {
+
+    public function createTwofish($mode = "CRYPT_TWOFISH_MODE_CBC") {
+        if (is_string($mode)) {
+            if (!defined($mode)) {
                 $this->preload("Crypt_Twofish");
             }
             $mode = constant($mode);
         }
         return new Crypt_Twofish($mode);
     }
-    
-    public function createX509()
-    {
+
+    public function createX509() {
         return new File_X509();
     }
-    
-    public function hash($type, $text, $key = false)
-    {
+
+    public function hash($type, $text, $key = false) {
         $hash = new Crypt_Hash($type);
         $hash->setKey($key);
         return $hash->hash($text);
     }
-    
-    public function preload($className)
-    {
+
+    public function preload($className) {
         self::autoload($className);
     }
-    
-    public function random($length)
-    {
+
+    public function random($length) {
         return crypt_random_string($length);
     }
-    
+
 }

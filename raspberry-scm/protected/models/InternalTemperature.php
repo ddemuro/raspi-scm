@@ -38,7 +38,7 @@ class InternalTemperature extends TKActiveRecord {
             array('date, temperature', 'safe', 'on' => 'search'),
         );
     }
-    
+
     /**
      * Save date and password before saving
      */

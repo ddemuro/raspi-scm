@@ -53,7 +53,6 @@
  * @version   1.0
  * @link      http://phpseclib.sourceforge.net
  */
-
 /**
  * Include Crypt_Base
  *
@@ -63,7 +62,7 @@ if (!class_exists('Crypt_Base')) {
     include_once 'Base.php';
 }
 
-/**#@+
+/* * #@+
  * @access public
  * @see Crypt_Blowfish::encrypt()
  * @see Crypt_Blowfish::decrypt()
@@ -100,9 +99,9 @@ define('CRYPT_BLOWFISH_MODE_CFB', CRYPT_MODE_CFB);
  * @link http://en.wikipedia.org/wiki/Block_cipher_modes_of_operation#Output_feedback_.28OFB.29
  */
 define('CRYPT_BLOWFISH_MODE_OFB', CRYPT_MODE_OFB);
-/**#@-*/
+/* * #@- */
 
-/**#@+
+/* * #@+
  * @access private
  * @see Crypt_Blowfish::Crypt_Blowfish()
  */
@@ -114,7 +113,7 @@ define('CRYPT_BLOWFISH_MODE_INTERNAL', CRYPT_MODE_INTERNAL);
  * Toggles the mcrypt implementation
  */
 define('CRYPT_BLOWFISH_MODE_MCRYPT', CRYPT_MODE_MCRYPT);
-/**#@-*/
+/* * #@- */
 
 /**
  * Pure-PHP implementation of Blowfish.
@@ -125,8 +124,8 @@ define('CRYPT_BLOWFISH_MODE_MCRYPT', CRYPT_MODE_MCRYPT);
  * @version 1.0
  * @access  public
  */
-class Crypt_Blowfish extends Crypt_Base
-{
+class Crypt_Blowfish extends Crypt_Base {
+
     /**
      * Block Length of the cipher
      *
@@ -181,7 +180,7 @@ class Crypt_Blowfish extends Crypt_Base
      * @access private
      * @var    array
      */
-    var $sbox0 = array (
+    var $sbox0 = array(
         0xd1310ba6, 0x98dfb5ac, 0x2ffd72db, 0xd01adfb7, 0xb8e1afed, 0x6a267e96, 0xba7c9045, 0xf12c7f99,
         0x24a19947, 0xb3916cf7, 0x0801f2e2, 0x858efc16, 0x636920d8, 0x71574e69, 0xa458fea3, 0xf4933d7e,
         0x0d95748f, 0x728eb658, 0x718bcd58, 0x82154aee, 0x7b54a41d, 0xc25a59b5, 0x9c30d539, 0x2af26013,
@@ -392,8 +391,7 @@ class Crypt_Blowfish extends Crypt_Base
      * @param optional Integer $mode
      * @access public
      */
-    function Crypt_Blowfish($mode = CRYPT_BLOWFISH_MODE_CBC)
-    {
+    function Crypt_Blowfish($mode = CRYPT_BLOWFISH_MODE_CBC) {
         parent::Crypt_Base($mode);
     }
 
@@ -412,8 +410,7 @@ class Crypt_Blowfish extends Crypt_Base
      * @see Crypt_Base::setKey()
      * @param String $key
      */
-    function setKey($key)
-    {
+    function setKey($key) {
         $keylength = strlen($key);
 
         if (!$keylength) {
@@ -431,8 +428,7 @@ class Crypt_Blowfish extends Crypt_Base
      * @see Crypt_Base::_setupKey()
      * @access private
      */
-    function _setupKey()
-    {
+    function _setupKey() {
         if (isset($this->kl['key']) && $this->key === $this->kl['key']) {
             // already expanded
             return;
@@ -441,7 +437,7 @@ class Crypt_Blowfish extends Crypt_Base
 
         /* key-expanding p[] and S-Box building sb[] */
         $this->bctx = array(
-            'p'  => array(),
+            'p' => array(),
             'sb' => array(
                 $this->sbox0,
                 $this->sbox1,
@@ -451,7 +447,7 @@ class Crypt_Blowfish extends Crypt_Base
         );
 
         // unpack binary string in unsigned chars
-        $key  = array_values(unpack('C*', $this->key));
+        $key = array_values(unpack('C*', $this->key));
         $keyl = count($key);
         for ($j = 0, $i = 0; $i < 18; ++$i) {
             // xor P1 with the first 32-bits of the key, xor P2 with the second 32-bits ...
@@ -469,13 +465,13 @@ class Crypt_Blowfish extends Crypt_Base
         $data = "\0\0\0\0\0\0\0\0";
         for ($i = 0; $i < 18; $i += 2) {
             list($l, $r) = array_values(unpack('N*', $data = $this->_encryptBlock($data)));
-            $this->bctx['p'][$i    ] = $l;
+            $this->bctx['p'][$i] = $l;
             $this->bctx['p'][$i + 1] = $r;
         }
         for ($i = 0; $i < 4; ++$i) {
             for ($j = 0; $j < 256; $j += 2) {
                 list($l, $r) = array_values(unpack('N*', $data = $this->_encryptBlock($data)));
-                $this->bctx['sb'][$i][$j    ] = $l;
+                $this->bctx['sb'][$i][$j] = $l;
                 $this->bctx['sb'][$i][$j + 1] = $r;
             }
         }
@@ -488,8 +484,7 @@ class Crypt_Blowfish extends Crypt_Base
      * @param String $in
      * @return String
      */
-    function _encryptBlock($in)
-    {
+    function _encryptBlock($in) {
         $p = $this->bctx["p"];
         // extract($this->bctx["sb"], EXTR_PREFIX_ALL, "sb"); // slower
         $sb_0 = $this->bctx["sb"][0];
@@ -502,17 +497,17 @@ class Crypt_Blowfish extends Crypt_Base
         $r = $in[2];
 
         for ($i = 0; $i < 16; $i+= 2) {
-                $l^= $p[$i];
-                $r^= ($sb_0[$l >> 24 & 0xff]  +
-                      $sb_1[$l >> 16 & 0xff]  ^
-                      $sb_2[$l >>  8 & 0xff]) +
-                      $sb_3[$l       & 0xff];
+            $l^= $p[$i];
+            $r^= ($sb_0[$l >> 24 & 0xff] +
+                    $sb_1[$l >> 16 & 0xff] ^
+                    $sb_2[$l >> 8 & 0xff]) +
+                    $sb_3[$l & 0xff];
 
-                $r^= $p[$i + 1];
-                $l^= ($sb_0[$r >> 24 & 0xff]  +
-                      $sb_1[$r >> 16 & 0xff]  ^
-                      $sb_2[$r >>  8 & 0xff]) +
-                      $sb_3[$r       & 0xff];
+            $r^= $p[$i + 1];
+            $l^= ($sb_0[$r >> 24 & 0xff] +
+                    $sb_1[$r >> 16 & 0xff] ^
+                    $sb_2[$r >> 8 & 0xff]) +
+                    $sb_3[$r & 0xff];
         }
         return pack("N*", $r ^ $p[17], $l ^ $p[16]);
     }
@@ -524,8 +519,7 @@ class Crypt_Blowfish extends Crypt_Base
      * @param String $in
      * @return String
      */
-    function _decryptBlock($in)
-    {
+    function _decryptBlock($in) {
         $p = $this->bctx["p"];
         $sb_0 = $this->bctx["sb"][0];
         $sb_1 = $this->bctx["sb"][1];
@@ -538,16 +532,16 @@ class Crypt_Blowfish extends Crypt_Base
 
         for ($i = 17; $i > 2; $i-= 2) {
             $l^= $p[$i];
-            $r^= ($sb_0[$l >> 24 & 0xff]  +
-                  $sb_1[$l >> 16 & 0xff]  ^
-                  $sb_2[$l >>  8 & 0xff]) +
-                  $sb_3[$l       & 0xff];
+            $r^= ($sb_0[$l >> 24 & 0xff] +
+                    $sb_1[$l >> 16 & 0xff] ^
+                    $sb_2[$l >> 8 & 0xff]) +
+                    $sb_3[$l & 0xff];
 
             $r^= $p[$i - 1];
-            $l^= ($sb_0[$r >> 24 & 0xff]  +
-                  $sb_1[$r >> 16 & 0xff]  ^
-                  $sb_2[$r >>  8 & 0xff]) +
-                  $sb_3[$r       & 0xff];
+            $l^= ($sb_0[$r >> 24 & 0xff] +
+                    $sb_1[$r >> 16 & 0xff] ^
+                    $sb_2[$r >> 8 & 0xff]) +
+                    $sb_3[$r & 0xff];
         }
 
         return pack("N*", $r ^ $p[0], $l ^ $p[1]);
@@ -559,13 +553,12 @@ class Crypt_Blowfish extends Crypt_Base
      * @see Crypt_Base::_setupInlineCrypt()
      * @access private
      */
-    function _setupInlineCrypt()
-    {
-        $lambda_functions =& Crypt_Blowfish::_getLambdaFunctions();
+    function _setupInlineCrypt() {
+        $lambda_functions = & Crypt_Blowfish::_getLambdaFunctions();
 
         // We create max. 10 hi-optimized code for memory reason. Means: For each $key one ultra fast inline-crypt function.
         // After that, we'll still create very fast optimized code but not the hi-ultimative code, for each $mode one.
-        $gen_hi_opt_code = (bool)( count($lambda_functions) < 10);
+        $gen_hi_opt_code = (bool) ( count($lambda_functions) < 10);
 
         switch (true) {
             case $gen_hi_opt_code:
@@ -590,7 +583,7 @@ class Crypt_Blowfish extends Crypt_Base
                     ';
                     break;
                 default:
-                    $p   = array();
+                    $p = array();
                     for ($i = 0; $i < 18; ++$i) {
                         $p[] = '$p_' . $i;
                     }
@@ -660,15 +653,16 @@ class Crypt_Blowfish extends Crypt_Base
             ';
 
             $lambda_functions[$code_hash] = $this->_createInlineCryptFunction(
-                array(
-                   'init_crypt'    => $init_crypt,
-                   'init_encrypt'  => '',
-                   'init_decrypt'  => '',
-                   'encrypt_block' => $encrypt_block,
-                   'decrypt_block' => $decrypt_block
-                )
+                    array(
+                        'init_crypt' => $init_crypt,
+                        'init_encrypt' => '',
+                        'init_decrypt' => '',
+                        'encrypt_block' => $encrypt_block,
+                        'decrypt_block' => $decrypt_block
+                    )
             );
         }
         $this->inline_crypt = $lambda_functions[$code_hash];
     }
+
 }

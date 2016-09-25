@@ -5,26 +5,26 @@
  * All controller classes for this application should extend from this base class.
  */
 class RelayController extends CApplicationComponent {
-    
+
     /**
      * Check if Crelay is running, start it otherwise.
      * @return boolean
      */
-    public function checkCRelay(){
+    public function checkCRelay() {
         $getexec = Yii::app()->functions->yiiparam('crelay', NULL);
         $pid = Yii::app()->functions->processExists('crelay');
-        if($pid == false){
+        if ($pid == false) {
             Yii::log('CRelay was not running, starting...', CLogger::LEVEL_WARNING, "info");
             shell_exec("$getexec -d &disown");
         }
         $pid = Yii::app()->functions->processExists('crelay');
-        if($pid){
+        if ($pid) {
             return true;
         }
         Yii::log('Unable to start crelay error raised...', CLogger::LEVEL_ERROR, "info");
         return false;
     }
-    
+
     /**
      * Returns an ordered array with:
      * RelayNumber:1|0 for status.
@@ -32,7 +32,7 @@ class RelayController extends CApplicationComponent {
      * TRUE | FALSE if relay number is provided
      * ARRAY if none.
      */
-    public function getRelayStatus($relnumber, $toString){
+    public function getRelayStatus($relnumber, $toString) {
         // Get cURL resource
         $curl = curl_init();
         // Set some options - we are passing in a useragent too here
@@ -44,26 +44,26 @@ class RelayController extends CApplicationComponent {
         // Send the request & save response to $resp
         $resp = curl_exec($curl);
         // Validate card was detected
-        if (strcmp("ERROR: No compatible device detected !", $resp) == 0){
-            Yii::log('Error, no Relay card could be detected, please check USB connection...', CLogger::LEVEL_ERROR, "warn");     
+        if (strcmp("ERROR: No compatible device detected !", $resp) == 0) {
+            Yii::log('Error, no Relay card could be detected, please check USB connection...', CLogger::LEVEL_ERROR, "warn");
             return -1;
         }
         // Close request to clear up some resources
         curl_close($curl);
         $resp = explode("\n", $resp);
-        if($relnumber != NULL && $relnumber > -1){
+        if ($relnumber != NULL && $relnumber > -1) {
             $pieces = explode(" ", $resp[$relnumber]);
             $state = explode(":", $pieces[1]);
             $relay_number = intval($state[0]);
-            if(intval($state[0]) == 1)
+            if (intval($state[0]) == 1)
                 return true;
             else
                 return false;
         }
-        if($toString == 1)
+        if ($toString == 1)
             return $resp;
         $relay_info = array();
-        foreach($resp as $line){
+        foreach ($resp as $line) {
             $pieces = explode(" ", $line);
             $state = explode(":", $pieces[1]);
             $relay_number = intval($state[0]);
@@ -72,29 +72,29 @@ class RelayController extends CApplicationComponent {
         }
         return $relay_info;
     }
-    
+
     /**
      * Changes the status of a relay
      * @param type $relay_number
      * @param type $status (0 OFF | 1 ON | 2 PULSE)
      * @return type
      */
-    public function changeRelayStatus($relay_number, $status){
-        $crelay = Yii::app()->functions->yiiparam('crelay',NULL);
-        if($crelay === NULL){
+    public function changeRelayStatus($relay_number, $status) {
+        $crelay = Yii::app()->functions->yiiparam('crelay', NULL);
+        if ($crelay === NULL) {
             Yii::log('CRelay not installed or configured in the main.php file.', CLogger::LEVEL_WARNING, "info");
             return NULL;
         }
         // Get status
         $req_status = $this->getRelayStatus($relay_number);
-        if($req_status == -1){
+        if ($req_status == -1) {
             Yii::log('Trying to set the state to the same state of relay.', CLogger::LEVEL_INFO, "info");
             return -1;
         }
-        if($req_status && $status == 1){
+        if ($req_status && $status == 1) {
             Yii::log('Trying to set the state to the same state of relay.', CLogger::LEVEL_INFO, "info");
-        }else{
-        // Get cURL resource
+        } else {
+            // Get cURL resource
             $curl = curl_init();
             // Set some options - we are passing in a useragent too here
             curl_setopt_array($curl, array(

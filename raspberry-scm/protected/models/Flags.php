@@ -58,7 +58,7 @@ class Flags extends TKActiveRecord {
             'Status' => 'Flag Name',
         );
     }
-    
+
     /**
      * Save date and password before saving
      */

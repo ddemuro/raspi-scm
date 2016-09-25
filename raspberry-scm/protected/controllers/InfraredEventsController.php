@@ -24,7 +24,7 @@ class InfraredEventsController extends Controller {
      */
     public function actionCreate() {
         $model = new InfraredEvents;
-        
+
         $categories = array(
             // Turn ON and OFF AC.
             0 => 'KEY_POWER',
@@ -42,7 +42,7 @@ class InfraredEventsController extends Controller {
             8 => 'KEY_SLEEP',
             9 => 'KEY_TIME',
         );
-        
+
         // Uncomment the following line if AJAX validation is needed
         // $this->performAjaxValidation($model);
 
@@ -65,7 +65,7 @@ class InfraredEventsController extends Controller {
      */
     public function actionUpdate($id) {
         $model = $this->loadModel($id);
-        
+
         $categories = array(
             // Turn ON and OFF AC.
             0 => 'KEY_POWER',

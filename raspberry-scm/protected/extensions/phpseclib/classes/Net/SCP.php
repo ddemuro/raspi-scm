@@ -48,8 +48,7 @@
  * @license   http://www.opensource.org/licenses/mit-license.html  MIT License
  * @link      http://phpseclib.sourceforge.net
  */
-
-/**#@+
+/* * #@+
  * @access public
  * @see Net_SCP::put()
  */
@@ -60,10 +59,10 @@ define('NET_SCP_LOCAL_FILE', 1);
 /**
  * Reads data from a string.
  */
-define('NET_SCP_STRING',  2);
-/**#@-*/
+define('NET_SCP_STRING', 2);
+/* * #@- */
 
-/**#@+
+/* * #@+
  * @access private
  * @see Net_SCP::_send()
  * @see Net_SCP::_receive()
@@ -75,8 +74,8 @@ define('NET_SCP_SSH1', 1);
 /**
  * SSH2 is being used.
  */
-define('NET_SCP_SSH2',  2);
-/**#@-*/
+define('NET_SCP_SSH2', 2);
+/* * #@- */
 
 /**
  * Pure-PHP implementations of SCP.
@@ -86,8 +85,8 @@ define('NET_SCP_SSH2',  2);
  * @version 0.1.0
  * @access  public
  */
-class Net_SCP
-{
+class Net_SCP {
+
     /**
      * SSH Object
      *
@@ -123,8 +122,7 @@ class Net_SCP
      * @return Net_SCP
      * @access public
      */
-    function Net_SCP($ssh)
-    {
+    function Net_SCP($ssh) {
         if (!is_object($ssh)) {
             return;
         }
@@ -165,8 +163,7 @@ class Net_SCP
      * @return Boolean
      * @access public
      */
-    function put($remote_file, $data, $mode = NET_SCP_STRING, $callback = null)
-    {
+    function put($remote_file, $data, $mode = NET_SCP_STRING, $callback = null) {
         if (!isset($this->ssh)) {
             return false;
         }
@@ -240,8 +237,7 @@ class Net_SCP
      * @return Mixed
      * @access public
      */
-    function get($remote_file, $local_file = false)
-    {
+    function get($remote_file, $local_file = false) {
         if (!isset($this->ssh)) {
             return false;
         }
@@ -296,8 +292,7 @@ class Net_SCP
      * @param String $data
      * @access private
      */
-    function _send($data)
-    {
+    function _send($data) {
         switch ($this->mode) {
             case NET_SCP_SSH2:
                 $this->ssh->_send_channel_packet(NET_SSH2_CHANNEL_EXEC, $data);
@@ -305,7 +300,7 @@ class Net_SCP
             case NET_SCP_SSH1:
                 $data = pack('CNa*', NET_SSH1_CMSG_STDIN_DATA, strlen($data), $data);
                 $this->ssh->_send_binary_packet($data);
-         }
+        }
     }
 
     /**
@@ -314,8 +309,7 @@ class Net_SCP
      * @return String
      * @access private
      */
-    function _receive()
-    {
+    function _receive() {
         switch ($this->mode) {
             case NET_SCP_SSH2:
                 return $this->ssh->_get_channel_packet(NET_SSH2_CHANNEL_EXEC, true);
@@ -341,7 +335,7 @@ class Net_SCP
                             return false;
                     }
                 }
-         }
+        }
     }
 
     /**
@@ -349,14 +343,14 @@ class Net_SCP
      *
      * @access private
      */
-    function _close()
-    {
+    function _close() {
         switch ($this->mode) {
             case NET_SCP_SSH2:
                 $this->ssh->_close_channel(NET_SSH2_CHANNEL_EXEC, true);
                 break;
             case NET_SCP_SSH1:
                 $this->ssh->disconnect();
-         }
+        }
     }
+
 }

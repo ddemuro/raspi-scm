@@ -59,7 +59,6 @@
  * @license   http://www.opensource.org/licenses/mit-license.html  MIT License
  * @link      http://phpseclib.sourceforge.net
  */
-
 /**
  * Include Crypt_Base
  *
@@ -69,7 +68,7 @@ if (!class_exists('Crypt_Base')) {
     include_once 'Base.php';
 }
 
-/**#@+
+/* * #@+
  * @access private
  * @see Crypt_RC4::Crypt_RC4()
  */
@@ -81,15 +80,15 @@ define('CRYPT_RC4_MODE_INTERNAL', CRYPT_MODE_INTERNAL);
  * Toggles the mcrypt implementation
  */
 define('CRYPT_RC4_MODE_MCRYPT', CRYPT_MODE_MCRYPT);
-/**#@-*/
+/* * #@- */
 
-/**#@+
+/* * #@+
  * @access private
  * @see Crypt_RC4::_crypt()
  */
 define('CRYPT_RC4_ENCRYPT', 0);
 define('CRYPT_RC4_DECRYPT', 1);
-/**#@-*/
+/* * #@- */
 
 /**
  * Pure-PHP implementation of RC4.
@@ -99,8 +98,8 @@ define('CRYPT_RC4_DECRYPT', 1);
  * @version 0.1.0
  * @access  public
  */
-class Crypt_RC4 extends Crypt_Base
-{
+class Crypt_RC4 extends Crypt_Base {
+
     /**
      * Block Length of the cipher
      *
@@ -177,8 +176,7 @@ class Crypt_RC4 extends Crypt_Base
      * @return Crypt_RC4
      * @access public
      */
-    function Crypt_RC4()
-    {
+    function Crypt_RC4() {
         parent::Crypt_Base(CRYPT_MODE_STREAM);
     }
 
@@ -201,8 +199,8 @@ class Crypt_RC4 extends Crypt_Base
      * @see Crypt_RC4::setKey()
      * @access public
      */
-    function setIV($iv)
-    {
+    function setIV($iv) {
+        
     }
 
     /**
@@ -215,8 +213,7 @@ class Crypt_RC4 extends Crypt_Base
      * @see Crypt_Base::setKey()
      * @param String $key
      */
-    function setKey($key)
-    {
+    function setKey($key) {
         parent::setKey(substr($key, 0, 256));
     }
 
@@ -229,8 +226,7 @@ class Crypt_RC4 extends Crypt_Base
      * @param String $plaintext
      * @return String $ciphertext
      */
-    function encrypt($plaintext)
-    {
+    function encrypt($plaintext) {
         if ($this->engine == CRYPT_MODE_MCRYPT) {
             return parent::encrypt($plaintext);
         }
@@ -249,14 +245,12 @@ class Crypt_RC4 extends Crypt_Base
      * @param String $ciphertext
      * @return String $plaintext
      */
-    function decrypt($ciphertext)
-    {
+    function decrypt($ciphertext) {
         if ($this->engine == CRYPT_MODE_MCRYPT) {
             return parent::decrypt($ciphertext);
         }
         return $this->_crypt($ciphertext, CRYPT_RC4_DECRYPT);
     }
-
 
     /**
      * Setup the key (expansion)
@@ -264,8 +258,7 @@ class Crypt_RC4 extends Crypt_Base
      * @see Crypt_Base::_setupKey()
      * @access private
      */
-    function _setupKey()
-    {
+    function _setupKey() {
         $key = $this->key;
         $keyLength = strlen($key);
         $keyStream = array();
@@ -298,8 +291,7 @@ class Crypt_RC4 extends Crypt_Base
      * @param Integer $mode
      * @return String $text
      */
-    function _crypt($text, $mode)
-    {
+    function _crypt($text, $mode) {
         if ($this->changed) {
             $this->_setup();
             $this->changed = false;
@@ -330,4 +322,5 @@ class Crypt_RC4 extends Crypt_Base
 
         return $text;
     }
+
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Pure-PHP ssh-agent client.
  *
@@ -48,8 +49,7 @@
  * @link      http://phpseclib.sourceforge.net
  * @internal  See http://api.libssh.org/rfc/PROTOCOL.agent
  */
-
-/**#@+
+/* * #@+
  * Message numbers
  *
  * @access private
@@ -63,7 +63,7 @@ define('SYSTEM_SSH_AGENT_FAILURE', 5);
 define('SYSTEM_SSH_AGENTC_SIGN_REQUEST', 13);
 // the SSH1 response is SSH_AGENT_RSA_RESPONSE (4)
 define('SYSTEM_SSH_AGENT_SIGN_RESPONSE', 14);
-/**#@-*/
+/* * #@- */
 
 /**
  * Pure-PHP ssh-agent client identity object
@@ -80,8 +80,8 @@ define('SYSTEM_SSH_AGENT_SIGN_RESPONSE', 14);
  * @version 0.1.0
  * @access  internal
  */
-class System_SSH_Agent_Identity
-{
+class System_SSH_Agent_Identity {
+
     /**
      * Key Object
      *
@@ -116,8 +116,7 @@ class System_SSH_Agent_Identity
      * @return System_SSH_Agent_Identity
      * @access private
      */
-    function System_SSH_Agent_Identity($fsock)
-    {
+    function System_SSH_Agent_Identity($fsock) {
         $this->fsock = $fsock;
     }
 
@@ -129,8 +128,7 @@ class System_SSH_Agent_Identity
      * @param Crypt_RSA $key
      * @access private
      */
-    function setPublicKey($key)
-    {
+    function setPublicKey($key) {
         $this->key = $key;
         $this->key->setPublicKey();
     }
@@ -144,8 +142,7 @@ class System_SSH_Agent_Identity
      * @param String $key_blob
      * @access private
      */
-    function setPublicKeyBlob($key_blob)
-    {
+    function setPublicKeyBlob($key_blob) {
         $this->key_blob = $key_blob;
     }
 
@@ -158,8 +155,7 @@ class System_SSH_Agent_Identity
      * @return Mixed
      * @access public
      */
-    function getPublicKey($format = null)
-    {
+    function getPublicKey($format = null) {
         return !isset($format) ? $this->key->getPublicKey() : $this->key->getPublicKey($format);
     }
 
@@ -172,8 +168,8 @@ class System_SSH_Agent_Identity
      * @param Integer $mode
      * @access public
      */
-    function setSignatureMode($mode)
-    {
+    function setSignatureMode($mode) {
+        
     }
 
     /**
@@ -185,8 +181,7 @@ class System_SSH_Agent_Identity
      * @return String
      * @access public
      */
-    function sign($message)
-    {
+    function sign($message) {
         // the last parameter (currently 0) is for flags and ssh-agent only defines one flag (for ssh-dss): SSH_AGENT_OLD_SIGNATURE
         $packet = pack('CNa*Na*N', SYSTEM_SSH_AGENTC_SIGN_REQUEST, strlen($this->key_blob), $this->key_blob, strlen($message), $message, 0);
         $packet = pack('Na*', strlen($packet), $packet);
@@ -205,6 +200,7 @@ class System_SSH_Agent_Identity
         // the + 12 is for the other various SSH added length fields
         return substr($signature_blob, strlen('ssh-rsa') + 12);
     }
+
 }
 
 /**
@@ -217,8 +213,8 @@ class System_SSH_Agent_Identity
  * @version 0.1.0
  * @access  internal
  */
-class System_SSH_Agent
-{
+class System_SSH_Agent {
+
     /**
      * Socket Resource
      *
@@ -233,8 +229,7 @@ class System_SSH_Agent
      * @return System_SSH_Agent
      * @access public
      */
-    function System_SSH_Agent()
-    {
+    function System_SSH_Agent() {
         switch (true) {
             case isset($_SERVER['SSH_AUTH_SOCK']):
                 $address = $_SERVER['SSH_AUTH_SOCK'];
@@ -262,8 +257,7 @@ class System_SSH_Agent
      * @return Array
      * @access public
      */
-    function requestIdentities()
-    {
+    function requestIdentities() {
         if (!$this->fsock) {
             return array();
         }
@@ -312,4 +306,5 @@ class System_SSH_Agent
 
         return $identities;
     }
+
 }

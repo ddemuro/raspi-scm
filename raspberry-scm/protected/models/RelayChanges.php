@@ -50,7 +50,7 @@ class RelayChanges extends TKActiveRecord {
         return array(
         );
     }
-    
+
     /**
      * Save date and password before saving
      */

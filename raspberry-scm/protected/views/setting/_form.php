@@ -44,7 +44,7 @@
         <?php echo $form->textArea($model, 'comment', array('rows' => 10, 'cols' => 50)); ?>
         <?php echo $form->error($model, 'comment'); ?>
     </div>
-    
+
     <div class="row buttons">
         <?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
     </div>

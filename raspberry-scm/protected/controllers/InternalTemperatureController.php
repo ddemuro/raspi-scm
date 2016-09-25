@@ -45,13 +45,13 @@ class InternalTemperatureController extends Controller {
      */
     public function actionViewStaticCPU() {
         $res = Yii::app()->TemperatureController->getInternalCPUTemp();
-        if($res == NULL){
+        if ($res == NULL) {
             Yii::log("Error loading temperature information, skipping...");
             return NULL;
         }
         $tempModel = new ExternalTemperature();
         $tempModel->temperature = $res;
-        $tempModel->date = date("Y-m-d H:i:s", time());  
+        $tempModel->date = date("Y-m-d H:i:s", time());
         $this->render('_view', array(
             'model' => $tempModel,));
     }
@@ -62,18 +62,17 @@ class InternalTemperatureController extends Controller {
      */
     public function actionViewStaticGPU() {
         $res = Yii::app()->TemperatureController->getInternalGPUTemp();
-        if($res == NULL){
+        if ($res == NULL) {
             Yii::log("Error loading temperature information, skipping...");
             return NULL;
         }
         $tempModel = new ExternalTemperature();
         $tempModel->temperature = $res;
-        $tempModel->date = date("Y-m-d H:i:s", time());  
+        $tempModel->date = date("Y-m-d H:i:s", time());
         $this->render('_view', array(
             'model' => $tempModel,));
     }
 
-    
     /**
      * Updates a particular model.
      * If update is successful, the browser will be redirected to the 'view' page.

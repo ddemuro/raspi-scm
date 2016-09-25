@@ -45,7 +45,7 @@ class Logger extends TKActiveRecord {
         $this->date = date("Y-m-d H:i:s", time());
         return parent::beforeSave();
     }
-    
+
     /**
      * @return array relational rules.
      */

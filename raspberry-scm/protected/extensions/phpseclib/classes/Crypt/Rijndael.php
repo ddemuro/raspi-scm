@@ -69,7 +69,6 @@
  * @license   http://www.opensource.org/licenses/mit-license.html  MIT License
  * @link      http://phpseclib.sourceforge.net
  */
-
 /**
  * Include Crypt_Base
  *
@@ -79,7 +78,7 @@ if (!class_exists('Crypt_Base')) {
     include_once 'Base.php';
 }
 
-/**#@+
+/* * #@+
  * @access public
  * @see Crypt_Rijndael::encrypt()
  * @see Crypt_Rijndael::decrypt()
@@ -116,9 +115,9 @@ define('CRYPT_RIJNDAEL_MODE_CFB', CRYPT_MODE_CFB);
  * @link http://en.wikipedia.org/wiki/Block_cipher_modes_of_operation#Output_feedback_.28OFB.29
  */
 define('CRYPT_RIJNDAEL_MODE_OFB', CRYPT_MODE_OFB);
-/**#@-*/
+/* * #@- */
 
-/**#@+
+/* * #@+
  * @access private
  * @see Crypt_Rijndael::Crypt_Rijndael()
  */
@@ -130,7 +129,7 @@ define('CRYPT_RIJNDAEL_MODE_INTERNAL', CRYPT_MODE_INTERNAL);
  * Toggles the mcrypt implementation
  */
 define('CRYPT_RIJNDAEL_MODE_MCRYPT', CRYPT_MODE_MCRYPT);
-/**#@-*/
+/* * #@- */
 
 /**
  * Pure-PHP implementation of Rijndael.
@@ -140,8 +139,8 @@ define('CRYPT_RIJNDAEL_MODE_MCRYPT', CRYPT_MODE_MCRYPT);
  * @version 0.1.0
  * @access  public
  */
-class Crypt_Rijndael extends Crypt_Base
-{
+class Crypt_Rijndael extends Crypt_Base {
+
     /**
      * The default password key_size used by setPassword()
      *
@@ -699,8 +698,7 @@ class Crypt_Rijndael extends Crypt_Base
      * @param optional Integer $mode
      * @access public
      */
-    function Crypt_Rijndael($mode = CRYPT_RIJNDAEL_MODE_CBC)
-    {
+    function Crypt_Rijndael($mode = CRYPT_RIJNDAEL_MODE_CBC) {
         parent::Crypt_Base($mode);
     }
 
@@ -721,8 +719,7 @@ class Crypt_Rijndael extends Crypt_Base
      * @access public
      * @param String $key
      */
-    function setKey($key)
-    {
+    function setKey($key) {
         parent::setKey($key);
 
         if (!$this->explicit_key_length) {
@@ -761,8 +758,7 @@ class Crypt_Rijndael extends Crypt_Base
      * @access public
      * @param Integer $length
      */
-    function setKeyLength($length)
-    {
+    function setKeyLength($length) {
         switch (true) {
             case $length == 160:
                 $this->key_size = 20;
@@ -794,8 +790,7 @@ class Crypt_Rijndael extends Crypt_Base
      * @access public
      * @param Integer $length
      */
-    function setBlockLength($length)
-    {
+    function setBlockLength($length) {
         $length >>= 5;
         if ($length > 8) {
             $length = 8;
@@ -821,8 +816,7 @@ class Crypt_Rijndael extends Crypt_Base
      * @see setBlockLength()
      * @access private
      */
-    function _setupEngine()
-    {
+    function _setupEngine() {
         if (constant('CRYPT_' . $this->const_namespace . '_MODE') == CRYPT_MODE_INTERNAL) {
             // No mcrypt support at all for rijndael
             return;
@@ -834,7 +828,7 @@ class Crypt_Rijndael extends Crypt_Base
         // Determining the availibility/usability of $cipher_name_mcrypt
         switch (true) {
             case $this->key_size % 8: // mcrypt is not usable for 160/224-bit keys, only for 128/192/256-bit keys
-            case !in_array($cipher_name_mcrypt, mcrypt_list_algorithms()): // $cipher_name_mcrypt is not available for the current $block_size
+            case!in_array($cipher_name_mcrypt, mcrypt_list_algorithms()): // $cipher_name_mcrypt is not available for the current $block_size
                 $engine = CRYPT_MODE_INTERNAL;
                 break;
             default:
@@ -871,8 +865,7 @@ class Crypt_Rijndael extends Crypt_Base
      * @see Crypt_Base::_setupMcrypt()
      * @access private
      */
-    function _setupMcrypt()
-    {
+    function _setupMcrypt() {
         $this->key = str_pad(substr($this->key, 0, $this->key_size), $this->key_size, "\0");
         parent::_setupMcrypt();
     }
@@ -884,16 +877,15 @@ class Crypt_Rijndael extends Crypt_Base
      * @param String $in
      * @return String
      */
-    function _encryptBlock($in)
-    {
+    function _encryptBlock($in) {
         static $t0, $t1, $t2, $t3, $sbox;
         if (!$t0) {
             for ($i = 0; $i < 256; ++$i) {
-                $t0[] = (int)$this->t0[$i];
-                $t1[] = (int)$this->t1[$i];
-                $t2[] = (int)$this->t2[$i];
-                $t3[] = (int)$this->t3[$i];
-                $sbox[] = (int)$this->sbox[$i];
+                $t0[] = (int) $this->t0[$i];
+                $t1[] = (int) $this->t1[$i];
+                $t2[] = (int) $this->t2[$i];
+                $t3[] = (int) $this->t3[$i];
+                $sbox[] = (int) $this->sbox[$i];
             }
         }
 
@@ -917,7 +909,6 @@ class Crypt_Rijndael extends Crypt_Base
         // Rijndael-ammended.pdf#page=20, "Implementation aspects / 32-bit processor", discusses such an optimization.
         // Unfortunately, the description given there is not quite correct.  Per aes.spec.v316.pdf#page=19 [1],
         // equation (7.4.7) is supposed to use addition instead of subtraction, so we'll do that here, as well.
-
         // [1] http://fp.gladman.plus.com/cryptography_technology/rijndael/aes.spec.v316.pdf
         $temp = array();
         for ($round = 1; $round < $Nr; ++$round) {
@@ -928,10 +919,10 @@ class Crypt_Rijndael extends Crypt_Base
 
             while ($i < $Nb) {
                 $temp[$i] = $t0[$state[$i] >> 24 & 0x000000FF] ^
-                            $t1[$state[$j] >> 16 & 0x000000FF] ^
-                            $t2[$state[$k] >>  8 & 0x000000FF] ^
-                            $t3[$state[$l]       & 0x000000FF] ^
-                            $w[$round][$i];
+                        $t1[$state[$j] >> 16 & 0x000000FF] ^
+                        $t2[$state[$k] >> 8 & 0x000000FF] ^
+                        $t3[$state[$l] & 0x000000FF] ^
+                        $w[$round][$i];
                 ++$i;
                 $j = ($j + 1) % $Nb;
                 $k = ($k + 1) % $Nb;
@@ -942,10 +933,10 @@ class Crypt_Rijndael extends Crypt_Base
 
         // subWord
         for ($i = 0; $i < $Nb; ++$i) {
-            $state[$i] =   $sbox[$state[$i]       & 0x000000FF]        |
-                          ($sbox[$state[$i] >>  8 & 0x000000FF] <<  8) |
-                          ($sbox[$state[$i] >> 16 & 0x000000FF] << 16) |
-                          ($sbox[$state[$i] >> 24 & 0x000000FF] << 24);
+            $state[$i] = $sbox[$state[$i] & 0x000000FF] |
+                    ($sbox[$state[$i] >> 8 & 0x000000FF] << 8) |
+                    ($sbox[$state[$i] >> 16 & 0x000000FF] << 16) |
+                    ($sbox[$state[$i] >> 24 & 0x000000FF] << 24);
         }
 
         // shiftRows + addRoundKey
@@ -955,10 +946,10 @@ class Crypt_Rijndael extends Crypt_Base
         $l = $c[3];
         while ($i < $Nb) {
             $temp[$i] = ($state[$i] & 0xFF000000) ^
-                        ($state[$j] & 0x00FF0000) ^
-                        ($state[$k] & 0x0000FF00) ^
-                        ($state[$l] & 0x000000FF) ^
-                         $w[$Nr][$i];
+                    ($state[$j] & 0x00FF0000) ^
+                    ($state[$k] & 0x0000FF00) ^
+                    ($state[$l] & 0x000000FF) ^
+                    $w[$Nr][$i];
             ++$i;
             $j = ($j + 1) % $Nb;
             $k = ($k + 1) % $Nb;
@@ -986,23 +977,22 @@ class Crypt_Rijndael extends Crypt_Base
      * @param String $in
      * @return String
      */
-    function _decryptBlock($in)
-    {
+    function _decryptBlock($in) {
         static $dt0, $dt1, $dt2, $dt3, $isbox;
         if (!$dt0) {
             for ($i = 0; $i < 256; ++$i) {
-                $dt0[] = (int)$this->dt0[$i];
-                $dt1[] = (int)$this->dt1[$i];
-                $dt2[] = (int)$this->dt2[$i];
-                $dt3[] = (int)$this->dt3[$i];
-                $isbox[] = (int)$this->isbox[$i];
+                $dt0[] = (int) $this->dt0[$i];
+                $dt1[] = (int) $this->dt1[$i];
+                $dt2[] = (int) $this->dt2[$i];
+                $dt3[] = (int) $this->dt3[$i];
+                $isbox[] = (int) $this->isbox[$i];
             }
         }
 
         $state = array();
         $words = unpack('N*', $in);
 
-        $c  = $this->c;
+        $c = $this->c;
         $dw = $this->dw;
         $Nb = $this->Nb;
         $Nr = $this->Nr;
@@ -1022,10 +1012,10 @@ class Crypt_Rijndael extends Crypt_Base
 
             while ($i < $Nb) {
                 $temp[$i] = $dt0[$state[$i] >> 24 & 0x000000FF] ^
-                            $dt1[$state[$j] >> 16 & 0x000000FF] ^
-                            $dt2[$state[$k] >>  8 & 0x000000FF] ^
-                            $dt3[$state[$l]       & 0x000000FF] ^
-                            $dw[$round][$i];
+                        $dt1[$state[$j] >> 16 & 0x000000FF] ^
+                        $dt2[$state[$k] >> 8 & 0x000000FF] ^
+                        $dt3[$state[$l] & 0x000000FF] ^
+                        $dw[$round][$i];
                 ++$i;
                 $j = ($j + 1) % $Nb;
                 $k = ($k + 1) % $Nb;
@@ -1046,10 +1036,10 @@ class Crypt_Rijndael extends Crypt_Base
                     ($state[$k] & 0x0000FF00) |
                     ($state[$l] & 0x000000FF);
 
-            $temp[$i] = $dw[0][$i] ^ ($isbox[$word       & 0x000000FF]        |
-                                     ($isbox[$word >>  8 & 0x000000FF] <<  8) |
-                                     ($isbox[$word >> 16 & 0x000000FF] << 16) |
-                                     ($isbox[$word >> 24 & 0x000000FF] << 24));
+            $temp[$i] = $dw[0][$i] ^ ($isbox[$word & 0x000000FF] |
+                    ($isbox[$word >> 8 & 0x000000FF] << 8) |
+                    ($isbox[$word >> 16 & 0x000000FF] << 16) |
+                    ($isbox[$word >> 24 & 0x000000FF] << 24));
             ++$i;
             $j = ($j + 1) % $Nb;
             $k = ($k + 1) % $Nb;
@@ -1076,8 +1066,7 @@ class Crypt_Rijndael extends Crypt_Base
      * @see Crypt_Base::_setupKey()
      * @access private
      */
-    function _setupKey()
-    {
+    function _setupKey() {
         // Each number in $rcon is equal to the previous number multiplied by two in Rijndael's finite field.
         // See http://en.wikipedia.org/wiki/Finite_field_arithmetic#Multiplicative_inverse
         static $rcon = array(0,
@@ -1154,9 +1143,9 @@ class Crypt_Rijndael extends Crypt_Base
                     while ($j < $this->Nb) {
                         $dw = $this->_subWord($this->w[$row][$j]);
                         $temp[$j] = $this->dt0[$dw >> 24 & 0x000000FF] ^
-                                    $this->dt1[$dw >> 16 & 0x000000FF] ^
-                                    $this->dt2[$dw >>  8 & 0x000000FF] ^
-                                    $this->dt3[$dw       & 0x000000FF];
+                                $this->dt1[$dw >> 16 & 0x000000FF] ^
+                                $this->dt2[$dw >> 8 & 0x000000FF] ^
+                                $this->dt3[$dw & 0x000000FF];
                         $j++;
                     }
                     $this->dw[$row] = $temp;
@@ -1173,15 +1162,15 @@ class Crypt_Rijndael extends Crypt_Base
         // In case of $this->use_inline_crypt === true we have to use 1-dim key arrays (both ascending)
         if ($this->use_inline_crypt) {
             $this->dw = array_reverse($this->dw);
-            $w  = array_pop($this->w);
+            $w = array_pop($this->w);
             $dw = array_pop($this->dw);
             foreach ($this->w as $r => $wr) {
                 foreach ($wr as $c => $wc) {
-                    $w[]  = $wc;
+                    $w[] = $wc;
                     $dw[] = $this->dw[$r][$c];
                 }
             }
-            $this->w  = $w;
+            $this->w = $w;
             $this->dw = $dw;
         }
     }
@@ -1192,14 +1181,13 @@ class Crypt_Rijndael extends Crypt_Base
      * @access private
      * @param Integer $word
      */
-    function _subWord($word)
-    {
+    function _subWord($word) {
         $sbox = $this->sbox;
 
-        return  $sbox[$word       & 0x000000FF]        |
-               ($sbox[$word >>  8 & 0x000000FF] <<  8) |
-               ($sbox[$word >> 16 & 0x000000FF] << 16) |
-               ($sbox[$word >> 24 & 0x000000FF] << 24);
+        return $sbox[$word & 0x000000FF] |
+                ($sbox[$word >> 8 & 0x000000FF] << 8) |
+                ($sbox[$word >> 16 & 0x000000FF] << 16) |
+                ($sbox[$word >> 24 & 0x000000FF] << 24);
     }
 
     /**
@@ -1208,25 +1196,24 @@ class Crypt_Rijndael extends Crypt_Base
      * @see Crypt_Base::_setupInlineCrypt()
      * @access private
      */
-    function _setupInlineCrypt()
-    {
+    function _setupInlineCrypt() {
         // Note: _setupInlineCrypt() will be called only if $this->changed === true
         // So here we are'nt under the same heavy timing-stress as we are in _de/encryptBlock() or de/encrypt().
         // However...the here generated function- $code, stored as php callback in $this->inline_crypt, must work as fast as even possible.
 
-        $lambda_functions =& Crypt_Rijndael::_getLambdaFunctions();
+        $lambda_functions = & Crypt_Rijndael::_getLambdaFunctions();
 
         // The first 10 generated $lambda_functions will use the key-words hardcoded for better performance.
         // For memory reason we limit those ultra-optimized functions.
         // After that, we use pure (extracted) integer vars for the key-words which is faster than accessing them via array.
         if (count($lambda_functions) < 10) {
-            $w  = $this->w;
+            $w = $this->w;
             $dw = $this->dw;
             $init_encrypt = '';
             $init_decrypt = '';
         } else {
             for ($i = 0, $cw = count($this->w); $i < $cw; ++$i) {
-                $w[]  = '$w['  . $i . ']';
+                $w[] = '$w[' . $i . ']';
                 $dw[] = '$dw[' . $i . ']';
             }
             $init_encrypt = '$w = $self->w;';
@@ -1238,7 +1225,7 @@ class Crypt_Rijndael extends Crypt_Base
         if (!isset($lambda_functions[$code_hash])) {
             $Nr = $this->Nr;
             $Nb = $this->Nb;
-            $c  = $this->c;
+            $c = $this->c;
 
             // Generating encrypt code:
             $init_encrypt.= '
@@ -1254,14 +1241,14 @@ class Crypt_Rijndael extends Crypt_Base
                 }
             ';
 
-            $s  = 'e';
-            $e  = 's';
+            $s = 'e';
+            $e = 's';
             $wc = $Nb - 1;
 
             // Preround: addRoundKey
-            $encrypt_block = '$in = unpack("N*", $in);'."\n";
+            $encrypt_block = '$in = unpack("N*", $in);' . "\n";
             for ($i = 0; $i < $Nb; ++$i) {
-                $encrypt_block .= '$s'.$i.' = $in['.($i + 1).'] ^ '.$w[++$wc].";\n";
+                $encrypt_block .= '$s' . $i . ' = $in[' . ($i + 1) . '] ^ ' . $w[++$wc] . ";\n";
             }
 
             // Mainrounds: shiftRows + subWord + mixColumns + addRoundKey
@@ -1269,32 +1256,32 @@ class Crypt_Rijndael extends Crypt_Base
                 list($s, $e) = array($e, $s);
                 for ($i = 0; $i < $Nb; ++$i) {
                     $encrypt_block.=
-                        '$'.$e.$i.' =
-                        $t0[($'.$s.$i                  .' >> 24) & 0xff] ^
-                        $t1[($'.$s.(($i + $c[1]) % $Nb).' >> 16) & 0xff] ^
-                        $t2[($'.$s.(($i + $c[2]) % $Nb).' >>  8) & 0xff] ^
-                        $t3[ $'.$s.(($i + $c[3]) % $Nb).'        & 0xff] ^
-                        '.$w[++$wc].";\n";
+                            '$' . $e . $i . ' =
+                        $t0[($' . $s . $i . ' >> 24) & 0xff] ^
+                        $t1[($' . $s . (($i + $c[1]) % $Nb) . ' >> 16) & 0xff] ^
+                        $t2[($' . $s . (($i + $c[2]) % $Nb) . ' >>  8) & 0xff] ^
+                        $t3[ $' . $s . (($i + $c[3]) % $Nb) . '        & 0xff] ^
+                        ' . $w[++$wc] . ";\n";
                 }
             }
 
             // Finalround: subWord + shiftRows + addRoundKey
             for ($i = 0; $i < $Nb; ++$i) {
                 $encrypt_block.=
-                    '$'.$e.$i.' =
-                     $sbox[ $'.$e.$i.'        & 0xff]        |
-                    ($sbox[($'.$e.$i.' >>  8) & 0xff] <<  8) |
-                    ($sbox[($'.$e.$i.' >> 16) & 0xff] << 16) |
-                    ($sbox[($'.$e.$i.' >> 24) & 0xff] << 24);'."\n";
+                        '$' . $e . $i . ' =
+                     $sbox[ $' . $e . $i . '        & 0xff]        |
+                    ($sbox[($' . $e . $i . ' >>  8) & 0xff] <<  8) |
+                    ($sbox[($' . $e . $i . ' >> 16) & 0xff] << 16) |
+                    ($sbox[($' . $e . $i . ' >> 24) & 0xff] << 24);' . "\n";
             }
-            $encrypt_block .= '$in = pack("N*"'."\n";
+            $encrypt_block .= '$in = pack("N*"' . "\n";
             for ($i = 0; $i < $Nb; ++$i) {
                 $encrypt_block.= ',
-                    ($'.$e.$i                  .' & 0xFF000000) ^
-                    ($'.$e.(($i + $c[1]) % $Nb).' & 0x00FF0000) ^
-                    ($'.$e.(($i + $c[2]) % $Nb).' & 0x0000FF00) ^
-                    ($'.$e.(($i + $c[3]) % $Nb).' & 0x000000FF) ^
-                    '.$w[$i]."\n";
+                    ($' . $e . $i . ' & 0xFF000000) ^
+                    ($' . $e . (($i + $c[1]) % $Nb) . ' & 0x00FF0000) ^
+                    ($' . $e . (($i + $c[2]) % $Nb) . ' & 0x0000FF00) ^
+                    ($' . $e . (($i + $c[3]) % $Nb) . ' & 0x000000FF) ^
+                    ' . $w[$i] . "\n";
             }
             $encrypt_block .= ');';
 
@@ -1312,14 +1299,14 @@ class Crypt_Rijndael extends Crypt_Base
                 }
             ';
 
-            $s  = 'e';
-            $e  = 's';
+            $s = 'e';
+            $e = 's';
             $wc = $Nb - 1;
 
             // Preround: addRoundKey
-            $decrypt_block = '$in = unpack("N*", $in);'."\n";
+            $decrypt_block = '$in = unpack("N*", $in);' . "\n";
             for ($i = 0; $i < $Nb; ++$i) {
-                $decrypt_block .= '$s'.$i.' = $in['.($i + 1).'] ^ '.$dw[++$wc].';'."\n";
+                $decrypt_block .= '$s' . $i . ' = $in[' . ($i + 1) . '] ^ ' . $dw[++$wc] . ';' . "\n";
             }
 
             // Mainrounds: shiftRows + subWord + mixColumns + addRoundKey
@@ -1327,45 +1314,46 @@ class Crypt_Rijndael extends Crypt_Base
                 list($s, $e) = array($e, $s);
                 for ($i = 0; $i < $Nb; ++$i) {
                     $decrypt_block.=
-                        '$'.$e.$i.' =
-                        $dt0[($'.$s.$i                        .' >> 24) & 0xff] ^
-                        $dt1[($'.$s.(($Nb + $i - $c[1]) % $Nb).' >> 16) & 0xff] ^
-                        $dt2[($'.$s.(($Nb + $i - $c[2]) % $Nb).' >>  8) & 0xff] ^
-                        $dt3[ $'.$s.(($Nb + $i - $c[3]) % $Nb).'        & 0xff] ^
-                        '.$dw[++$wc].";\n";
+                            '$' . $e . $i . ' =
+                        $dt0[($' . $s . $i . ' >> 24) & 0xff] ^
+                        $dt1[($' . $s . (($Nb + $i - $c[1]) % $Nb) . ' >> 16) & 0xff] ^
+                        $dt2[($' . $s . (($Nb + $i - $c[2]) % $Nb) . ' >>  8) & 0xff] ^
+                        $dt3[ $' . $s . (($Nb + $i - $c[3]) % $Nb) . '        & 0xff] ^
+                        ' . $dw[++$wc] . ";\n";
                 }
             }
 
             // Finalround: subWord + shiftRows + addRoundKey
             for ($i = 0; $i < $Nb; ++$i) {
                 $decrypt_block.=
-                    '$'.$e.$i.' =
-                     $isbox[ $'.$e.$i.'        & 0xff]        |
-                    ($isbox[($'.$e.$i.' >>  8) & 0xff] <<  8) |
-                    ($isbox[($'.$e.$i.' >> 16) & 0xff] << 16) |
-                    ($isbox[($'.$e.$i.' >> 24) & 0xff] << 24);'."\n";
+                        '$' . $e . $i . ' =
+                     $isbox[ $' . $e . $i . '        & 0xff]        |
+                    ($isbox[($' . $e . $i . ' >>  8) & 0xff] <<  8) |
+                    ($isbox[($' . $e . $i . ' >> 16) & 0xff] << 16) |
+                    ($isbox[($' . $e . $i . ' >> 24) & 0xff] << 24);' . "\n";
             }
-            $decrypt_block .= '$in = pack("N*"'."\n";
+            $decrypt_block .= '$in = pack("N*"' . "\n";
             for ($i = 0; $i < $Nb; ++$i) {
                 $decrypt_block.= ',
-                    ($'.$e.$i.                        ' & 0xFF000000) ^
-                    ($'.$e.(($Nb + $i - $c[1]) % $Nb).' & 0x00FF0000) ^
-                    ($'.$e.(($Nb + $i - $c[2]) % $Nb).' & 0x0000FF00) ^
-                    ($'.$e.(($Nb + $i - $c[3]) % $Nb).' & 0x000000FF) ^
-                    '.$dw[$i]."\n";
+                    ($' . $e . $i . ' & 0xFF000000) ^
+                    ($' . $e . (($Nb + $i - $c[1]) % $Nb) . ' & 0x00FF0000) ^
+                    ($' . $e . (($Nb + $i - $c[2]) % $Nb) . ' & 0x0000FF00) ^
+                    ($' . $e . (($Nb + $i - $c[3]) % $Nb) . ' & 0x000000FF) ^
+                    ' . $dw[$i] . "\n";
             }
             $decrypt_block .= ');';
 
             $lambda_functions[$code_hash] = $this->_createInlineCryptFunction(
-                array(
-                   'init_crypt'    => '',
-                   'init_encrypt'  => $init_encrypt,
-                   'init_decrypt'  => $init_decrypt,
-                   'encrypt_block' => $encrypt_block,
-                   'decrypt_block' => $decrypt_block
-                )
+                    array(
+                        'init_crypt' => '',
+                        'init_encrypt' => $init_encrypt,
+                        'init_decrypt' => $init_decrypt,
+                        'encrypt_block' => $encrypt_block,
+                        'decrypt_block' => $decrypt_block
+                    )
             );
         }
         $this->inline_crypt = $lambda_functions[$code_hash];
     }
+
 }

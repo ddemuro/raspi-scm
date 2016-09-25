@@ -31,11 +31,11 @@ class CronCommand extends CConsoleCommand {
         $time = date("Y-m-d H:i:s", time() + 30);
         $this->debug("Ready for another run at: $time");
         // Every 12 hours
-        if($runs == 21600){
+        if ($runs == 21600) {
             $this->logCPUTemp(true);
             $this->logExternalTemperature(true);
             $this->logRelayStatus(true);
-        // Every 30 sec, only updates if we've had changes
+            // Every 30 sec, only updates if we've had changes
         } else {
             $this->logCPUTemp(false);
             $this->logExternalTemperature(false);
@@ -50,15 +50,15 @@ class CronCommand extends CConsoleCommand {
         $this->debug("Actual memory usage: " . $mem_usage . " MB\r\n", false);
         $runs++;
     }
-    
+
     // Log the actual status of the relay board
-    public function logCPUTemp($force){
+    public function logCPUTemp($force) {
         $res = Yii::app()->TemperatureController->getInternalCPUTemp();
-        if($res == -1){
+        if ($res == -1) {
             $this->debug("Error checking with relay board..., check log...\n", false);
         }
         $flag = Yii::app()->functions->getFlag("internal_tmp");
-        if(strcmp("internal_tmp", $res) ==0 && $force != false){
+        if (strcmp("internal_tmp", $res) == 0 && $force != false) {
             return;
         }
         $res = Yii::app()->functions->deleteFlag("internal_tmp");
@@ -74,15 +74,15 @@ class CronCommand extends CConsoleCommand {
     }
 
     // Add log entry with the external temperature for each sensor
-    public function logExternalTemperature($force){
+    public function logExternalTemperature($force) {
         $model = Setting::model()->findAll('setting_id=:sett', array(':sett' => 'external_temp_sensor_pin'));
-        foreach($model as $pin){
+        foreach ($model as $pin) {
             $res = Yii::app()->TemperatureController->getHumidityTemp($pin);
-            if($res == NULL){
+            if ($res == NULL) {
                 $this->debug("Error processing temperature..., check log...\n", false);
             }
             $flag = Yii::app()->functions->getFlag("ex_tmp_$pin");
-            if(strcmp("ex_tmp_$pin", $res) ==0 && $force != false){
+            if (strcmp("ex_tmp_$pin", $res) == 0 && $force != false) {
                 return;
             }
             $res = Yii::app()->functions->deleteFlag("ex_tmp_$pin");
@@ -99,19 +99,19 @@ class CronCommand extends CConsoleCommand {
             unset($res);
         }
     }
-    
+
     // Log the actual status of the relay board
-    public function logRelayStatus($force){
+    public function logRelayStatus($force) {
         $model = Setting::model()->findAll('setting_id=:sett', array(':sett' => 'external_temp_sensor_pin'));
-        foreach($model as $pin){
+        foreach ($model as $pin) {
             $res = Yii::app()->RelayController->getRelayStatus(NULL, true);
             $flag = Yii::app()->functions->getFlag("relay_status");
-            if(strcmp($flag->status, $res) ==0 && $force != false){
+            if (strcmp($flag->status, $res) == 0 && $force != false) {
                 return;
             }
             $res = Yii::app()->functions->deleteFlag("relay_status");
             $res = Yii::app()->functions->writeFlag("relay_status", $res);
-            if($res == -1){
+            if ($res == -1) {
                 $this->debug("Error checking with relay board..., check log...\n", false);
             }
             $tempModel = new Logger();

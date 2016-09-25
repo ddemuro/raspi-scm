@@ -53,8 +53,7 @@
  * @license   http://www.opensource.org/licenses/mit-license.html  MIT License
  * @link      http://phpseclib.sourceforge.net
  */
-
-/**#@+
+/* * #@+
  * @access private
  * @see Crypt_Hash::Crypt_Hash()
  */
@@ -65,12 +64,12 @@ define('CRYPT_HASH_MODE_INTERNAL', 1);
 /**
  * Toggles the mhash() implementation, which has been deprecated on PHP 5.3.0+.
  */
-define('CRYPT_HASH_MODE_MHASH',    2);
+define('CRYPT_HASH_MODE_MHASH', 2);
 /**
  * Toggles the hash() implementation, which works on PHP 5.1.2+.
  */
-define('CRYPT_HASH_MODE_HASH',     3);
-/**#@-*/
+define('CRYPT_HASH_MODE_HASH', 3);
+/* * #@- */
 
 /**
  * Pure-PHP implementations of keyed-hash message authentication codes (HMACs) and various cryptographic hashing functions.
@@ -80,8 +79,8 @@ define('CRYPT_HASH_MODE_HASH',     3);
  * @version 0.1.0
  * @access  public
  */
-class Crypt_Hash
-{
+class Crypt_Hash {
+
     /**
      * Hash Parameter
      *
@@ -152,9 +151,8 @@ class Crypt_Hash
      * @return Crypt_Hash
      * @access public
      */
-    function Crypt_Hash($hash = 'sha1')
-    {
-        if ( !defined('CRYPT_HASH_MODE') ) {
+    function Crypt_Hash($hash = 'sha1') {
+        if (!defined('CRYPT_HASH_MODE')) {
             switch (true) {
                 case extension_loaded('hash'):
                     define('CRYPT_HASH_MODE', CRYPT_HASH_MODE_HASH);
@@ -178,8 +176,7 @@ class Crypt_Hash
      * @access public
      * @param optional String $key
      */
-    function setKey($key = false)
-    {
+    function setKey($key = false) {
         $this->key = $key;
     }
 
@@ -191,8 +188,7 @@ class Crypt_Hash
      * @access public
      * @return String
      */
-    function getHash()
-    {
+    function getHash() {
         return $this->hashParam;
     }
 
@@ -202,8 +198,7 @@ class Crypt_Hash
      * @access public
      * @param String $hash
      */
-    function setHash($hash)
-    {
+    function setHash($hash) {
         $this->hashParam = $hash = strtolower($hash);
         switch ($hash) {
             case 'md5-96':
@@ -230,7 +225,7 @@ class Crypt_Hash
         switch ($hash) {
             case 'md2':
                 $mode = CRYPT_HASH_MODE == CRYPT_HASH_MODE_HASH && in_array('md2', hash_algos()) ?
-                    CRYPT_HASH_MODE_HASH : CRYPT_HASH_MODE_INTERNAL;
+                        CRYPT_HASH_MODE_HASH : CRYPT_HASH_MODE_INTERNAL;
                 break;
             case 'sha384':
             case 'sha512':
@@ -240,7 +235,7 @@ class Crypt_Hash
                 $mode = CRYPT_HASH_MODE;
         }
 
-        switch ( $mode ) {
+        switch ($mode) {
             case CRYPT_HASH_MODE_MHASH:
                 switch ($hash) {
                     case 'md5':
@@ -278,28 +273,28 @@ class Crypt_Hash
 
         switch ($hash) {
             case 'md2':
-                 $this->b = 16;
-                 $this->hash = array($this, '_md2');
-                 break;
+                $this->b = 16;
+                $this->hash = array($this, '_md2');
+                break;
             case 'md5':
             case 'md5-96':
-                 $this->b = 64;
-                 $this->hash = array($this, '_md5');
-                 break;
+                $this->b = 64;
+                $this->hash = array($this, '_md5');
+                break;
             case 'sha256':
-                 $this->b = 64;
-                 $this->hash = array($this, '_sha256');
-                 break;
+                $this->b = 64;
+                $this->hash = array($this, '_sha256');
+                break;
             case 'sha384':
             case 'sha512':
-                 $this->b = 128;
-                 $this->hash = array($this, '_sha512');
-                 break;
+                $this->b = 128;
+                $this->hash = array($this, '_sha512');
+                break;
             case 'sha1':
             case 'sha1-96':
             default:
-                 $this->b = 64;
-                 $this->hash = array($this, '_sha1');
+                $this->b = 64;
+                $this->hash = array($this, '_sha1');
         }
 
         $this->ipad = str_repeat(chr(0x36), $this->b);
@@ -313,12 +308,11 @@ class Crypt_Hash
      * @param String $text
      * @return String
      */
-    function hash($text)
-    {
+    function hash($text) {
         $mode = is_array($this->hash) ? CRYPT_HASH_MODE_INTERNAL : CRYPT_HASH_MODE;
 
         if (!empty($this->key) || is_string($this->key)) {
-            switch ( $mode ) {
+            switch ($mode) {
                 case CRYPT_HASH_MODE_MHASH:
                     $output = mhash($this->hash, $text, $this->key);
                     break;
@@ -327,21 +321,21 @@ class Crypt_Hash
                     break;
                 case CRYPT_HASH_MODE_INTERNAL:
                     /* "Applications that use keys longer than B bytes will first hash the key using H and then use the
-                        resultant L byte string as the actual key to HMAC."
+                      resultant L byte string as the actual key to HMAC."
 
-                        -- http://tools.ietf.org/html/rfc2104#section-2 */
+                      -- http://tools.ietf.org/html/rfc2104#section-2 */
                     $key = strlen($this->key) > $this->b ? call_user_func($this->hash, $this->key) : $this->key;
 
-                    $key    = str_pad($key, $this->b, chr(0));      // step 1
-                    $temp   = $this->ipad ^ $key;                   // step 2
-                    $temp  .= $text;                                // step 3
-                    $temp   = call_user_func($this->hash, $temp);   // step 4
+                    $key = str_pad($key, $this->b, chr(0));      // step 1
+                    $temp = $this->ipad ^ $key;                   // step 2
+                    $temp .= $text;                                // step 3
+                    $temp = call_user_func($this->hash, $temp);   // step 4
                     $output = $this->opad ^ $key;                   // step 5
                     $output.= $temp;                                // step 6
                     $output = call_user_func($this->hash, $output); // step 7
             }
         } else {
-            switch ( $mode ) {
+            switch ($mode) {
                 case CRYPT_HASH_MODE_MHASH:
                     $output = mhash($this->hash, $text);
                     break;
@@ -362,8 +356,7 @@ class Crypt_Hash
      * @access public
      * @return Integer
      */
-    function getLength()
-    {
+    function getLength() {
         return $this->l;
     }
 
@@ -373,8 +366,7 @@ class Crypt_Hash
      * @access private
      * @param String $m
      */
-    function _md5($m)
-    {
+    function _md5($m) {
         return pack('H*', md5($m));
     }
 
@@ -384,8 +376,7 @@ class Crypt_Hash
      * @access private
      * @param String $m
      */
-    function _sha1($m)
-    {
+    function _sha1($m) {
         return pack('H*', sha1($m));
     }
 
@@ -397,27 +388,26 @@ class Crypt_Hash
      * @access private
      * @param String $m
      */
-    function _md2($m)
-    {
+    function _md2($m) {
         static $s = array(
-             41,  46,  67, 201, 162, 216, 124,   1,  61,  54,  84, 161, 236, 240, 6,
-             19,  98, 167,   5, 243, 192, 199, 115, 140, 152, 147,  43, 217, 188,
-             76, 130, 202,  30, 155,  87,  60, 253, 212, 224,  22, 103,  66, 111, 24,
-            138,  23, 229,  18, 190,  78, 196, 214, 218, 158, 222,  73, 160, 251,
-            245, 142, 187,  47, 238, 122, 169, 104, 121, 145,  21, 178,   7,  63,
-            148, 194,  16, 137,  11,  34,  95,  33, 128, 127,  93, 154,  90, 144, 50,
-             39,  53,  62, 204, 231, 191, 247, 151,   3, 255,  25,  48, 179,  72, 165,
-            181, 209, 215,  94, 146,  42, 172,  86, 170, 198,  79, 184,  56, 210,
-            150, 164, 125, 182, 118, 252, 107, 226, 156, 116,   4, 241,  69, 157,
-            112,  89, 100, 113, 135,  32, 134,  91, 207, 101, 230,  45, 168,   2, 27,
-             96,  37, 173, 174, 176, 185, 246,  28,  70,  97, 105,  52,  64, 126, 15,
-             85,  71, 163,  35, 221,  81, 175,  58, 195,  92, 249, 206, 186, 197,
-            234,  38,  44,  83,  13, 110, 133,  40, 132,   9, 211, 223, 205, 244, 65,
-            129,  77,  82, 106, 220,  55, 200, 108, 193, 171, 250,  36, 225, 123,
-              8,  12, 189, 177,  74, 120, 136, 149, 139, 227,  99, 232, 109, 233,
-            203, 213, 254,  59,   0,  29,  57, 242, 239, 183,  14, 102,  88, 208, 228,
-            166, 119, 114, 248, 235, 117,  75,  10,  49,  68,  80, 180, 143, 237,
-             31,  26, 219, 153, 141,  51, 159,  17, 131, 20
+            41, 46, 67, 201, 162, 216, 124, 1, 61, 54, 84, 161, 236, 240, 6,
+            19, 98, 167, 5, 243, 192, 199, 115, 140, 152, 147, 43, 217, 188,
+            76, 130, 202, 30, 155, 87, 60, 253, 212, 224, 22, 103, 66, 111, 24,
+            138, 23, 229, 18, 190, 78, 196, 214, 218, 158, 222, 73, 160, 251,
+            245, 142, 187, 47, 238, 122, 169, 104, 121, 145, 21, 178, 7, 63,
+            148, 194, 16, 137, 11, 34, 95, 33, 128, 127, 93, 154, 90, 144, 50,
+            39, 53, 62, 204, 231, 191, 247, 151, 3, 255, 25, 48, 179, 72, 165,
+            181, 209, 215, 94, 146, 42, 172, 86, 170, 198, 79, 184, 56, 210,
+            150, 164, 125, 182, 118, 252, 107, 226, 156, 116, 4, 241, 69, 157,
+            112, 89, 100, 113, 135, 32, 134, 91, 207, 101, 230, 45, 168, 2, 27,
+            96, 37, 173, 174, 176, 185, 246, 28, 70, 97, 105, 52, 64, 126, 15,
+            85, 71, 163, 35, 221, 81, 175, 58, 195, 92, 249, 206, 186, 197,
+            234, 38, 44, 83, 13, 110, 133, 40, 132, 9, 211, 223, 205, 244, 65,
+            129, 77, 82, 106, 220, 55, 200, 108, 193, 171, 250, 36, 225, 123,
+            8, 12, 189, 177, 74, 120, 136, 149, 139, 227, 99, 232, 109, 233,
+            203, 213, 254, 59, 0, 29, 57, 242, 239, 183, 14, 102, 88, 208, 228,
+            166, 119, 114, 248, 235, 117, 75, 10, 49, 68, 80, 180, 143, 237,
+            31, 26, 219, 153, 141, 51, 159, 17, 131, 20
         );
 
         // Step 1. Append Padding Bytes
@@ -473,8 +463,7 @@ class Crypt_Hash
      * @access private
      * @param String $m
      */
-    function _sha256($m)
-    {
+    function _sha256($m) {
         if (extension_loaded('suhosin')) {
             return pack('H*', sha256($m));
         }
@@ -515,14 +504,13 @@ class Crypt_Hash
 
             // Extend the sixteen 32-bit words into sixty-four 32-bit words
             for ($i = 16; $i < 64; $i++) {
-                $s0 = $this->_rightRotate($w[$i - 15],  7) ^
-                      $this->_rightRotate($w[$i - 15], 18) ^
-                      $this->_rightShift( $w[$i - 15],  3);
+                $s0 = $this->_rightRotate($w[$i - 15], 7) ^
+                        $this->_rightRotate($w[$i - 15], 18) ^
+                        $this->_rightShift($w[$i - 15], 3);
                 $s1 = $this->_rightRotate($w[$i - 2], 17) ^
-                      $this->_rightRotate($w[$i - 2], 19) ^
-                      $this->_rightShift( $w[$i - 2], 10);
+                        $this->_rightRotate($w[$i - 2], 19) ^
+                        $this->_rightShift($w[$i - 2], 10);
                 $w[$i] = $this->_add($w[$i - 16], $s0, $w[$i - 7], $s1);
-
             }
 
             // Initialize hash value for this chunk
@@ -530,19 +518,19 @@ class Crypt_Hash
 
             // Main loop
             for ($i = 0; $i < 64; $i++) {
-                $s0 = $this->_rightRotate($a,  2) ^
-                      $this->_rightRotate($a, 13) ^
-                      $this->_rightRotate($a, 22);
+                $s0 = $this->_rightRotate($a, 2) ^
+                        $this->_rightRotate($a, 13) ^
+                        $this->_rightRotate($a, 22);
                 $maj = ($a & $b) ^
-                       ($a & $c) ^
-                       ($b & $c);
+                        ($a & $c) ^
+                        ($b & $c);
                 $t2 = $this->_add($s0, $maj);
 
-                $s1 = $this->_rightRotate($e,  6) ^
-                      $this->_rightRotate($e, 11) ^
-                      $this->_rightRotate($e, 25);
+                $s1 = $this->_rightRotate($e, 6) ^
+                        $this->_rightRotate($e, 11) ^
+                        $this->_rightRotate($e, 25);
                 $ch = ($e & $f) ^
-                      ($this->_not($e) & $g);
+                        ($this->_not($e) & $g);
                 $t1 = $this->_add($h, $s1, $ch, $k[$i], $w[$i]);
 
                 $h = $g;
@@ -578,8 +566,7 @@ class Crypt_Hash
      * @access private
      * @param String $m
      */
-    function _sha512($m)
-    {
+    function _sha512($m) {
         if (!class_exists('Math_BigInteger')) {
             include_once 'Math/BigInteger.php';
         }
@@ -588,11 +575,11 @@ class Crypt_Hash
 
         if (!isset($k)) {
             // Initialize variables
-            $init384 = array( // initial values for SHA384
+            $init384 = array(// initial values for SHA384
                 'cbbb9d5dc1059ed8', '629a292a367cd507', '9159015a3070dd17', '152fecd8f70e5939',
                 '67332667ffc00b31', '8eb44a8768581511', 'db0c2e0d64f98fa7', '47b5481dbefa4fa4'
             );
-            $init512 = array( // initial values for SHA512
+            $init512 = array(// initial values for SHA512
                 '6a09e667f3bcc908', 'bb67ae8584caa73b', '3c6ef372fe94f82b', 'a54ff53a5f1d36f1',
                 '510e527fade682d1', '9b05688c2b3e6c1f', '1f83d9abfb41bd6b', '5be0cd19137e2179'
             );
@@ -657,16 +644,16 @@ class Crypt_Hash
             // Extend the sixteen 32-bit words into eighty 32-bit words
             for ($i = 16; $i < 80; $i++) {
                 $temp = array(
-                          $w[$i - 15]->bitwise_rightRotate(1),
-                          $w[$i - 15]->bitwise_rightRotate(8),
-                          $w[$i - 15]->bitwise_rightShift(7)
+                    $w[$i - 15]->bitwise_rightRotate(1),
+                    $w[$i - 15]->bitwise_rightRotate(8),
+                    $w[$i - 15]->bitwise_rightShift(7)
                 );
                 $s0 = $temp[0]->bitwise_xor($temp[1]);
                 $s0 = $s0->bitwise_xor($temp[2]);
                 $temp = array(
-                          $w[$i - 2]->bitwise_rightRotate(19),
-                          $w[$i - 2]->bitwise_rightRotate(61),
-                          $w[$i - 2]->bitwise_rightShift(6)
+                    $w[$i - 2]->bitwise_rightRotate(19),
+                    $w[$i - 2]->bitwise_rightRotate(61),
+                    $w[$i - 2]->bitwise_rightShift(6)
                 );
                 $s1 = $temp[0]->bitwise_xor($temp[1]);
                 $s1 = $s1->bitwise_xor($temp[2]);
@@ -764,8 +751,7 @@ class Crypt_Hash
      * @see _sha256()
      * @return Integer
      */
-    function _rightRotate($int, $amt)
-    {
+    function _rightRotate($int, $amt) {
         $invamt = 32 - $amt;
         $mask = (1 << $invamt) - 1;
         return (($int << $invamt) & 0xFFFFFFFF) | (($int >> $amt) & $mask);
@@ -780,8 +766,7 @@ class Crypt_Hash
      * @see _sha256()
      * @return Integer
      */
-    function _rightShift($int, $amt)
-    {
+    function _rightShift($int, $amt) {
         $mask = (1 << (32 - $amt)) - 1;
         return ($int >> $amt) & $mask;
     }
@@ -794,8 +779,7 @@ class Crypt_Hash
      * @see _sha256()
      * @return Integer
      */
-    function _not($int)
-    {
+    function _not($int) {
         return ~$int & 0xFFFFFFFF;
     }
 
@@ -810,8 +794,7 @@ class Crypt_Hash
      * @see _sha256()
      * @access private
      */
-    function _add()
-    {
+    function _add() {
         static $mod;
         if (!isset($mod)) {
             $mod = pow(2, 32);
@@ -836,10 +819,10 @@ class Crypt_Hash
      * @return String
      * @access private
      */
-    function _string_shift(&$string, $index = 1)
-    {
+    function _string_shift(&$string, $index = 1) {
         $substr = substr($string, 0, $index);
         $string = substr($string, $index);
         return $substr;
     }
+
 }

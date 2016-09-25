@@ -32,7 +32,7 @@
         <?php echo $form->label($model, 'extended'); ?>
         <?php echo $form->textArea($model, 'extended', array('rows' => 6, 'cols' => 50)); ?>
     </div>
-    
+
     <div class="row">
         <?php echo $form->label($model, 'comment'); ?>
         <?php echo $form->textArea($model, 'comment', array('rows' => 10, 'cols' => 50)); ?>

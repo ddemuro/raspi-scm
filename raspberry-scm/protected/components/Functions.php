@@ -40,45 +40,44 @@ class Functions extends CApplicationComponent {
         $result = ob_get_clean();
         return $result;
     }
-    
+
     /**
      * Returns parameter if available.
      * @param type $name of parameter
      * @param type $default default parameter value if not found
      * @return type var
      */
-    public function yiiparam($name, $default = null)
-    {
-        if ( isset(Yii::app()->params[$name]) )
+    public function yiiparam($name, $default = null) {
+        if (isset(Yii::app()->params[$name]))
             return Yii::app()->params[$name];
         else
             return $default;
     }
-    
+
     /**
      * To check if there's a process already running.
      * @param type $processName
      * @return boolean
      */
     function processExists($processName) {
-        $exists= false;
+        $exists = false;
         exec("ps -A | grep -i $processName | grep -v grep", $pids);
         if (count($pids) > 0) {
             $exists = true;
         }
         return $exists;
     }
-    
+
     /**
      * Writes flag to database
      */
-    public function writeFlag($name, $status){
+    public function writeFlag($name, $status) {
         // As we send keep alives every minute, in the last 30 seconds he should be online
         $time = date("Y-m-d H:i:s", time() - 10);
         $criteriaMembers = new CDbCriteria;
         $criteriaMembers->addCondition("flag_name = $name");
         $existingFlags = Flags::model()->findAll($criteriaMembers);
-        if($existingFlags->count() > 0){
+        if ($existingFlags->count() > 0) {
             return false;
         } else {
             $newFlag = Flags();
@@ -87,22 +86,22 @@ class Functions extends CApplicationComponent {
             return $newFlag->save();
         }
     }
-    
+
     /**
      * Returns all flags for a name
      * @param type $name
      */
-    public function getFlag($name){
+    public function getFlag($name) {
         $criteriaMembers = new CDbCriteria;
         $criteriaMembers->addCondition("flag_name = $name");
         $existingFlags = Flags::model()->findAll($criteriaMembers);
         return $existingFlags;
     }
-    
+
     /**
      * Removes flag to database
      */
-    public function removeFlag($name){
+    public function removeFlag($name) {
         // As we send keep alives every minute, in the last 30 seconds he should be online
         $time = date("Y-m-d H:i:s", time() - 10);
         // Members rules
@@ -110,8 +109,9 @@ class Functions extends CApplicationComponent {
         // We check online members
         $criteriaMembers->addCondition("flag_name = $name");
         $existingFlags = Flags::model()->findAll($criteriaMembers);
-        if($existingFlags != NULL && $existingFlags > 0)
+        if ($existingFlags != NULL && $existingFlags > 0)
             return $existingFlags->delete();
         return false;
     }
+
 }

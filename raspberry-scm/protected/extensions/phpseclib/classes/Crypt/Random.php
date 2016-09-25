@@ -39,7 +39,6 @@
  * @license   http://www.opensource.org/licenses/mit-license.html  MIT License
  * @link      http://phpseclib.sourceforge.net
  */
-
 /**
  * "Is Windows" test
  *
@@ -58,8 +57,7 @@ define('CRYPT_RANDOM_IS_WINDOWS', strtoupper(substr(PHP_OS, 0, 3)) === 'WIN');
  * @return String
  * @access public
  */
-function crypt_random_string($length)
-{
+function crypt_random_string($length) {
     if (CRYPT_RANDOM_IS_WINDOWS) {
         // method 1. prior to PHP 5.3 this would call rand() on windows hence the function_exists('class_alias') call.
         // ie. class_alias is a function that was introduced in PHP 5.3
@@ -107,7 +105,6 @@ function crypt_random_string($length)
         }
     }
     // at this point we have no choice but to use a pure-PHP CSPRNG
-
     // cascade entropy across multiple PHP instances by fixing the session and collecting all
     // environmental variables, including the previous session data and the current session
     // data.
@@ -142,18 +139,18 @@ function crypt_random_string($length)
         session_start();
 
         $v = $seed = $_SESSION['seed'] = pack('H*', sha1(
-            serialize($_SERVER) .
-            serialize($_POST) .
-            serialize($_GET) .
-            serialize($_COOKIE) .
-            serialize($GLOBALS) .
-            serialize($_SESSION) .
-            serialize($_OLD_SESSION)
+                        serialize($_SERVER) .
+                        serialize($_POST) .
+                        serialize($_GET) .
+                        serialize($_COOKIE) .
+                        serialize($GLOBALS) .
+                        serialize($_SESSION) .
+                        serialize($_OLD_SESSION)
         ));
         if (!isset($_SESSION['count'])) {
             $_SESSION['count'] = 0;
         }
-        $_SESSION['count']++;
+        $_SESSION['count'] ++;
 
         session_write_close();
 
@@ -164,9 +161,9 @@ function crypt_random_string($length)
             ini_set('session.use_cookies', $old_use_cookies);
             session_cache_limiter($old_session_cache_limiter);
         } else {
-           if ($_OLD_SESSION !== false) {
-               $_SESSION = $_OLD_SESSION;
-               unset($_OLD_SESSION);
+            if ($_OLD_SESSION !== false) {
+                $_SESSION = $_OLD_SESSION;
+                unset($_OLD_SESSION);
             } else {
                 unset($_SESSION);
             }
