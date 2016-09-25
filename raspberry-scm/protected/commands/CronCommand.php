@@ -78,7 +78,7 @@ class CronCommand extends CConsoleCommand {
     public function logExternalTemperature($force) {
         $model = Setting::model()->findAll('setting_id=:sett', array(':sett' => 'external_temp_sensor_pin'));
         foreach ($model as $pin) {
-            $res = Yii::app()->TemperatureController->getHumidityTemp($pin->setting);
+            $res = Yii::app()->TemperatureController->getHumidityTemp($pin->setting, $pin->extended);
             if ($res == NULL) {
                 $this->debug("Error processing temperature..., check log...\n", false);
             }
