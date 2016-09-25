@@ -78,7 +78,7 @@ class Functions extends CApplicationComponent {
         if (count($existingFlags) > 0) {
             return false;
         } else {
-            $newFlag = Flags();
+            $newFlag = new Flags();
             $newFlag->flag_name = $name;
             $newFlag->satus = $tatus;
             return $newFlag->save();
