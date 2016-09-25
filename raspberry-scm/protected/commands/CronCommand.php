@@ -27,28 +27,32 @@ class CronCommand extends CConsoleCommand {
         $runs = 0;
         // If we want the script to echo information to STDOUT.
         $this->debug = true;
-        // As we send keep alives every minute, in the last 30 seconds he should be online
-        $time = date("Y-m-d H:i:s", time() + 30);
-        $this->debug("Ready for another run at: $time");
-        // Every 12 hours
-        if ($runs == 21600) {
-            $this->logCPUTemp(true);
-            $this->logExternalTemperature(true);
-            $this->logRelayStatus(true);
-            // Every 30 sec, only updates if we've had changes
-        } else {
-            $this->logCPUTemp(false);
-            $this->logExternalTemperature(false);
-            $this->logRelayStatus(false);
+        while (true) {
+            // As we send keep alives every minute, in the last 30 seconds he should be online
+            $time = date("Y-m-d H:i:s", time() + 30);
+            $this->debug("Ready for another run at: $time");
+            // Every 12 hours
+            if ($runs == 21600) {
+                $this->logCPUTemp(true);
+                $this->logExternalTemperature(true);
+                $this->logRelayStatus(true);
+                $runs = 0;
+                // Every 30 sec, only updates if we've had changes
+            } else {
+                $this->logCPUTemp(false);
+                $this->logExternalTemperature(false);
+                $this->logRelayStatus(false);
+            }
+            unset($time);
+            //We sleep before next loop.
+            $currentMemory = (memory_get_peak_usage(true) / 1024 / 1024);
+            $mem_usage = (memory_get_usage(true) / 1024 / 1024);
+            usleep(3000000);
+            $this->debug("Peak memory usage: " . $currentMemory . " MB\r\n", false);
+            $this->debug("Actual memory usage: " . $mem_usage . " MB\r\n", false);
+            $runs++;
+            gc_collect_cycles();
         }
-        unset($time);
-        //We sleep before next loop.
-        $currentMemory = (memory_get_peak_usage(true) / 1024 / 1024);
-        $mem_usage = (memory_get_usage(true) / 1024 / 1024);
-        usleep(3000000);
-        $this->debug("Peak memory usage: " . $currentMemory . " MB\r\n", false);
-        $this->debug("Actual memory usage: " . $mem_usage . " MB\r\n", false);
-        $runs++;
     }
 
     // Log the actual status of the relay board
@@ -81,8 +85,9 @@ class CronCommand extends CConsoleCommand {
             $res = Yii::app()->TemperatureController->getHumidityTemp($pin->setting, $pin->extended);
             $vd = var_dump($res);
             $this->debug("Checking with pin: $pin->setting and extended: $pin->extended. $vd \n", false);
-            if ($res == NULL || count($res) <= 1) {
+            if ($res === NULL || count($res) <= 1) {
                 Yii::log("Error loading temperature information, skipping...");
+                Yii::log("Confirm you've added he root password to the config files....");
                 continue;
             }
             $flag = Yii::app()->functions->getFlag("ex_tmp_$pin->setting");
@@ -107,7 +112,7 @@ class CronCommand extends CConsoleCommand {
 
     // Log the actual status of the relay board
     public function logRelayStatus($force) {
-
+        
     }
 
     /**
