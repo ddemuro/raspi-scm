@@ -80,7 +80,7 @@ class Functions extends CApplicationComponent {
         } else {
             $newFlag = new Flags();
             $newFlag->flag_name = $name;
-            $newFlag->satus = $status;
+            $newFlag->status = $status;
             return $newFlag->save();
         }
     }
