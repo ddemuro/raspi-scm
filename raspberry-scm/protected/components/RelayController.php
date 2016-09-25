@@ -52,8 +52,8 @@ class RelayController extends CApplicationComponent {
         curl_close($curl);
         $resp = explode("\n", $resp);
         if ($relnumber != NULL && $relnumber > -1) {
-            $pieces = explode(" ", $resp[$relnumber]);
-            $state = explode(":", $pieces[1]);
+            $pieces = explode(' ', $resp[$relnumber]);
+            $state = explode(':', $pieces[1]);
             $relay_number = intval($state[0]);
             if (intval($state[0]) == 1)
                 return true;
@@ -64,8 +64,10 @@ class RelayController extends CApplicationComponent {
             return var_dump($resp);
         $relay_info = array();
         foreach ($resp as $line) {
-            $pieces = explode(" ", $line);
-            $state = explode(":", $pieces[1]);
+            if(strpos($line, 'Relay') == FALSE)
+                    continue;
+            $line = str_replace('Relay ', '', $line);
+            $state = explode(':', $pieces);
             $relay_number = intval($state[0]);
             $relay_state = intval($state[1]);
             array_push($relay_info, array($relay_number => $relay_state));
