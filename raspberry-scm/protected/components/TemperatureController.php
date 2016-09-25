@@ -94,10 +94,10 @@ class TemperatureController extends CApplicationComponent {
         }
         $res = Yii::app()->RootElevator->executeRoot("cat $tempprog", false);
         $this->debug("Internal Temperature Return: $res");
-        if(strlen($res[0]) != 4){
+        if(strlen($res) != 5){
             return NULL;
         }
-        $res = $res[0] / 1000;
+        $res = $res / 1000;
         return $res;
     }
 
