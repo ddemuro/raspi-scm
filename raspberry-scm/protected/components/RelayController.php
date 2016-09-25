@@ -67,7 +67,7 @@ class RelayController extends CApplicationComponent {
             if(strpos($line, 'Relay') === FALSE)
                     continue;
             $line = str_replace('Relay ', '', $line);
-            $state = explode(':', $pieces);
+            $state = explode(':', $line);
             $relay_number = intval($state[0]);
             $relay_state = intval($state[1]);
             array_push($relay_info, array($relay_number => $relay_state));
