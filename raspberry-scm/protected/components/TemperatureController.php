@@ -92,8 +92,7 @@ class TemperatureController extends CApplicationComponent {
             Yii::log('No temperature sensor configured, cannot sense inernally...', CLogger::LEVEL_ERROR, "info");
             return NULL;
         }
-        $res = Yii::app()->RootElevator->executeRoot("$tempprog 2>&1", false);
-        $res = shell_exec("cat $tempprog");
+        $res = Yii::app()->RootElevator->executeRoot("cat $tempprog", false);
         $this->debug("Internal Temperature Return: $res");
         if(strlen($res[0] != 5)){
             return NULL;
@@ -113,8 +112,7 @@ class TemperatureController extends CApplicationComponent {
             Yii::log('No temperature sensor configured, cannot sense inernally...', CLogger::LEVEL_ERROR, "info");
             return NULL;
         }
-        $res = Yii::app()->RootElevator->executeRoot("$tempprog 2>&1", false);
-        $res = shell_exec("$tempprog");
+        $res = Yii::app()->RootElevator->executeRoot("$tempprog", false);
         $this->debug("Internal GPU Temperature Return: $res");
         str_replace('temp=', '', $res);
         str_replace('\'C', '', $res);
