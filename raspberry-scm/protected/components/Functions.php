@@ -74,9 +74,7 @@ class Functions extends CApplicationComponent {
     public function writeFlag($name, $status) {
         // As we send keep alives every minute, in the last 30 seconds he should be online
         $time = date("Y-m-d H:i:s", time() - 10);
-        $criteriaMembers = new CDbCriteria;
-        $criteriaMembers->addCondition("flag_name = $name");
-        $existingFlags = Flags::model()->findAll($criteriaMembers);
+        $existingFlags = Flags::model()->findAll('flag_name=:flgname', array(':flgname' => $name));
         if ($existingFlags->count() > 0) {
             return false;
         } else {
@@ -92,10 +90,7 @@ class Functions extends CApplicationComponent {
      * @param type $name
      */
     public function getFlag($name) {
-        $criteriaMembers = new CDbCriteria;
-        $criteriaMembers->addCondition("flag_name = $name");
-        $existingFlags = Flags::model()->findAll($criteriaMembers);
-        return $existingFlags;
+        return Flags::model()->findAll('flag_name=:flgname', array(':flgname' => $name));
     }
 
     /**
@@ -104,11 +99,7 @@ class Functions extends CApplicationComponent {
     public function removeFlag($name) {
         // As we send keep alives every minute, in the last 30 seconds he should be online
         $time = date("Y-m-d H:i:s", time() - 10);
-        // Members rules
-        $criteriaMembers = new CDbCriteria;
-        // We check online members
-        $criteriaMembers->addCondition("flag_name = $name");
-        $existingFlags = Flags::model()->findAll($criteriaMembers);
+        $existingFlags = Flags::model()->findAll('flag_name=:flgname', array(':flgname' => $name));
         if ($existingFlags != NULL && $existingFlags > 0)
             return $existingFlags->delete();
         return false;
