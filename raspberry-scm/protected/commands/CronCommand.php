@@ -112,7 +112,8 @@ class CronCommand extends CConsoleCommand {
 
     // Log the actual status of the relay board
     public function logRelayStatus($force) {
-        
+        $relayInfo = Yii::app()->RelayController->getRelayStatus(NULL, true);
+        $this->debug("Relay information: $relayInfo");
     }
 
     /**
