@@ -113,7 +113,7 @@ class RelayController extends CApplicationComponent {
             curl_setopt_array($curl, array(
                 CURLOPT_RETURNTRANSFER => 1,
                 CURLOPT_URL => $crelayurl,
-                CURLOPT_USERAGENT => 'Raspberry Pi SCM',
+                //CURLOPT_USERAGENT => 'Raspberry Pi SCM',
                 CURLOPT_POST => 1,
                 CURLOPT_POSTFIELDS => array(
                     'pin' => "$relay_number",
