@@ -33,12 +33,18 @@ class RelayController extends CApplicationComponent {
      * ARRAY if none.
      */
     public function getRelayStatus($relnumber, $toString) {
+        $crelay = Yii::app()->functions->yiiparam('crelay', NULL);
+        $crelayurl = Yii::app()->functions->yiiparam('crelay_url', 'http://localhost:8000/gpio');
+        if ($crelay === NULL) {
+            Yii::log('CRelay not installed or configured in the main.php file.', CLogger::LEVEL_WARNING, "info");
+            return NULL;
+        }
         // Get cURL resource
         $curl = curl_init();
         // Set some options - we are passing in a useragent too here
         curl_setopt_array($curl, array(
             CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_URL => 'http://localhost:8000/gpio',
+            CURLOPT_URL => $crelayurl,
             CURLOPT_USERAGENT => 'Raspberry Pi SCM'
         ));
         // Send the request & save response to $resp
@@ -83,6 +89,7 @@ class RelayController extends CApplicationComponent {
      */
     public function changeRelayStatus($relay_number, $status) {
         $crelay = Yii::app()->functions->yiiparam('crelay', NULL);
+        $crelayurl = Yii::app()->functions->yiiparam('crelay_url', 'http://localhost:8000/gpio');
         if ($crelay === NULL) {
             Yii::log('CRelay not installed or configured in the main.php file.', CLogger::LEVEL_WARNING, "info");
             return NULL;
@@ -90,8 +97,8 @@ class RelayController extends CApplicationComponent {
         // Get status
         $req_status = $this->getRelayStatus($relay_number, false);
         Yii::log("Relay: $relay_number, Status trying to be set: $status, Actual Status: $req_status.", CLogger::LEVEL_INFO, "info");
-        if ($req_status == -1) {
-            Yii::log('Trying to set the state to the same state of relay.', CLogger::LEVEL_INFO, "info");
+        if ($req_status == -1 || $req_status === NULL) {
+            Yii::log('Error getting status of the requested relay.'+$relay_number, CLogger::LEVEL_INFO, "info");
             return -1;
         }
         if ($req_status && $status == 1) {
@@ -102,7 +109,7 @@ class RelayController extends CApplicationComponent {
             // Set some options - we are passing in a useragent too here
             curl_setopt_array($curl, array(
                 CURLOPT_RETURNTRANSFER => 1,
-                CURLOPT_URL => 'http://localhost:8000/gpio',
+                CURLOPT_URL => $crelayurl,
                 CURLOPT_USERAGENT => 'Raspberry Pi SCM',
                 CURLOPT_POST => 1,
                 CURLOPT_POSTFIELDS => array(
