@@ -89,6 +89,7 @@ class RelayController extends CApplicationComponent {
         }
         // Get status
         $req_status = $this->getRelayStatus($relay_number, false);
+        Yii::log("Relay: $relay_number, Status trying to be set: $status, Actual Status: $req_status.", CLogger::LEVEL_INFO, "info");
         if ($req_status == -1) {
             Yii::log('Trying to set the state to the same state of relay.', CLogger::LEVEL_INFO, "info");
             return -1;
