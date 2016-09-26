@@ -15,7 +15,7 @@ class RelayController extends CApplicationComponent {
         $pid = Yii::app()->functions->processExists('crelay');
         if ($pid == false) {
             Yii::log('CRelay was not running, starting...', CLogger::LEVEL_WARNING, "info");
-            Yii::app()->RootElevator->executeRoot("$getexec -d &disown", NULL);
+            Yii::app()->RootElevator->executeRoot("$getexec -d &disown", false);
         }
         $pid = Yii::app()->functions->processExists('crelay');
         if ($pid) {
