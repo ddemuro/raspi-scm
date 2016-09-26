@@ -2,6 +2,12 @@
 
 DATE=`date "+%Y-%m-%d"`
 LOG='../updater.log'
+USER='www-data'
+DIR_MAKE='raspberry-scm/assets raspberry-scm/protected/assets raspberry-scm/protected/runtime'
+PERMISSION='755'
+
+echo "\n\n Starting Updater... \n\n"
+
 # fetch changes, git stores them in FETCH_HEAD
 git fetch
 
@@ -16,22 +22,24 @@ then
         git add .
         git add -u
         git commit -m "$DATE"
-        echo "fallback created" >> $LOG
+        echo "Fallback created" >> $LOG
  
         git checkout master
         git pull
-        git merge FETCH_HEAD --squash v1.0
-        echo "merged updates" >> $LOG
+        git merge FETCH_HEAD --squash v1.0 -m "Automerging updates"
+        echo "Merged updates" >> $LOG
         for branch in $(git for-each-ref --format '%(refname:short)' refs/heads/)
         do
             git merge-base --is-ancestor ${branch} HEAD && git branch -d ${branch}
         done
-		mkdir raspberry-scm/assets raspberry-scm/protected/assets raspberry-scm/protected/runtime 
-        chown www-data:www-data * -R
-        chmod 755 * -R
+		mkdir -p $DIR_MAKE > /dev/null 2>&1
+        chown $USER:$USER * -R > /dev/null 2>&1
+        chmod $PERMISSION * -R > /dev/null 2>&1
 else
-        echo "no updates available" >> $LOG
+        echo "No updates available" >> $LOG
 fi
-mkdir raspberry-scm/assets raspberry-scm/protected/assets raspberry-scm/protected/runtime 
-chown www-data:www-data * -R
-chmod 755 * -R
+mkdir -p $DIR_MAKE > /dev/null 2>&1
+chown $USER:$USER * -R > /dev/null 2>&1
+chmod $PERMISSION * -R > /dev/null 2>&1
+
+echo "Updater finished, you should be running the latest version..."

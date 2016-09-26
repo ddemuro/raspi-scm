@@ -68,7 +68,7 @@ class CronCommand extends CConsoleCommand {
         Yii::app()->functions->removeFlag("internal_tmp");
         Yii::app()->functions->writeFlag("internal_tmp", $res);
         $tempModel = new InternalTemperature();
-        $tempModel->temperature = $res;
+        $tempModel->temperature = floatval($res);
         $tempModel->date = date('Y-m-d H:m:s');
         $tempModel->save();
         $str = $tempModel->ToString();
@@ -97,8 +97,8 @@ class CronCommand extends CConsoleCommand {
             Yii::app()->functions->removeFlag("ex_tmp_$pin->setting");
             Yii::app()->functions->writeFlag("ex_tmp_$pin->setting", $res);
             $tempModel = new ExternalTemperature();
-            $tempModel->temperature = $res[1];
-            $tempModel->humidity = $res[0];
+            $tempModel->temperature = floatval($res[1]);
+            $tempModel->humidity = floatval($res[0]);
             $tempModel->date = date('Y-m-d H:m:s');
             $tempModel->log = "DataPIN=$pin->setting";
             $tempModel->save();

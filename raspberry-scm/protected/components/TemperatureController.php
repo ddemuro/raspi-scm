@@ -35,7 +35,7 @@ class TemperatureController extends CApplicationComponent {
         $this->debug("Humidity Temp Return: $res");
         str_replace(' ', '', $res);
         $respli = explode("%", $res);
-        return$respli;
+        return $respli;
     }
 
     /**
@@ -56,7 +56,7 @@ class TemperatureController extends CApplicationComponent {
         $this->debug("Temperature Return: $res");
         str_replace(' ', '', $res);
         $respli = explode("%", $res);
-        return[1];
+        return floatval($respli[1]);
     }
 
     /**
@@ -77,7 +77,7 @@ class TemperatureController extends CApplicationComponent {
         $this->debug("Humidity Return: $res");
         str_replace(' ', '', $res);
         $respli = explode("%", $res);
-        return[0];
+        return floatval($respli[0]);
     }
 
     /**
@@ -99,7 +99,7 @@ class TemperatureController extends CApplicationComponent {
             return NULL;
         }
         $res = ($res / 1000);
-        return $res;
+        return floatval($res);
     }
 
     /**
