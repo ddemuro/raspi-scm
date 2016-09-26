@@ -124,6 +124,8 @@ class RelayController extends CApplicationComponent {
             $resp = curl_exec($curl);
             // Close request to clear up some resources
             curl_close($curl);
+            var_dump($resp);
+            echo 'call made?';
         }
         echo 'final';
     }
