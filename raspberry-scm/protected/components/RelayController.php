@@ -15,7 +15,7 @@ class RelayController extends CApplicationComponent {
         $pid = Yii::app()->functions->processExists('crelay');
         if ($pid == false) {
             Yii::log('CRelay was not running, starting...', CLogger::LEVEL_WARNING, "info");
-            shell_exec("$getexec -d &disown");
+            Yii::app()->RootElevator->executeRoot("$getexec -d &disown");
         }
         $pid = Yii::app()->functions->processExists('crelay');
         if ($pid) {
@@ -35,7 +35,7 @@ class RelayController extends CApplicationComponent {
     public function getRelayStatus($relnumber, $toString) {
         $crelay = Yii::app()->functions->yiiparam('crelay', NULL);
         $crelayurl = Yii::app()->functions->yiiparam('crelay_url', 'http://localhost:8000/gpio');
-        if ($crelay === NULL) {
+        if ($crelay === NULL || $this->checkCRelay() != true) {
             Yii::log('CRelay not installed or configured in the main.php file.', CLogger::LEVEL_WARNING, "info");
             return NULL;
         }
@@ -91,7 +91,7 @@ class RelayController extends CApplicationComponent {
         $crelay = Yii::app()->functions->yiiparam('crelay', NULL);
         $crelayurl = Yii::app()->functions->yiiparam('crelay_url', 'http://localhost:8000/gpio');
         Yii::log("CRelay $crelay, API URL: $crelayurl.", CLogger::LEVEL_WARNING, "info");
-        if ($crelay === NULL) {
+        if ($crelay === NULL || $this->checkCRelay() != true) {
             Yii::log('CRelay not installed or configured in the main.php file.', CLogger::LEVEL_WARNING, "info");
             return NULL;
         }
