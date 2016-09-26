@@ -115,8 +115,10 @@ class CronCommand extends CConsoleCommand {
         $relayInfo = Yii::app()->RelayController->getRelayStatus(NULL, false);
         $relayInfo = var_dump($relayInfo);
         $this->debug("Relay information: $relayInfo");
-        $relayInfo = Yii::app()->RelayController->getRelayStatus(NULL, false);
+        unset($relayInfo);
         var_dump(Yii::app()->RelayController->changeRelayStatus(1, 1));
+        $relayInfo = Yii::app()->RelayController->getRelayStatus(NULL, false);
+        unset($relayInfo);
     }
 
     /**
