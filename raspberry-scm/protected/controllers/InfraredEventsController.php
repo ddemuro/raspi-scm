@@ -19,6 +19,22 @@ class InfraredEventsController extends Controller {
     }
 
     /**
+     * Send the IR commands to the LED
+     * @param type $util = Util learned by LIRC
+     * @param type $command BUTTON to press
+     * @return type
+     */
+    public function ir_cmd($util, $command) {
+        $temoprog = Yii::app()->functions->yiiparam('infrared_prog', NULL);
+        if ($temoprog == NULL) {
+            Yii::log('No infrared found...', CLogger::LEVEL_ERROR, "info");
+            return NULL;
+        }
+        $res = Yii::app()->RootElevator->executeRoot("$temoprog  SEND_ONCE $utilname $command", false);
+        return $res;
+    }
+    
+    /**
      * Creates a new model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      */
@@ -48,6 +64,7 @@ class InfraredEventsController extends Controller {
 
         if (isset($_POST['InfraredEvents'])) {
             $model->attributes = $_POST['InfraredEvents'];
+            $this->ir_cmd($model->device, $categories[$model->action]);
             if ($model->save())
                 $this->redirect(array('view', 'id' => $model->date));
         }

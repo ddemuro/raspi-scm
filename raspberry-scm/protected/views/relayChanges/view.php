@@ -9,7 +9,6 @@ $this->breadcrumbs = array(
 
 $this->menu = array(
     array('label' => 'List Relay Changes', 'url' => array('index')),
-    array('label' => 'View Actual Relay Status', 'url' => array('viewActual')),
     array('label' => 'Create Relay Changes', 'url' => array('create')),
     array('label' => 'Update Relay Changes', 'url' => array('update', 'id' => $model->date)),
     array('label' => 'Delete Relay Changes', 'url' => '#', 'linkOptions' => array('submit' => array('delete', 'id' => $model->date), 'confirm' => 'Are you sure you want to delete this item?')),

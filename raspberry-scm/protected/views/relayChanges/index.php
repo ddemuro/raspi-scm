@@ -9,6 +9,7 @@ $this->breadcrumbs = array(
 $this->menu = array(
     array('label' => 'Create Relay Changes', 'url' => array('create')),
     array('label' => 'Manage Relay Changes', 'url' => array('admin')),
+    array('label' => 'View Actual Relay Status', 'url' => array('viewActual')),
 );
 ?>
 
