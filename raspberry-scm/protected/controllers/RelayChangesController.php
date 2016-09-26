@@ -19,6 +19,17 @@ class RelayChangesController extends Controller {
     }
 
     /**
+     * Displays a particular model.
+     * @param integer $id the ID of the model to be displayed
+     */
+    public function actionViewActual($id) {
+        $res = Yii::app()->RelayController->getRelayStatus(NULL, TRUE);
+        $this->render('_viewActualStatus', array(
+            'status' => $res,
+        ));
+    }
+    
+    /**
      * Creates a new model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      */
@@ -30,8 +41,12 @@ class RelayChangesController extends Controller {
 
         if (isset($_POST['RelayChanges'])) {
             $model->attributes = $_POST['RelayChanges'];
-            if ($model->save())
+            $res = Yii::app()->RelayController->changeRelayStatus($model->relay_number, $model->action);
+            if ($res && $model->save())
                 $this->redirect(array('view', 'id' => $model->date));
+            else {
+                Yii::log("Error either changing relay status, or saving the changes. Relay Number: $model->relay_number Action: $model->action");
+            }
         }
 
         $this->render('create', array(
@@ -53,8 +68,12 @@ class RelayChangesController extends Controller {
         $categories = array(0 => 'OFF', 1 => 'ON', 2 => 'PULSE');
         if (isset($_POST['RelayChanges'])) {
             $model->attributes = $_POST['RelayChanges'];
-            if ($model->save())
+            $res = Yii::app()->RelayController->changeRelayStatus($model->relay_number, $model->action);
+            if ($res && $model->save())
                 $this->redirect(array('view', 'id' => $model->date, 'categories' => $categories));
+            else {
+                Yii::log("Error either changing relay status, or saving the changes. Relay Number: $model->relay_number Action: $model->action");
+            }
         }
 
         $this->render('update', array(
