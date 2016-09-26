@@ -105,8 +105,8 @@ class RelayController extends CApplicationComponent {
                 CURLOPT_USERAGENT => 'Raspberry Pi SCM',
                 CURLOPT_POST => 1,
                 CURLOPT_POSTFIELDS => array(
-                    pin => $relay_number,
-                    status => $status
+                    'pin' => $relay_number,
+                    'status' => $status
                 )
             ));
             // Send the request & save response to $resp
