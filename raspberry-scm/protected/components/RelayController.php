@@ -91,6 +91,7 @@ class RelayController extends CApplicationComponent {
         $crelay = Yii::app()->functions->yiiparam('crelay', NULL);
         $crelayurl = Yii::app()->functions->yiiparam('crelay_url', 'http://localhost:8000/gpio');
         Yii::log("CRelay $crelay, API URL: $crelayurl.", CLogger::LEVEL_WARNING, "info");
+        echo 's1 done';
         if ($crelay === NULL) {
             Yii::log('CRelay not installed or configured in the main.php file.', CLogger::LEVEL_WARNING, "info");
             return NULL;
@@ -102,6 +103,7 @@ class RelayController extends CApplicationComponent {
             Yii::log('Error getting status of the requested relay.'+$relay_number, CLogger::LEVEL_INFO, "info");
             return -1;
         }
+        echo 's2 done';
         if ($req_status && $status == 1) {
             Yii::log('Trying to set the state to the same state of relay.', CLogger::LEVEL_INFO, "info");
         } else {
@@ -123,6 +125,6 @@ class RelayController extends CApplicationComponent {
             // Close request to clear up some resources
             curl_close($curl);
         }
+        echo 'final';
     }
-
 }
