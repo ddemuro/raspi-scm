@@ -68,7 +68,7 @@ class InfraredEvents extends TKActiveRecord {
      * Save date and password before saving
      */
     public function beforeSave() {
-        $this->date = date("Y-m-d H:i:s", time());
+        $this->date = date('Y-m-d H:m:s');
         return parent::beforeSave();
     }
 

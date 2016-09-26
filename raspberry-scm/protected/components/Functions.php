@@ -71,8 +71,7 @@ class Functions extends CApplicationComponent {
      * Writes flag to database
      */
     public function writeFlag($name, $status) {
-        // As we send keep alives every minute, in the last 30 seconds he should be online
-        $time = date("Y-m-d H:i:s", time() - 10);
+        $time = date('Y-m-d H:m:s');
         $existingFlags = Flags::model()->findAll('flag_name=:flgname', array(':flgname' => $name));
         if (count($existingFlags) > 0) {
             return false;
@@ -96,8 +95,7 @@ class Functions extends CApplicationComponent {
      * Removes flag to database
      */
     public function removeFlag($name) {
-        // As we send keep alives every minute, in the last 30 seconds he should be online
-        $time = date("Y-m-d H:i:s", time() - 10);
+        $time = date('Y-m-d H:m:s');
         $existingFlags = Flags::model()->findAll('flag_name=:flgname', array(':flgname' => $name));
         if ($existingFlags != NULL && $existingFlags > 0)
             return $existingFlags->delete();
