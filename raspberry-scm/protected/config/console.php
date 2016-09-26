@@ -1,4 +1,5 @@
 <?php
+
 // Sort cache options
 $caches = array();
 $fastCache = true;
@@ -45,8 +46,18 @@ return array(
             'class' => 'CLogRouter',
             'routes' => array(
                 array(
+                    'class' => 'CWebLogRoute',
+                    'enabled' => true,
+                    'levels' => 'info',
+                ),
+                array(
+                    'class' => 'CProfileLogRoute',
+                    'enabled' => false,
+                ),
+                array(
+                    'logFile' => 'traceDebug.log',
                     'class' => 'CFileLogRoute',
-                    'levels' => 'error, warning, trace, profile, info',
+                    'levels' => 'error,info, warning',
                 ),
             ),
         ),
