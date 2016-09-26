@@ -61,7 +61,7 @@ class Functions extends CApplicationComponent {
      */
     function processExists($processName) {
         $exists = false;
-        $pids = Yii::app()->RootElevator->executeRoot("ps -A | grep -i $processName | grep -v grep");
+        $pids = Yii::app()->RootElevator->executeRoot("ps -A | grep -i $processName | grep -v grep", NULL);
         if (count($pids) > 0) {
             $exists = true;
         }
