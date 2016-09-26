@@ -68,6 +68,7 @@ return array(
         'cpu_tmp' => '/sys/class/thermal/thermal_zone0/temp',
         'gpu_tmp' => '/opt/vc/bin/vcgencmd measure_temp',
         'crelay' => '/opt/raspberrypi/crelay',
+        'crelay_url' => 'http://localhost:8000/gpio',
         'infrared_prog' => 'irsend',
         'max_temp' => '31',
         'min_temp' => '16',
