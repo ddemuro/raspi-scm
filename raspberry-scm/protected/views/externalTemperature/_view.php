@@ -25,7 +25,7 @@
 
         </div>
     <?php endforeach; ?>
-<?php else: ?>
+<?php elseif(isset($model)): ?>
             <div class="view">
 
             <b><?php echo CHtml::encode($model->getAttributeLabel('date')); ?>:</b>
