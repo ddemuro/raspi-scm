@@ -83,6 +83,8 @@ class CronCommand extends CConsoleCommand {
     // Log the actual status of the relay board
     public function logUPSStatus($force) {
         $ups = Ups::model()->findAll();
+        if($ups == NULL)
+            return;
         foreach ($model as $ups) {
             $res = Yii::app()->UpsController->getAllStatuses($model['name'], $model['setting'], '');
             if ($res == -100) {
