@@ -134,7 +134,7 @@ class ExternalTemperatureController extends Controller {
      * @throws CHttpException
      */
     public function loadModel($id) {
-        $model = ExternalTemperature::model()->findByPk($id);
+        $model = ExternalTemperature::model()->findByAttributes(array('date'=>$id));
         if ($model === null)
             throw new CHttpException(404, 'The requested page does not exist.');
         return $model;
