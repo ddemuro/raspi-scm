@@ -13,5 +13,7 @@
     <b><?php echo CHtml::encode($model->getAttributeLabel('temperature')); ?>:</b>
     <?php echo CHtml::encode($model->temperature); ?>
     <br />
+    
    <?php endif; ?>
+
 </div>
