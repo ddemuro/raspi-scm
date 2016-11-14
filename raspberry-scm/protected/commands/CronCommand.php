@@ -137,6 +137,8 @@ class CronCommand extends CConsoleCommand {
             $tempModel = new ExternalTemperature();
             $tempModel->temperature = floatval($res[1]);
             $tempModel->humidity = floatval($res[0]);
+            // Decide if alert is required
+            $this->temperatureAlert($tempModel->temperature, $tempModel->humidity);
             $tempModel->date = date('Y-m-d H:m:s');
             $tempModel->log = "DataPIN=$pin->setting";
             $tempModel->save();
@@ -148,7 +150,67 @@ class CronCommand extends CConsoleCommand {
             unset($res);
         }
     }
+    
+    /**
+     * @param temperature to calculate alert.
+     * @param humidity to calculate alert.
+     */
+    public function temperatureAlert($temp, $hmudity){
+        $max_temp = Yii::app()->params['max_temp'];
+        $min_temp = Yii::app()->params['min_temp'];
+        $max_warn_temp = Yii::app()->params['max_warn_temp'];
+        $min_warn_temp = Yii::app()->params['min_warn_temp'];
+        $min_humidty = Yii::app()->params['min_humidity'];
+        $warn_humidity = Yii::app()->params['warn_humidity'];
+        $max_humidity = Yii::app()->params['max_humidity'];
+        // Temperature exceeded the max temperature
+        if($temp > $max_temp){
+            $this->email("Maximum temperature exceeded: Current: $temp, Maximum: $max_temp", 'ALERT: Maximum temperature was exceeded.');
+            if ($hmudity > $max_humidity){
+                $this->email("Maximum humidity exceeded: Current: $hmudity, Maximum: $max_humidity", 'ALERT: Maximum humidity was exceeded.');                
+            }
+        }
+        // Temperature below minimum
+        if($temp < $min_temp){
+            $this->email("Minimum temperature exceeded: Current: $temp, Minimum: $max_temp", 'ALERT: Minimum temperature was exceeded.');
+            if ($hmudity < $min_humidity){
+                $this->email("Minimum humidity exceeded: Current: $hmudity, Minimum: $max_humidity", 'ALERT: Minimum humidity was exceeded.');                
+                return;
+            }
+            return;
+        }
+        // Temperature below warn
+        if($temp < $min_warn_temp){
+            $this->email("Minimum warning temperature exceeded: Current: $temp, Minimum: $max_temp", 'WARNING: Minimum temperature was exceeded.');
+        }
+        // Temperature exceeded the max warning temperature
+        if($temp > $max_warn_temp){
+            $this->email("Maximum warning temperature exceeded: Current: $temp, Maximum: $max_temp", 'WARNING: Maximum temperature was exceeded.');
+        }
+        if($warn_humidity > $humidity){
+            $this->email("Warning, humidity over warning level. Current: $humidity", "Current: $humidity, Max warn level: $warn_humidity.");   
+        }
+        unset($max_temp);
+        unset($min_temp);
+        unset($max_warn_temp);
+        unset($min_warn_temp);
+        unset($min_humidty);
+        unset($warn_humidity);
+        unset($max_humidity);
+    }
 
+    /**
+     * Sends email alerting of change
+     * @param alert Sends message.
+     * @param subject Subject to be sent on email.
+     */
+    public function email($alert, $subject){
+        $to = Yii::app()->params['alertEmail'];
+        $subject = $subject;
+        $content = $alert;
+        Yii::app()->mailer->send($to, $subject, $content);
+    }
+    
     // Log the actual status of the relay board
     public function logRelayStatus($force) {
         $res = Yii::app()->RelayController->getRelayStatus(NULL, true);
