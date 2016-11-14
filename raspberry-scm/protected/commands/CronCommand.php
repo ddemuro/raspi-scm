@@ -160,7 +160,7 @@ class CronCommand extends CConsoleCommand {
         Yii::app()->functions->writeFlag('relay_status', $res);
         $relay = new RelayChanges();
         //array('date, relay_number, action, log', 'required'),
-        $relay->
+        //$relay->
         //Yii::app()->RelayController->changeRelayStatus(1, 1);
         $this->debug("Relay info: $relayInfo", false);
         var_dump($relayInfo);

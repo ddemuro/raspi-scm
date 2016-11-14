@@ -11,7 +11,7 @@ if (!is_writeable(ROOT_PATH . 'protected/runtime')) {
     die('Please chmod 0777 ' . ROOT_PATH . 'protected/runtime');
 }
 
-$configFile = 'console.php';
+$configFile = 'production.php';
 
 //We load YII
 require_once($yii);

@@ -30,7 +30,7 @@ then
         git checkout master
         git pop
 		git pull
-        git merge FETCH_HEAD --squash v1.0 -m "Automerging updates"
+        git merge FETCH_HEAD
         echo "Merged updates" >> $LOG
         for branch in $(git for-each-ref --format '%(refname:short)' refs/heads/)
         do
