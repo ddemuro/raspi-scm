@@ -33,17 +33,55 @@ class CronCommand extends CConsoleCommand {
             $this->debug("Ready for another run at: $time");
             // Every 12 hours
             if ($runs == 21600) {
-                $this->logCPUTemp(true);
-                $this->logExternalTemperature(true);
-                $this->logRelayStatus(true);
-                $this->logUPSStatus(true);
+                try{
+                    $this->logCPUTemp(true);
+                } catch (Exception $ex) {
+                    $this->debug("Error: " + var_dump($ex));
+                }
+                
+                try{
+                    $this->logExternalTemperature(true);
+                } catch (Exception $ex) {
+                    $this->debug("Error: " + var_dump($ex));
+                }
+                
+                try{
+                    $this->logRelayStatus(true);
+                } catch (Exception $ex) {
+                    $this->debug("Error: " + var_dump($ex));
+                }
+                
+                try{
+                    $this->logUPSStatus(true);
+                } catch (Exception $ex) {
+                    $this->debug("Error: " + var_dump($ex));
+                }
                 $runs = 0;
                 // Every 30 sec, only updates if we've had changes
             } else {
-                $this->logCPUTemp(false);
-                $this->logExternalTemperature(false);
-                $this->logRelayStatus(false);
-                $this->logUPSStatus(false);
+                try{
+                    $this->logCPUTemp(false);
+                } catch (Exception $ex) {
+                    $this->debug("Error: " + var_dump($ex));
+                }
+                
+                try{
+                    $this->logExternalTemperature(false);
+                } catch (Exception $ex) {
+                    $this->debug("Error: " + var_dump($ex));
+                }
+                
+                try{
+                    $this->logRelayStatus(false);
+                } catch (Exception $ex) {
+                    $this->debug("Error: " + var_dump($ex));
+                }
+                
+                try{
+                    $this->logUPSStatus(false);
+                } catch (Exception $ex) {
+                    $this->debug("Error: " + var_dump($ex));
+                }
             }
             unset($time);
             //We sleep before next loop.
