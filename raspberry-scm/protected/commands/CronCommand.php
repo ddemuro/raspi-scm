@@ -155,7 +155,7 @@ class CronCommand extends CConsoleCommand {
      * @param temperature to calculate alert.
      * @param humidity to calculate alert.
      */
-    public function temperatureAlert($temp, $hmudity){
+    public function temperatureAlert($temp, $humidity){
         $max_temp = Yii::app()->params['max_temp'];
         $min_temp = Yii::app()->params['min_temp'];
         $max_warn_temp = Yii::app()->params['max_warn_temp'];
