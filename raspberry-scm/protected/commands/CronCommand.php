@@ -262,8 +262,8 @@ class CronCommand extends CConsoleCommand {
         //array('date, relay_number, action, log', 'required'),
         //$relay->
         //Yii::app()->RelayController->changeRelayStatus(1, 1);
-        $this->debug("Relay info: $relayInfo", false);
-        var_dump($relayInfo);
+        //$this->debug("Relay info: $relayInfo", false);
+        //var_dump($relayInfo);
     }
 
     /**
