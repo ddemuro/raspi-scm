@@ -14,7 +14,7 @@ $production = array(
             'username' => 'alerts',
             'password' => "fQJ'3ur#7.aTDj",
             // for php mail
-            'class' => 'extensions.mailer.YiiMailer',
+            'class' => 'extensions.YiiMailer.Mailer',
         ),
     ),
     // application-level parameters that can be accessed
