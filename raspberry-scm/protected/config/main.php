@@ -101,5 +101,6 @@ return array(
         'RootElevator' => array('class' => 'application.components.RootElevator',),
         'TKActiveRecord' => array('class' => 'application.components.TKActiveRecord',),
         'phpseclib' => array('class' => 'ext.phpseclib.PhpSecLib'),
+        'mailer' => array('class' => 'ext.YiiMailer.Mailer'),
     ),
 );
