@@ -2,11 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/A:/Documents/IDE-Projects/PHP/raspi-scm/raspberry-scm/protected/views/externalTemperature/index.php</file>
-            <file>file:/A:/Documents/IDE-Projects/PHP/raspi-scm/raspberry-scm/protected/views/externalTemperature/view.php</file>
-            <file>file:/A:/Documents/IDE-Projects/PHP/raspi-scm/raspberry-scm/protected/controllers/ExternalTemperatureController.php</file>
-            <file>file:/A:/Documents/IDE-Projects/PHP/raspi-scm/raspberry-scm/protected/views/externalTemperature/admin.php</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>
