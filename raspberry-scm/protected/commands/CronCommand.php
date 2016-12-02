@@ -19,20 +19,23 @@ set_time_limit(0);
 class CronCommand extends CConsoleCommand {
 
     public $debug = false;
-
+    public $from_time = 0;
+    private $to_time = 0;
+    public $mail_sent = false;
+    public $supress_mail = false;
+    public $start = 0;
     /**
      * Controller constructor
      */
-    public function run() {
-        $runs = 0;
+    public function run($args) {
         // If we want the script to echo information to STDOUT.
         $this->debug = true;
+        $this->email("Starting test... - Any alert past this e-mail are ACTUAL alerts.", 'ALERT: Raspberry system check has started.');
+        $this->start = date("Y-m-d H:i:s", time());
         while (true) {
-            // As we send keep alives every minute, in the last 30 seconds he should be online
-            $time = date("Y-m-d H:i:s", time() + 30);
-            $this->debug("Ready for another run at: $time");
             // Every 12 hours
-            if ($runs == 21600) {
+            if (round(abs(strtotime(date("Y-m-d H:i:s", time())) - $this->start) / 60,2) >= 720) {
+                $this->start = date("Y-m-d H:i:s", time());
                 try{
                     $this->logCPUTemp(true);
                 } catch (Exception $ex) {
@@ -56,7 +59,6 @@ class CronCommand extends CConsoleCommand {
                 } catch (Exception $ex) {
                     $this->debug("Error: " + var_dump($ex));
                 }
-                $runs = 0;
                 // Every 30 sec, only updates if we've had changes
             } else {
                 try{
@@ -83,14 +85,12 @@ class CronCommand extends CConsoleCommand {
                     $this->debug("Error: " + var_dump($ex));
                 }
             }
-            unset($time);
             //We sleep before next loop.
             $currentMemory = (memory_get_peak_usage(true) / 1024 / 1024);
             $mem_usage = (memory_get_usage(true) / 1024 / 1024);
-            usleep(3000000);
+            sleep(Yii::app()->params['run_every']*60);
             $this->debug("Peak memory usage: " . $currentMemory . " MB\r\n", false);
             $this->debug("Actual memory usage: " . $mem_usage . " MB\r\n", false);
-            $runs++;
             gc_collect_cycles();
         }
     }
@@ -110,9 +110,10 @@ class CronCommand extends CConsoleCommand {
         $tempModel = new InternalTemperature();
         $tempModel->temperature = floatval($res);
         $tempModel->date = date('Y-m-d H:m:s');
+        $tempModel->date = date('CPU');
         $tempModel->save();
         $str = $tempModel->ToString();
-        $this->debug("$str \n", false);
+        $this->debug("$str \r\n", false);
         unset($tempModel);
         unset($model);
         unset($res);
@@ -126,11 +127,11 @@ class CronCommand extends CConsoleCommand {
         foreach ($model as $ups) {
             $res = Yii::app()->UpsController->getAllStatuses($model['name'], $model['setting'], '');
             if ($res == -100) {
-                $this->debug("UPS is not found...\n", false);
+                $this->debug("UPS is not found...\r\n", false);
                 continue;
             }
             if ($res == NULL) {
-                $this->debug("UPS is not configured...\n", false);
+                $this->debug("UPS is not configured...\r\n", false);
                 continue;
             }
             $flag = Yii::app()->functions->getFlag("ups_status");
@@ -142,11 +143,11 @@ class CronCommand extends CConsoleCommand {
             $upsstatus = new UpsStatus();
             //array('id, date, status, change', 'required'),
             $upsstatus->id = $model['id'];
-            $upsstatus->status = explode('\n', $flag);
+            $upsstatus->status = explode('\r\n', $flag);
             $upsstatus->change = array_diff($flag, $res);
             $upsstatus->date = date('Y-m-d H:m:s');
             $str = $upsstatus->ToString();
-            $this->debug("$str \n", false);
+            $this->debug("$str \r\n", false);
             unset($upsstatus);
             unset($model);
             unset($str);
@@ -160,10 +161,10 @@ class CronCommand extends CConsoleCommand {
         foreach ($model as $pin) {
             $res = Yii::app()->TemperatureController->getHumidityTemp($pin->setting, $pin->extended);
             $vd = var_dump($res);
-            $this->debug("Checking with pin: $pin->setting and extended: $pin->extended. $vd \n", false);
+            $this->debug("Checking with pin: $pin->setting and extended: $pin->extended. $vd \r\n", false);
             if ($res === NULL || count($res) <= 1) {
-                Yii::log("Error loading temperature information, skipping...");
-                Yii::log("Confirm you've added he root password to the config files....");
+                $this->debug("Error loading temperature information, skipping...");
+                $this->debug("Confirm you've added he root password to the config files....");
                 continue;
             }
             $flag = Yii::app()->functions->getFlag("ex_tmp_$pin->setting");
@@ -181,7 +182,7 @@ class CronCommand extends CConsoleCommand {
             $tempModel->log = "DataPIN=$pin->setting";
             $tempModel->save();
             $str = $tempModel->ToString();
-            $this->debug("$str \n", false);
+            $this->debug("$str \r\n", false);
             unset($tempModel);
             unset($model);
             unset($str);
@@ -202,17 +203,22 @@ class CronCommand extends CConsoleCommand {
         $warn_humidity = Yii::app()->params['warn_humidity'];
         $max_humidity = Yii::app()->params['max_humidity'];
         // Temperature exceeded the max temperature
+        $this->debug("Max warn temp: $max_warn_temp, Min warn temp: $min_warn_temp, Max Temp: $max_temp, Min Temp: $min_temp, Max Humidity: $max_humidity, Warn Humidity: $warn_humidity, $");
         if($temp > $max_temp){
-            $this->email("Maximum temperature exceeded: Current: $temp, Maximum: $max_temp", 'ALERT: Maximum temperature was exceeded.');
-            if ($hmudity > $max_humidity){
-                $this->email("Maximum humidity exceeded: Current: $hmudity, Maximum: $max_humidity", 'ALERT: Maximum humidity was exceeded.');                
+            $this->email("Maximum temperature exceeded: Current: $temp, Maximum: $max_temp", 'ALERT: Maximum temperature was exceeded.', true);
+            $this->debug("Maximum temperature exceeded: Current: $temp, Maximum: $max_temp", 'ALERT: Maximum temperature was exceeded.');
+            if ($humidity > $max_humidity){
+                $this->email("Maximum humidity exceeded: Current: $humidity, Maximum: $max_humidity", 'ALERT: Maximum humidity was exceeded.', true);                
+                $this->debug("Maximum humidity exceeded: Current: $humidity, Maximum: $max_humidity", 'ALERT: Maximum humidity was exceeded.');
             }
         }
         // Temperature below minimum
         if($temp < $min_temp){
-            $this->email("Minimum temperature exceeded: Current: $temp, Minimum: $max_temp", 'ALERT: Minimum temperature was exceeded.');
-            if ($hmudity < $min_humidity){
-                $this->email("Minimum humidity exceeded: Current: $hmudity, Minimum: $max_humidity", 'ALERT: Minimum humidity was exceeded.');                
+            $this->email("Minimum temperature exceeded: Current: $temp, Minimum: $max_temp", 'ALERT: Minimum temperature was exceeded.', true);
+            $this->debug("Minimum temperature exceeded: Current: $temp, Minimum: $max_temp", 'ALERT: Minimum temperature was exceeded.');
+            if ($humidity < $min_humidity){
+                $this->email("Minimum humidity exceeded: Current: $humidity, Minimum: $max_humidity", 'ALERT: Minimum humidity was exceeded.', true);                
+                $this->debug("Minimum humidity exceeded: Current: $humidity, Minimum: $max_humidity", 'ALERT: Minimum humidity was exceeded.');
                 return;
             }
             return;
@@ -220,13 +226,16 @@ class CronCommand extends CConsoleCommand {
         // Temperature below warn
         if($temp < $min_warn_temp){
             $this->email("Minimum warning temperature exceeded: Current: $temp, Minimum: $max_temp", 'WARNING: Minimum temperature was exceeded.');
+            $this->debug("Minimum warning temperature exceeded: Current: $temp, Minimum: $max_temp", 'WARNING: Minimum temperature was exceeded.');
         }
         // Temperature exceeded the max warning temperature
         if($temp > $max_warn_temp){
             $this->email("Maximum warning temperature exceeded: Current: $temp, Maximum: $max_temp", 'WARNING: Maximum temperature was exceeded.');
+            $this->debug("Maximum warning temperature exceeded: Current: $temp, Maximum: $max_temp", 'WARNING: Maximum temperature was exceeded.');
         }
         if($warn_humidity > $humidity){
             $this->email("Warning, humidity over warning level. Current: $humidity", "Current: $humidity, Max warn level: $warn_humidity.");   
+            $this->debug("Warning, humidity over warning level. Current: $humidity", "Current: $humidity, Max warn level: $warn_humidity.");
         }
         unset($max_temp);
         unset($min_temp);
@@ -241,12 +250,28 @@ class CronCommand extends CConsoleCommand {
      * Sends email alerting of change
      * @param alert Sends message.
      * @param subject Subject to be sent on email.
+     * @param force (If we ignore the supress time)
      */
-    public function email($alert, $subject){
-        $to = Yii::app()->params['alertEmail'];
-        $subject = $subject;
-        $content = $alert;
-        Yii::app()->mailer->send($to, $subject, $content);
+    public function email($alert, $subject, $force = false){
+        if(!$this->supress_mail){
+            // Time since supress
+            $this->to_time = strtotime(date("Y-m-d H:i:s", time() + intval(Yii::app()->params['mail_antispam'])));
+        }
+        if($this->supress_mail && round(abs(strtotime(date("Y-m-d H:i:s", time())) - $this->from_time) / 60,2) <= 0){
+            $this->supress_mail = false;
+        }
+        if(!$this->supress_mail || $force){
+            $mail = new YiiMailer();
+            //$mail->clearLayout();//if layout is already set in config
+            $mail->setFrom('alerts@derekdemuro.com', 'Raspberry Alert System.');
+            $mail->setTo(Yii::app()->params['alertEmail']);
+            $mail->setCc(Yii::app()->params['adminEmail']);
+            $mail->setSubject($subject);
+            $mail->setBody($alert);
+            $mail->send();
+            $this->supress_mail = true;
+        }
+        unset($mail);
     }
     
     // Log the actual status of the relay board

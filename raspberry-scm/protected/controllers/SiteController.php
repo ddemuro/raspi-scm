@@ -1,7 +1,16 @@
 <?php
 
-class SiteController extends Controller {
+class SiteController extends BaseController {
 
+     /**
+     * Class constructor
+     *
+     */
+    public function init() {
+        /* Run init */
+        parent::init();
+    }
+    
     /**
      * Declares class-based actions.
      */
@@ -76,7 +85,7 @@ class SiteController extends Controller {
                 // Login
                 $identity = new InternalIdentity($model->email, $model->password);
                 if ($identity->authenticate()) {
-                    Yii::log("User logged in. &model->email", CLogger::LEVEL_INFO, "info");
+                    Yii::log("User logged in. $model->email", CLogger::LEVEL_INFO, "info");
                     // Member authenticated, Login
                     Yii::app()->user->setFlash('success', Yii::t('login', 'Thanks. You are now logged in.'));
                     Yii::app()->user->login($identity, (Yii::app()->params['loggedInDays'] * 60 * 60 * 24));

@@ -1,18 +1,23 @@
 <?php
 
-class InternalTemperatureController extends Controller {
+class InternalTemperatureController extends BaseController {
 
     /**
-     * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
-     * using two-column layout. See 'protected/views/layouts/column2.php'.
+     * Class constructor
+     *
      */
-    public $layout = '//layouts/column2';
-
+    public function init() {
+        $this->pageTitle = Yii::app()->name . ' - Internal Temperature';
+        /* Run init */
+        parent::init();
+    }
+    
     /**
      * Displays a particular model.
      * @param integer $id the ID of the model to be displayed
      */
     public function actionView($id) {
+        Yii::app()->functions->simpleAccessProvision();
         $this->render('view', array(
             'model' => $this->loadModel($id),
         ));
@@ -23,6 +28,7 @@ class InternalTemperatureController extends Controller {
      * If creation is successful, the browser will be redirected to the 'view' page.
      */
     public function actionCreate() {
+        Yii::app()->functions->simpleAccessProvision();
         $model = new InternalTemperature;
 
         // Uncomment the following line if AJAX validation is needed
@@ -44,16 +50,18 @@ class InternalTemperatureController extends Controller {
      * @param integer $id the ID of the model to be displayed
      */
     public function actionViewStaticCPU() {
+        Yii::app()->functions->simpleAccessProvision();
         $res = Yii::app()->TemperatureController->getInternalCPUTemp();
         if ($res == NULL) {
             Yii::log("Error loading temperature information, skipping...");
             return NULL;
         }
-        $tempModel = new ExternalTemperature();
+        $tempModel = new InternalTemperature();
         $tempModel->temperature = $res;
+        $tempModel->type = "CPU";
         $tempModel->date = date('Y-m-d H:m:s');
         $this->render('_view', array(
-            'model' => $tempModel,));
+            'data' => $tempModel,));
     }
 
     /**
@@ -61,16 +69,18 @@ class InternalTemperatureController extends Controller {
      * @param integer $id the ID of the model to be displayed
      */
     public function actionViewStaticGPU() {
+        Yii::app()->functions->simpleAccessProvision();
         $res = Yii::app()->TemperatureController->getInternalGPUTemp();
         if ($res == NULL) {
             Yii::log("Error loading temperature information, skipping...");
             return NULL;
         }
-        $tempModel = new ExternalTemperature();
+        $tempModel = new InternalTemperature();
         $tempModel->temperature = $res;
+        $tempModel->type = "GPU";
         $tempModel->date = date('Y-m-d H:m:s');
         $this->render('_view', array(
-            'model' => $tempModel,));
+            'data' => $tempModel,));
     }
 
     /**
@@ -79,6 +89,7 @@ class InternalTemperatureController extends Controller {
      * @param integer $id the ID of the model to be updated
      */
     public function actionUpdate($id) {
+        Yii::app()->functions->simpleAccessProvision();
         $model = $this->loadModel($id);
 
         // Uncomment the following line if AJAX validation is needed
@@ -101,6 +112,7 @@ class InternalTemperatureController extends Controller {
      * @param integer $id the ID of the model to be deleted
      */
     public function actionDelete($id) {
+        Yii::app()->functions->simpleAccessProvision();
         $this->loadModel($id)->delete();
 
         // if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
@@ -122,6 +134,7 @@ class InternalTemperatureController extends Controller {
      * Manages all models.
      */
     public function actionAdmin() {
+        Yii::app()->functions->simpleAccessProvision();
         $model = new InternalTemperature('search');
         $model->unsetAttributes();  // clear any default values
         if (isset($_GET['InternalTemperature']))
@@ -140,7 +153,7 @@ class InternalTemperatureController extends Controller {
      * @throws CHttpException
      */
     public function loadModel($id) {
-        $model = InternalTemperature::model()->findByPk($id);
+        $model = InternalTemperature::model()->findByAttributes(array('date' => $_GET['id']));
         if ($model === null)
             throw new CHttpException(404, 'The requested page does not exist.');
         return $model;

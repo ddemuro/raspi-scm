@@ -10,6 +10,17 @@ class Functions extends CApplicationComponent {
     }
 
     /**
+     * If you hit this method, and you are not an administrator...
+     * You're thrown a 403 error.
+     * @throws CHttpException
+     */
+    public function simpleAccessProvision(){
+        if (Yii::app()->user->isGuest) {
+            throw new CHttpException(403, Yii::t('error', 'Sorry, You don\'t have the required permissions to enter this section'));
+        }
+    }
+    
+    /**
      * Function to compress and encode strings
      * @property @string array to encode
      * @return Encoded string.
@@ -54,6 +65,17 @@ class Functions extends CApplicationComponent {
             return $default;
     }
 
+    /**
+     * True if text is in any point in arr
+     * @param type $arr
+     * @param type $text
+     */
+    public function textInArray($arr, $text){
+        if(is_string($arr))
+            return strpos($arr, $text) !== false;
+        return in_array($text, $arr, true);
+    }
+    
     /**
      * To check if there's a process already running.
      * @param type $processName

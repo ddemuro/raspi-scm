@@ -50,6 +50,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
     'columns' => array(
         'date',
         'temperature',
+        'type',
         array(
             'class' => 'CButtonColumn',
         ),

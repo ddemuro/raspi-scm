@@ -24,6 +24,7 @@ $this->widget('zii.widgets.CDetailView', array(
     'attributes' => array(
         'date',
         'temperature',
+        'type',
     ),
 ));
 ?>

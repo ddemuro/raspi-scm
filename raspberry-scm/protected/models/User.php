@@ -56,7 +56,7 @@ class User extends TKActiveRecord {
      * Save date and password before saving
      */
     public function beforeSave() {
-        if ($this->isNewRecord) {
+        if ($this->isNewRecord || $this->scenario == 'login') {
             $this->ipaddress = Yii::app()->request->getUserHostAddress();
         }
 
@@ -67,7 +67,7 @@ class User extends TKActiveRecord {
         if (($this->scenario == 'update' && $this->password)) {
             $this->password = $this->hashPassword($this->password, $this->email);
         }
-
+        
         return parent::beforeSave();
     }
 

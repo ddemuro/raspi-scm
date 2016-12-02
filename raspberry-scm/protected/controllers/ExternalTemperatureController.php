@@ -1,7 +1,17 @@
 <?php
 
-class ExternalTemperatureController extends Controller {
+class ExternalTemperatureController extends BaseController {
 
+    /**
+     * Class constructor
+     *
+     */
+    public function init() {
+        $this->pageTitle = Yii::app()->name . ' - External Temperature';
+        /* Run init */
+        parent::init();
+    }
+    
     /**
      * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
      * using two-column layout. See 'protected/views/layouts/column2.php'.
@@ -13,6 +23,7 @@ class ExternalTemperatureController extends Controller {
      * @param integer $id the ID of the model to be displayed
      */
     public function actionView($id) {
+        Yii::app()->functions->simpleAccessProvision();
         $this->render('view', array(
             'model' => $this->loadModel($id),
         ));
@@ -23,11 +34,12 @@ class ExternalTemperatureController extends Controller {
      * @param integer $id the ID of the model to be displayed
      */
     public function actionViewAll() {
+        Yii::app()->functions->simpleAccessProvision();
         $model = Setting::model()->findAll('setting_id=:sett', array(':sett' => 'external_temp_sensor_pin'));
         $temps = array();
         foreach ($model as $pin) {
             $res = Yii::app()->TemperatureController->getHumidityTemp($pin->setting, $pin->extended);
-            if ($res === NULL || count($res) <= 1) {
+            if ($res === NULL) {
                 Yii::log("Error loading temperature information, skipping...");
                 Yii::log("Confirm you've added he root password to the config files....");
                 continue;
@@ -42,7 +54,6 @@ class ExternalTemperatureController extends Controller {
 
         $this->render('_view', array(
             'model' => $temps,
-            'multi' => true,
         ));
     }
 
@@ -51,6 +62,7 @@ class ExternalTemperatureController extends Controller {
      * If creation is successful, the browser will be redirected to the 'view' page.
      */
     public function actionCreate() {
+        Yii::app()->functions->simpleAccessProvision();
         $model = new ExternalTemperature;
 
         // Uncomment the following line if AJAX validation is needed
@@ -73,6 +85,7 @@ class ExternalTemperatureController extends Controller {
      * @param integer $id the ID of the model to be updated
      */
     public function actionUpdate($id) {
+        Yii::app()->functions->simpleAccessProvision();
         $model = $this->loadModel($id);
 
         // Uncomment the following line if AJAX validation is needed
@@ -95,6 +108,7 @@ class ExternalTemperatureController extends Controller {
      * @param integer $id the ID of the model to be deleted
      */
     public function actionDelete($id) {
+        Yii::app()->functions->simpleAccessProvision();
         $this->loadModel($id)->delete();
 
         // if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
@@ -116,6 +130,7 @@ class ExternalTemperatureController extends Controller {
      * Manages all models.
      */
     public function actionAdmin() {
+        Yii::app()->functions->simpleAccessProvision();
         $model = new ExternalTemperature('search');
         $model->unsetAttributes();  // clear any default values
         if (isset($_GET['ExternalTemperature']))

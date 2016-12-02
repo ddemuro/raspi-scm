@@ -31,11 +31,12 @@ class InternalTemperature extends TKActiveRecord {
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('date, temperature', 'required'),
+            array('date, temperature, type', 'required'),
             array('temperature', 'length', 'max' => 255),
+            array('type', 'length', 'max' => 3),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
-            array('date, temperature', 'safe', 'on' => 'search'),
+            array('date, temperature, type', 'safe', 'on' => 'search'),
         );
     }
 
@@ -63,6 +64,7 @@ class InternalTemperature extends TKActiveRecord {
     public function attributeLabels() {
         return array(
             'date' => 'Date',
+            'type' => 'Type',
             'temperature' => 'Temperature',
         );
     }
@@ -85,6 +87,7 @@ class InternalTemperature extends TKActiveRecord {
         $criteria = new CDbCriteria;
 
         $criteria->compare('date', $this->date, true);
+        $criteria->compare('type', $this->type, true);
         $criteria->compare('temperature', $this->temperature, true);
 
         return new CActiveDataProvider($this, array(

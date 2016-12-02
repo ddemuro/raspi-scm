@@ -39,6 +39,7 @@ return array(
         'application.models.*',
         'application.components.*',
         'application.extensions.*',
+        'ext.YiiMailer.YiiMailer',
     ),
     'modules' => array(
         // uncomment the following to enable the Gii tool
@@ -101,6 +102,5 @@ return array(
         'RootElevator' => array('class' => 'application.components.RootElevator',),
         'TKActiveRecord' => array('class' => 'application.components.TKActiveRecord',),
         'phpseclib' => array('class' => 'ext.phpseclib.PhpSecLib'),
-        'mailer' => array('class' => 'ext.YiiMailer.Mailer'),
     ),
 );

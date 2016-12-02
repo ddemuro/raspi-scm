@@ -1,18 +1,23 @@
 <?php
 
-class UserController extends Controller {
+class UserController extends BaseController {
 
     /**
-     * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
-     * using two-column layout. See 'protected/views/layouts/column2.php'.
+     * Class constructor
+     *
      */
-    public $layout = '//layouts/column2';
-
+    public function init() {
+        $this->pageTitle = Yii::app()->name . ' - Users';
+        /* Run init */
+        parent::init();
+    }
+    
     /**
      * Displays a particular model.
      * @param integer $id the ID of the model to be displayed
      */
     public function actionView($id) {
+        Yii::app()->functions->simpleAccessProvision();
         $this->render('view', array(
             'model' => $this->loadModel($id),
         ));
@@ -23,6 +28,7 @@ class UserController extends Controller {
      * If creation is successful, the browser will be redirected to the 'view' page.
      */
     public function actionCreate() {
+        Yii::app()->functions->simpleAccessProvision();
         $model = new User;
 
         // Uncomment the following line if AJAX validation is needed
@@ -46,6 +52,7 @@ class UserController extends Controller {
      * @param integer $id the ID of the model to be updated
      */
     public function actionUpdate($id) {
+        Yii::app()->functions->simpleAccessProvision();
         $model = $this->loadModel($id);
 
         // Uncomment the following line if AJAX validation is needed
@@ -70,6 +77,7 @@ class UserController extends Controller {
      * @param integer $id the ID of the model to be deleted
      */
     public function actionDelete($id) {
+        Yii::app()->functions->simpleAccessProvision();
         $this->loadModel($id)->delete();
 
         // if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
@@ -81,6 +89,7 @@ class UserController extends Controller {
      * Lists all models.
      */
     public function actionIndex() {
+        Yii::app()->functions->simpleAccessProvision();
         $dataProvider = new CActiveDataProvider('User');
         $this->render('index', array(
             'dataProvider' => $dataProvider,
@@ -91,6 +100,7 @@ class UserController extends Controller {
      * Manages all models.
      */
     public function actionAdmin() {
+        Yii::app()->functions->simpleAccessProvision();
         $model = new User('search');
         $model->unsetAttributes();  // clear any default values
         if (isset($_GET['User']))

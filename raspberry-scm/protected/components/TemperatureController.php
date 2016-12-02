@@ -25,16 +25,16 @@ class TemperatureController extends CApplicationComponent {
     public function getHumidityTemp($datapin, $extended) {
         $tempprog = Yii::app()->functions->yiiparam('external_sensor_program', NULL);
         $this->debug("DataPin: $datapin, Program: $tempprog");
+        $res = NULL;
         if ($tempprog == NULL) {
             Yii::log('No temperature sensor configured, cannot sense externally...', CLogger::LEVEL_ERROR, "info");
             return NULL;
         }
         do {
             $res = Yii::app()->RootElevator->executeRoot("$tempprog -MJP $datapin $extended 2>&1", false);
-        } while (strpos($res[0], 'Error') !== false);
+        } while (Yii::app()->functions->textInArray($res,"Error"));
         $this->debug("Humidity Temp Return: $res");
-        str_replace(' ', '', $res);
-        $respli = explode("%", $res);
+        $respli = explode(" ", $res);
         return $respli;
     }
 
@@ -46,13 +46,14 @@ class TemperatureController extends CApplicationComponent {
     public function getTemperature($datapin, $extended) {
         $tempprog = Yii::app()->functions->yiiparam('external_sensor_program', NULL);
         $this->debug("DataPin: $datapin, Program: $tempprog");
+        $res = NULL;
         if ($tempprog == NULL) {
             Yii::log('No temperature sensor configured, cannot sense externally...', CLogger::LEVEL_ERROR, "info");
             return NULL;
         }
         do {
             $res = Yii::app()->RootElevator->executeRoot("$tempprog -MJP $datapin $extended 2>&1", false);
-        } while (strpos($res[0], 'Error') !== false);
+        } while (Yii::app()->functions->textInArray($res,"Error"));
         $this->debug("Temperature Return: $res");
         str_replace(' ', '', $res);
         $respli = explode("%", $res);
@@ -73,7 +74,7 @@ class TemperatureController extends CApplicationComponent {
         }
         do {
             $res = Yii::app()->RootElevator->executeRoot("$tempprog -MJP $datapin $extended 2>&1", false);
-        } while (strpos($res[0], 'Error') !== false);
+        } while (Yii::app()->functions->textInArray($res,"Error"));
         $this->debug("Humidity Return: $res");
         str_replace(' ', '', $res);
         $respli = explode("%", $res);
@@ -93,12 +94,12 @@ class TemperatureController extends CApplicationComponent {
             return NULL;
         }
         $res = Yii::app()->RootElevator->executeRoot("cat $tempprog", false);
-        $this->debug("Internal Temperature Return: $res");
         $res = str_replace(' ', '', $res);
         if (strlen($res) == 5) {
             return NULL;
         }
         $res = ($res / 1000);
+        $this->debug("Internal Temperature Return: $res");
         return floatval($res);
     }
 
@@ -115,9 +116,9 @@ class TemperatureController extends CApplicationComponent {
             return NULL;
         }
         $res = Yii::app()->RootElevator->executeRoot("$tempprog", false);
-        $this->debug("Internal GPU Temperature Return: $res");
         $res = str_replace('temp=', '', $res);
         $res = str_replace("'C", '', $res);
+        $this->debug("Internal GPU Temperature Return: $res");
         return $res;
     }
 
