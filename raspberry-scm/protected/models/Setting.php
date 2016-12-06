@@ -57,7 +57,7 @@ class Setting extends TKActiveRecord {
     public function attributeLabels() {
         return array(
             'id' => 'ID',
-            'setting_id' => 'Setting',
+            'setting_id' => 'Setting ID',
             'setting' => 'Setting',
             'extended' => 'Extended',
             'comment' => 'Comment',

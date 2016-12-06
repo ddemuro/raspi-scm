@@ -11,7 +11,7 @@ class RelayChangesController extends BaseController {
         /* Run init */
         parent::init();
     }
-    
+
     /**
      * Displays a particular model.
      * @param integer $id the ID of the model to be displayed
@@ -27,14 +27,18 @@ class RelayChangesController extends BaseController {
      * Displays a particular model.
      * @param integer $id the ID of the model to be displayed
      */
-    public function actionViewActual($id) {
+    public function actionViewActual() {
         Yii::app()->functions->simpleAccessProvision();
-        $res = Yii::app()->RelayController->getRelayStatus(NULL, TRUE);
+        $res = Yii::app()->RelayController->getRelayStatus(NULL, false);
+        $relay_setts = Setting::model()->findAll(
+                'setting_id LIKE :match', array(':match' => "relay_%")
+        );
         $this->render('_viewActualStatus', array(
             'status' => $res,
+            'relayInfo' => $relay_setts,
         ));
     }
-    
+
     /**
      * Creates a new model.
      * If creation is successful, the browser will be redirected to the 'view' page.
@@ -60,6 +64,30 @@ class RelayChangesController extends BaseController {
             'model' => $model,
             'categories' => $categories,
         ));
+    }
+
+    /**
+     * Ajax change status of a relay.
+     * @return type
+     */
+    public function actionChangeRelay() {
+        $relayId = Yii::app()->request->getParam('id', null);
+        $status = Yii::app()->request->getParam('status', null);
+        if ($relayId !== null && $status !== null) {
+            $res = Yii::app()->RelayController->changeRelayStatus($relayId, $status);
+            $model = RelayChanges::model();
+            $model->relay_number = intval($relayId);
+            $model->action = intval($status);
+            $model->log = "From ajax in live view";
+            if ($model->save()) {
+                $this->renderJSON("Success");
+            } else {
+                if ($model->save()) {
+                    $this->renderJSON("Error");
+                }
+            }
+            Yii::app()->end();
+        }
     }
 
     /**

@@ -2,6 +2,7 @@
 
 class SiteController extends BaseController {
 
+    public $layout = '//layouts/column1';
      /**
      * Class constructor
      *

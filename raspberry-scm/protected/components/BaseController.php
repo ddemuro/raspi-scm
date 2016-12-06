@@ -53,6 +53,7 @@ class BaseController extends CController {
                 array('label' => 'Contact', 'url' => array('/site/contact')),
                 array('label' => 'Login', 'url' => array('/site/login'), 'visible' => Yii::app()->user->isGuest),
                 array('label' => 'Users', 'url' => array('/User'), 'visible' => !Yii::app()->user->isGuest),
+                array('label' => 'Settings', 'url' => array('/Setting'), 'visible' => !Yii::app()->user->isGuest),
         );
         if (Yii::app()->functions->yiiparam('ups_status') !== null) {
             array_push($this->extraMenu, array('label' => 'UPS', 'url' => array('/ups'), 'visible' => !Yii::app()->user->isGuest));
@@ -70,5 +71,22 @@ class BaseController extends CController {
             array_push($this->extraMenu, array('label' => 'Infrared Controller', 'url' => array('/InfraredEvents'), 'visible' => !Yii::app()->user->isGuest));
         }
         array_push($this->extraMenu, array('label' => 'Logout', 'url' => array('/site/logout'), 'visible' => !Yii::app()->user->isGuest));
+    }
+    
+    /**
+     * Return data to browser as JSON and end application.
+     * @param array $data
+     */
+    protected function renderJSON($data)
+    {
+        header('Content-type: application/json');
+        echo CJSON::encode($data);
+
+        foreach (Yii::app()->log->routes as $route) {
+            if($route instanceof CWebLogRoute) {
+                $route->enabled = false; // disable any weblogroutes
+            }
+        }
+        Yii::app()->end();
     }
 }

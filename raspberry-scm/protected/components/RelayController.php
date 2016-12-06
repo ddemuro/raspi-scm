@@ -57,26 +57,24 @@ class RelayController extends CApplicationComponent {
         // Close request to clear up some resources
         curl_close($curl);
         $resp = explode("\n", $resp);
-        if ($relnumber != NULL && $relnumber > -1) {
-            $pieces = explode(' ', $resp[$relnumber]);
+        $resp_count = count($resp);
+        // Remove last element, since its an empty line
+        unset($resp[$resp_count-1]);
+        if ($relnumber != NULL && $relnumber > -1 && !$toString) {
+            $pieces = explode(' ', $resp[$relnumber-1]);
             $state = explode(':', $pieces[1]);
-            $relay_number = intval($state[0]);
-            if (intval($state[0]) == 1)
-                return true;
-            else
-                return false;
+            $relay_number = intval(trim($state[0]));
+            return intval(trim($state[1]));
         }
         if ($toString)
             return var_dump($resp);
         $relay_info = array();
         foreach ($resp as $line) {
-            if(strpos($line, 'Relay') === FALSE)
-                    continue;
             $line = str_replace('Relay ', '', $line);
             $state = explode(':', $line);
             $relay_number = intval($state[0]);
             $relay_state = intval($state[1]);
-            array_push($relay_info, array($relay_number => $relay_state));
+            array_push($relay_info, $relay_state);
         }
         return $relay_info;
     }
@@ -97,13 +95,14 @@ class RelayController extends CApplicationComponent {
         }
         // Get status
         $req_status = $this->getRelayStatus($relay_number, false);
-        Yii::log("Relay: $relay_number, Status trying to be set: $status, Actual Status: $req_status.", CLogger::LEVEL_INFO, "info");
+        Yii::log("Relay: $relay_number, Status trying to be set: $status", CLogger::LEVEL_INFO, "info");
         if ($req_status == -1 || $req_status === NULL) {
             Yii::log('Error getting status of the requested relay.'+$relay_number, CLogger::LEVEL_INFO, "info");
             return -1;
         }
-        if ($req_status && $status == 1) {
+        if ($req_status == $status) {
             Yii::log('Trying to set the state to the same state of relay.', CLogger::LEVEL_INFO, "info");
+            return NULL;
         } else {
             // Get cURL resource
             $curl = curl_init();
@@ -115,9 +114,11 @@ class RelayController extends CApplicationComponent {
             ));
             // Send the request & save response to $resp
             $resp = curl_exec($curl);
+            echo var_dump($resp);
+            Yii::log("Relay response change : $resp", CLogger::LEVEL_INFO, "info");
             // Close request to clear up some resources
             curl_close($curl);
-            var_dump($resp);
+            return $resp;
         }
     }
 }
