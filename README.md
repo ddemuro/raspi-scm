@@ -5,33 +5,33 @@
 
 #Features:
 
-[-] User Management.
+[x] User Management.
 
-[-] Infrared Management (For AC units and remote RC Boards).
+[x] Infrared Management (For AC units and remote RC Boards).
 
-[-] Relay board controller (For remote power switching).
+[x] Relay board controller (For remote power switching).
 
-[-] UPS Manager (With historical data and graphs).
+[x] UPS Manager (With historical data and graphs).
 
-[-] External Temperature Monitor (Using DHT11 or DHT22 sensors).
+[x] External Temperature Monitor (Using DHT11 or DHT22 sensors).
 
-[-] Raspberry PI Temperature management.
+[x] Raspberry PI Temperature management.
 
-[-] Full customizable configuration.
+[x] Full customizable configuration.
 
-[-] Temperature Alert.
+[x] Temperature Alert.
 
-[-] UPS Change Alerts.
+[x] UPS Change Alerts.
 
-[-] Automatic AC Unit management.
+[x] Automatic AC Unit management.
 
-[-] Run forver service provided.
+[x] Run forver service provided.
 
-[-] Styled E-Mails.
+[x] Styled E-Mails.
 
-[-] Manual relay board management.
+[x] Manual relay board management.
 
-[-] Full data customizataion.
+[x] Full data customizataion.
 
 
 _Upon feature request, they will be included._
@@ -39,4 +39,4 @@ _Upon feature request, they will be included._
 __Built on Yii and SQLite__
 
 # Sample
-![alt tag](https://raw.githubusercontent.com/ddemuro/raspi-scm/188214b2e1b930b405c0fe3dabba10d06a1d06ab/play.gif)
+![alt tag](https://github.com/ddemuro/raspi-scm/raw/master/play.gif)
