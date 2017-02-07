@@ -33,6 +33,21 @@
 
 [x] Full data customizataion.
 
+[x] PHP 7 Ready.
+
+[ ] Automatic Backups of DB.
+
+[ ] Plugin Manager.
+
+[ ] Automatic URL Poller.
+
+[ ] Weather of Location (Where the SCM is located).
+
+[ ] Weather Alerts.
+
+[ ] Support for Redis | Memcached.
+
+
 
 _Upon feature request, they will be included._
 
