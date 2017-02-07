@@ -30,11 +30,11 @@ return array(
             'variable_set' => Yii::t('YiiMailer', 'Cannot set or reset variable: ')
     ),
     'Mailer' => 'smtp',
-    'Host' => 'mail.derekdemuro.com',
+    'Host' => 'mail.xxxxxx.com',
     'Port' => 25,
     'SMTPSecure' => '',
     'SMTPAuth' => true,
-    'Username' => 'alerts@derekdemuro.com',
-    'Password' => "sodeep",
+    'Username' => 'xxxxx@xxxxxx.com',
+    'Password' => "xxxxxxx",
 
 );

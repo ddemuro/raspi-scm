@@ -36,7 +36,7 @@ class InfraredEventsController extends BaseController {
             Yii::log('No infrared found...', CLogger::LEVEL_ERROR, "info");
             return NULL;
         }
-        $res = Yii::app()->RootElevator->executeRoot("$temoprog  SEND_ONCE $utilname $command", false);
+        $res = Yii::app()->RootElevator->executeRoot("$temoprog  SEND_ONCE $util $command", false);
         return $res;
     }
     
@@ -71,7 +71,7 @@ class InfraredEventsController extends BaseController {
 
         if (isset($_POST['InfraredEvents'])) {
             $model->attributes = $_POST['InfraredEvents'];
-            $this->ir_cmd($model->device, $categories[$model->action]);
+            $this->ir_cmd($model->device, $categories[$model->event]);
             if ($model->save())
                 $this->redirect(array('view', 'id' => $model->date));
         }

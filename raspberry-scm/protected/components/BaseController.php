@@ -54,6 +54,7 @@ class BaseController extends CController {
                 array('label' => 'Login', 'url' => array('/site/login'), 'visible' => Yii::app()->user->isGuest),
                 array('label' => 'Users', 'url' => array('/User'), 'visible' => !Yii::app()->user->isGuest),
                 array('label' => 'Settings', 'url' => array('/Setting'), 'visible' => !Yii::app()->user->isGuest),
+                array('label' => 'Logger', 'url' => array('/logger'), 'visible' => !Yii::app()->user->isGuest),
         );
         if (Yii::app()->functions->yiiparam('ups_status') !== null) {
             array_push($this->extraMenu, array('label' => 'UPS', 'url' => array('/ups'), 'visible' => !Yii::app()->user->isGuest));

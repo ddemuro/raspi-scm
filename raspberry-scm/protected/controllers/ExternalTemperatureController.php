@@ -11,7 +11,7 @@ class ExternalTemperatureController extends BaseController {
         /* Run init */
         parent::init();
     }
-    
+
     /**
      * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
      * using two-column layout. See 'protected/views/layouts/column2.php'.
@@ -120,9 +120,31 @@ class ExternalTemperatureController extends BaseController {
      * Lists all models.
      */
     public function actionIndex() {
-        $dataProvider = new CActiveDataProvider('ExternalTemperature');
+        $startOfDay = date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s') . "-7 days"));
+        $endOfDay = date('Y-m-d H:i:s');
+        $criteria = new CDbCriteria(array('order'=>'date DESC'));
+        $criteria->addBetweenCondition('date', $startOfDay, $endOfDay);
+        $today = ExternalTemperature::model()->findAll($criteria);
+        $times = array();
+        $temps = array();
+        $humidity = array();
+        // Filter data
+        foreach ($today as $t) {
+            array_push($times, $t->date);
+            array_push($temps, $t->temperature);
+            array_push($humidity, $t->humidity);
+        }
+        $dataProvider = new CActiveDataProvider('ExternalTemperature', array(
+            'criteria' => array(
+                'order' => 'date DESC',
+            ),
+            'pagination' => array(
+                'pageSize' => 10)));
         $this->render('index', array(
             'dataProvider' => $dataProvider,
+            'times' => $times,
+            'temps' => $temps,
+            'humid' => $humidity,
         ));
     }
 

@@ -72,7 +72,7 @@ class Functions extends CApplicationComponent {
      */
     public function textInArray($arr, $text){
         if(is_string($arr))
-            return strpos($arr, $text) !== false;
+            return strcmp($arr, $text) == 0;
         return in_array($text, $arr, true);
     }
     
@@ -93,10 +93,15 @@ class Functions extends CApplicationComponent {
      * Writes flag to database
      */
     public function writeFlag($name, $status) {
-        $time = date('Y-m-d H:m:s');
         $existingFlags = Flags::model()->findAll('flag_name=:flgname', array(':flgname' => $name));
         if (count($existingFlags) > 0) {
-            return false;
+            $criteria = new CDbCriteria;
+            $criteria->addInCondition('flag_name',$name);
+            Flags::model()->deleteAll($criteria);
+            $newFlag = new Flags();
+            $newFlag->flag_name = $name;
+            $newFlag->status = $status;
+            return $newFlag->save();
         } else {
             $newFlag = new Flags();
             $newFlag->flag_name = $name;
@@ -119,9 +124,37 @@ class Functions extends CApplicationComponent {
     public function removeFlag($name) {
         $time = date('Y-m-d H:m:s');
         $existingFlags = Flags::model()->findAll('flag_name=:flgname', array(':flgname' => $name));
-        if ($existingFlags != NULL && $existingFlags > 0)
+        if ($existingFlags != NULL && count($existingFlags) > 0)
             return $existingFlags->delete();
         return false;
     }
+    
+    /**
+     * Manages the weblog
+     * @param type $name
+     * @return boolean
+     */
+    public function addToWebLog($logline) {
+        $res = false;
+        $log = new Logger();
+        $log->setIsNewRecord(true);
+        $log->log = $logline;
+        $res = $log->save();
+        unset($date);
+        unset($log);
+        return $res;
+    }
 
+    /**
+     * Write to file
+     * @param type $file
+     * @param type $towrite
+     */
+    public function writeToFile($file, $towrite){
+        $myfile = fopen($file, "w");
+        fwrite($myfile, $towrite);
+        fclose($myfile);
+    }
+    
 }
+

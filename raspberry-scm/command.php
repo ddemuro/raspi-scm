@@ -11,9 +11,12 @@ if (!is_writeable(ROOT_PATH . 'protected/runtime')) {
     die('Please chmod 0777 ' . ROOT_PATH . 'protected/runtime');
 }
 
+define('CONSOLE', true);
+
 $configFile = 'production.php';
 
 //We load YII
 require_once($yii);
 
 Yii::createConsoleApplication($config.$configFile)->run();
+

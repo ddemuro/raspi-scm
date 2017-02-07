@@ -18,16 +18,6 @@ class TKActiveRecord extends CActiveRecord {
         $this->isView = $view;
     }
 
-    public function beforeSave() {
-        if (parent::beforeSave()) {
-            //If this ActiveRecord is a view, we disable saving.
-            if ($this->isView) {
-                return false;
-            }
-            return true;
-        }
-    }
-
     /**
      * @return model To String
      */

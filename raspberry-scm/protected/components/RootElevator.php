@@ -16,7 +16,7 @@ class RootElevator extends CApplicationComponent {
      * @param type $cmd
      * @param SSH $retcallback
      */
-    public function executeRoot($cmd, $retcallback) {
+    public function executeRoot($cmd, $retcallback, $retstatus=False) {
         $ssh = Yii::app()->phpseclib->createSSH2('localhost');
         $rootpwd = Yii::app()->functions->yiiparam('rootpwd', NULL);
         if ($rootpwd === NULL || !$ssh->login('root', $rootpwd)) {
@@ -25,6 +25,10 @@ class RootElevator extends CApplicationComponent {
         }
         if ($retcallback) {
             return array($ssh->exec($cmd), $ssh);
+        }
+        if($retstatus){
+            $ssh->exec($cmd);
+            return $ssh->getExitStatus();
         }
         return $ssh->exec($cmd);
     }

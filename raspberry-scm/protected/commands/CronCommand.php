@@ -3,6 +3,12 @@
 //Time limit = 0
 set_time_limit(0);
 
+function get_string_between($string, $start, $end){
+  $expl = explode($start, $string);
+  $expl1 = explode($end, $expl[1]);
+  return $expl1[0];
+}
+
 /**
  * This Command executable
  * Allows us to run a cron to make sure prices are up to date against
@@ -24,6 +30,8 @@ class CronCommand extends CConsoleCommand {
     public $mail_sent = false;
     public $supress_mail = false;
     public $start = 0;
+    public $mypid = -1;
+
     /**
      * Controller constructor
      */
@@ -32,85 +40,92 @@ class CronCommand extends CConsoleCommand {
         $this->debug = true;
         $this->email("Starting test... - Any alert past this e-mail are ACTUAL alerts.", 'ALERT: Raspberry system check has started.');
         $this->start = date("Y-m-d H:i:s", time());
+        $this->mypid = getmypid();
+        Yii::app()->functions->writeToFile('/mnt/pendrive/raspi-scm.pid',$this->mypid);
         while (true) {
             // Every 12 hours
-            if (round(abs(strtotime(date("Y-m-d H:i:s", time())) - $this->start) / 60,2) >= 720) {
+            if (round(abs(strtotime(date("Y-m-d H:i:s", time())) - $this->start) / 60, 2) >= 720) {
                 $this->start = date("Y-m-d H:i:s", time());
-                try{
+                try {
                     $this->logCPUTemp(true);
-                } catch (Exception $ex) {
-                    $this->debug("Error: " + var_dump($ex));
-                }
-                
-                try{
+                    $this->logGPUTemp(true);
                     $this->logExternalTemperature(true);
-                } catch (Exception $ex) {
-                    $this->debug("Error: " + var_dump($ex));
-                }
-                
-                try{
                     $this->logRelayStatus(true);
-                } catch (Exception $ex) {
-                    $this->debug("Error: " + var_dump($ex));
-                }
-                
-                try{
                     $this->logUPSStatus(true);
                 } catch (Exception $ex) {
                     $this->debug("Error: " + var_dump($ex));
+                    continue;
                 }
                 // Every 30 sec, only updates if we've had changes
             } else {
-                try{
+                try {
                     $this->logCPUTemp(false);
-                } catch (Exception $ex) {
-                    $this->debug("Error: " + var_dump($ex));
-                }
-                
-                try{
+                    $this->logGPUTemp(false);
                     $this->logExternalTemperature(false);
-                } catch (Exception $ex) {
-                    $this->debug("Error: " + var_dump($ex));
-                }
-                
-                try{
                     $this->logRelayStatus(false);
-                } catch (Exception $ex) {
-                    $this->debug("Error: " + var_dump($ex));
-                }
-                
-                try{
                     $this->logUPSStatus(false);
                 } catch (Exception $ex) {
                     $this->debug("Error: " + var_dump($ex));
+                    continue;
                 }
             }
             //We sleep before next loop.
             $currentMemory = (memory_get_peak_usage(true) / 1024 / 1024);
             $mem_usage = (memory_get_usage(true) / 1024 / 1024);
-            sleep(Yii::app()->params['run_every']*60);
+            $this->debug("Sleeping before a new loop.", false);
+            sleep(Yii::app()->params['run_every'] * 60);
             $this->debug("Peak memory usage: " . $currentMemory . " MB\r\n", false);
             $this->debug("Actual memory usage: " . $mem_usage . " MB\r\n", false);
             gc_collect_cycles();
         }
     }
 
-    // Log the actual status of the relay board
+    /**
+     * Log the actual status of the relay board
+     * @param type $force
+     * @return type
+     */
     public function logCPUTemp($force) {
-        $res = Yii::app()->TemperatureController->getInternalCPUTemp();
+        $res = (float)Yii::app()->TemperatureController->getInternalCPUTemp();
         if ($res == -1) {
-            $this->debug("Error checking with relay board..., check log...\n", false);
+            $this->debug("Error checking with raspberry pi..., check log...\n", false);
         }
         $flag = Yii::app()->functions->getFlag("internal_tmp");
-        if ($res != NULL && strcmp("internal_tmp", $res) == 0 && $force != false) {
+        if ($res != NULL && strcmp("internal_tmp", $res) == 0 && !$force) {
             return;
         }
         Yii::app()->functions->removeFlag("internal_tmp");
         Yii::app()->functions->writeFlag("internal_tmp", $res);
         $tempModel = new InternalTemperature();
         $tempModel->temperature = floatval($res);
-        $tempModel->date = date('Y-m-d H:m:s');
-        $tempModel->date = date('CPU');
+        $tempModel->type = 'CPU';
+        $tempModel->save();
+        $str = $tempModel->ToString();
+        $this->debug("$str \r\n", false);
+        unset($tempModel);
+        unset($model);
+        unset($res);
+    }
+    
+    /**
+     * Log the actual status of the relay board
+     * @param type $force
+     * @return type
+     */
+    public function logGPUTemp($force) {
+        $res = (float)Yii::app()->TemperatureController->getInternalGPUTemp();
+        if ($res == -1) {
+            $this->debug("Error checking with raspberry pi..., check log...\n", false);
+        }
+        $flag = Yii::app()->functions->getFlag("internal_gtmp");
+        if ($res != NULL && strcmp("internal_gtmp", $res) == 0 && !$force) {
+            return;
+        }
+        Yii::app()->functions->removeFlag("internal_gtmp");
+        Yii::app()->functions->writeFlag("internal_gtmp", $res);
+        $tempModel = new InternalTemperature();
+        $tempModel->temperature = floatval($res);
+        $tempModel->type = 'GPU';
         $tempModel->save();
         $str = $tempModel->ToString();
         $this->debug("$str \r\n", false);
@@ -119,66 +134,106 @@ class CronCommand extends CConsoleCommand {
         unset($res);
     }
 
-    // Log the actual status of the relay board
+    /**
+     * Log the actual status of the relay board
+     * @param type $force
+     * @return type
+     */
     public function logUPSStatus($force) {
-        $ups = Ups::model()->findAll();
-        if($ups == NULL)
-            return;
-        foreach ($model as $ups) {
-            $res = Yii::app()->UpsController->getAllStatuses($model['name'], $model['setting'], '');
-            if ($res == -100) {
-                $this->debug("UPS is not found...\r\n", false);
-                continue;
-            }
-            if ($res == NULL) {
-                $this->debug("UPS is not configured...\r\n", false);
-                continue;
-            }
-            $flag = Yii::app()->functions->getFlag("ups_status");
-            if ($res != NULL && count(array_diff($flag, $res)) == 0 && $force != false) {
-                continue;
-            }
-            Yii::app()->functions->removeFlag("ups_status");
-            Yii::app()->functions->writeFlag("ups_status", $res);
-            $upsstatus = new UpsStatus();
-            //array('id, date, status, change', 'required'),
-            $upsstatus->id = $model['id'];
-            $upsstatus->status = explode('\r\n', $flag);
-            $upsstatus->change = array_diff($flag, $res);
-            $upsstatus->date = date('Y-m-d H:m:s');
-            $str = $upsstatus->ToString();
-            $this->debug("$str \r\n", false);
-            unset($upsstatus);
-            unset($model);
-            unset($str);
-            unset($res);
+        // If no UPS configured
+        if(!Yii::app()->UpsManager->checkUPSConfigured()){
+            $this->debug("Error checking with UPS..., check log...\n", false);
+            return null;
         }
+        $this->debug("Running UPS check..." + PHP_EOL, false);
+        $s = Setting::model()->findByAttributes(array('setting_id' => 'ups'));
+        if (count($s) == 1) {
+            $uinfo = Yii::app()->UpsManager->getAll($s->setting, $s->extended);
+            $this->debug("Checking UPS $s->setting, $s->extended $uinfo..." + PHP_EOL, false);
+            if ($uinfo == -100) {
+                $this->debug("UPS is not found...\r\n", false);
+                return;
+            }
+            if ($uinfo == NULL) {
+                $this->debug("UPS is not configured...\r\n", false);
+                return;
+            }
+            $flag = Yii::app()->functions->getFlag("$s->setting-$s->extended");
+            if ($flag == null || !Yii::app()->functions->textInArray($uinfo, $flag) || $force) {
+                Yii::app()->functions->writeFlag("$s->setting-$s->extended", $uinfo);
+                $this->debug("Saving details...", false);
+                $u = new Ups();
+                $u->setting = "$s->setting-$s->extended";
+                $u->ups_details = $uinfo;
+                if ($u->save()) {
+                    $this->debug("New UPS status saved.");
+                    $this->email("$s->setting & $s->extended status changed: $uinfo", "UPS Changed status: $s->setting @ $s->extended");
+                    $this->debug("Adding ups info. Status changed");
+                } else {
+                    $this->debug("Error saving UPS Status.");
+                }
+            }
+        } else {
+            foreach ($s as $ups) {
+                $uinfo = Yii::app()->UpsManager->getAll($ups->setting, $ups->extended);
+                $this->debug("Checking UPS $ups->setting, $ups->extended $uinfo...\r\n", false);
+                if ($uinfo == -100) {
+                    $this->debug("UPS is not found...\r\n", false);
+                    continue;
+                }
+                if ($uinfo == NULL) {
+                    $this->debug("UPS is not configured...\r\n", false);
+                    continue;
+                }
+                $flag = Yii::app()->functions->getFlag("$ups->setting-$ups->extended");
+                if ($flag == null || !Yii::app()->functions->textInArray($uinfo, $flag) || $force) {
+                    Yii::app()->functions->writeFlag("$ups->setting-$ups->extended", $uinfo);
+                    $u = new Ups();
+                    $u->setting = "$ups->setting & $ups->extended";
+                    $u->ups_details = $uinfo;
+                    if ($u->save()) {
+                        $this->debug("New UPS status saved.");
+                        $this->email("$s->setting & $s->extended status changed: $uinfo", "UPS Changed status: $s->setting @ $s->extended");
+                        $this->debug("Adding ups info. Status changed");
+                    } else {
+                        $this->debug("Error saving UPS Status.");
+                    }
+                    $this->email("$ups->setting & $ups->extended status changed: $uinfo", "UPS Changed status: $ups->setting@$ups->extended");
+                    $this->debug("Adding ups info. Status changed");
+                }
+            }
+        }
+        $this->debug("Finished checking UPS status.\n", false);
+        unset($s);
     }
 
-    // Add log entry with the external temperature for each sensor
+    /**
+     * Add log entry with the external temperature for each sensor
+     * @param type $force
+     */
     public function logExternalTemperature($force) {
+        if(Yii::app()->TemperatureController->checkExternalSensorConfigured())
+            return null;
         $model = Setting::model()->findAll('setting_id=:sett', array(':sett' => 'external_temp_sensor_pin'));
         foreach ($model as $pin) {
             $res = Yii::app()->TemperatureController->getHumidityTemp($pin->setting, $pin->extended);
-            $vd = var_dump($res);
-            $this->debug("Checking with pin: $pin->setting and extended: $pin->extended. $vd \r\n", false);
-            if ($res === NULL || count($res) <= 1) {
+            $this->debug("Checking with pin: $pin->setting and extended: $pin->extended. \r\n", false);
+            if ($res === NULL || !Yii::app()->functions->textInArray($res, 'Error')) {
                 $this->debug("Error loading temperature information, skipping...");
                 $this->debug("Confirm you've added he root password to the config files....");
                 continue;
             }
-            $flag = Yii::app()->functions->getFlag("ex_tmp_$pin->setting");
-            if ($flag != NULL && strcmp("ex_tmp_$pin->setting", $res) == 0 && $force != false) {
+            $flag = Yii::app()->functions->getFlag("ex_tmp-$pin->setting");
+            if ($flag != NULL && Yii::app()->functions->textInArray("ex_tmp_$pin->setting", $res) && !$force) {
                 continue;
             }
             Yii::app()->functions->removeFlag("ex_tmp_$pin->setting");
             Yii::app()->functions->writeFlag("ex_tmp_$pin->setting", $res);
             $tempModel = new ExternalTemperature();
-            $tempModel->temperature = floatval($res[1]);
-            $tempModel->humidity = floatval($res[0]);
+            $tempModel->temperature = $res[1];
+            $tempModel->humidity = $res[0];
             // Decide if alert is required
             $this->temperatureAlert($tempModel->temperature, $tempModel->humidity);
-            $tempModel->date = date('Y-m-d H:m:s');
             $tempModel->log = "DataPIN=$pin->setting";
             $tempModel->save();
             $str = $tempModel->ToString();
@@ -189,54 +244,68 @@ class CronCommand extends CConsoleCommand {
             unset($res);
         }
     }
-    
+
     /**
      * @param temperature to calculate alert.
      * @param humidity to calculate alert.
      */
-    public function temperatureAlert($temp, $humidity){
-        $max_temp = Yii::app()->params['max_temp'];
-        $min_temp = Yii::app()->params['min_temp'];
-        $max_warn_temp = Yii::app()->params['max_warn_temp'];
-        $min_warn_temp = Yii::app()->params['min_warn_temp'];
-        $min_humidty = Yii::app()->params['min_humidity'];
-        $warn_humidity = Yii::app()->params['warn_humidity'];
-        $max_humidity = Yii::app()->params['max_humidity'];
+    public function temperatureAlert($temp, $humidity) {
+        $max_temp = Yii::app()->functions->yiiparam('max_temp', NULL);
+        $min_temp = Yii::app()->functions->yiiparam('min_temp', NULL);
+        $max_warn_temp = Yii::app()->functions->yiiparam('max_warn_temp', NULL);
+        $min_warn_temp = Yii::app()->functions->yiiparam('min_warn_temp', NULL);
+        $min_humidty = Yii::app()->functions->yiiparam('min_humidity', NULL);
+        $warn_humidity = Yii::app()->functions->yiiparam('warn_humidity', NULL);
+        $max_humidity = Yii::app()->functions->yiiparam('max_humidity', NULL);
+        $acon = false;
         // Temperature exceeded the max temperature
         $this->debug("Max warn temp: $max_warn_temp, Min warn temp: $min_warn_temp, Max Temp: $max_temp, Min Temp: $min_temp, Max Humidity: $max_humidity, Warn Humidity: $warn_humidity, $");
-        if($temp > $max_temp){
+        if ($temp > $max_temp) {
             $this->email("Maximum temperature exceeded: Current: $temp, Maximum: $max_temp", 'ALERT: Maximum temperature was exceeded.', true);
             $this->debug("Maximum temperature exceeded: Current: $temp, Maximum: $max_temp", 'ALERT: Maximum temperature was exceeded.');
-            if ($humidity > $max_humidity){
-                $this->email("Maximum humidity exceeded: Current: $humidity, Maximum: $max_humidity", 'ALERT: Maximum humidity was exceeded.', true);                
+            $this->useIRControlAC($max_warn_temp - 5, true);
+            $acon = true;
+            if ($humidity > $max_humidity) {
+                $this->useIRControlAC($max_warn_temp - 5, true);
+                $acon = true;
+                $this->email("Maximum humidity exceeded: Current: $humidity, Maximum: $max_humidity", 'ALERT: Maximum humidity was exceeded.', true);
                 $this->debug("Maximum humidity exceeded: Current: $humidity, Maximum: $max_humidity", 'ALERT: Maximum humidity was exceeded.');
             }
         }
         // Temperature below minimum
-        if($temp < $min_temp){
+        if ($temp < $min_temp) {
+            $this->useIRControlAC($max_warn_temp - 5, false);
             $this->email("Minimum temperature exceeded: Current: $temp, Minimum: $max_temp", 'ALERT: Minimum temperature was exceeded.', true);
             $this->debug("Minimum temperature exceeded: Current: $temp, Minimum: $max_temp", 'ALERT: Minimum temperature was exceeded.');
-            if ($humidity < $min_humidity){
-                $this->email("Minimum humidity exceeded: Current: $humidity, Minimum: $max_humidity", 'ALERT: Minimum humidity was exceeded.', true);                
+            if ($humidity < $min_humidity) {
+                $this->useIRControlAC($max_warn_temp - 5, false);
+                $this->email("Minimum humidity exceeded: Current: $humidity, Minimum: $max_humidity", 'ALERT: Minimum humidity was exceeded.', true);
                 $this->debug("Minimum humidity exceeded: Current: $humidity, Minimum: $max_humidity", 'ALERT: Minimum humidity was exceeded.');
                 return;
             }
             return;
         }
         // Temperature below warn
-        if($temp < $min_warn_temp){
+        if ($temp < $min_warn_temp) {
             $this->email("Minimum warning temperature exceeded: Current: $temp, Minimum: $max_temp", 'WARNING: Minimum temperature was exceeded.');
             $this->debug("Minimum warning temperature exceeded: Current: $temp, Minimum: $max_temp", 'WARNING: Minimum temperature was exceeded.');
+            $this->useIRControlAC($max_warn_temp - 5, false);
         }
         // Temperature exceeded the max warning temperature
-        if($temp > $max_warn_temp){
+        if ($temp > $max_warn_temp) {
+            $this->useIRControlAC($max_warn_temp - 5, true);
+            $acon = true;
             $this->email("Maximum warning temperature exceeded: Current: $temp, Maximum: $max_temp", 'WARNING: Maximum temperature was exceeded.');
             $this->debug("Maximum warning temperature exceeded: Current: $temp, Maximum: $max_temp", 'WARNING: Maximum temperature was exceeded.');
         }
-        if($warn_humidity > $humidity){
-            $this->email("Warning, humidity over warning level. Current: $humidity", "Current: $humidity, Max warn level: $warn_humidity.");   
+        if ($warn_humidity > $humidity) {
+            $this->useIRControlAC($max_warn_temp - 5, true);
+            $acon = true;
+            $this->email("Warning, humidity over warning level. Current: $humidity", "Current: $humidity, Max warn level: $warn_humidity.");
             $this->debug("Warning, humidity over warning level. Current: $humidity", "Current: $humidity, Max warn level: $warn_humidity.");
         }
+        if (!$acon)
+            $this->useIRControlAC(null, false);
         unset($max_temp);
         unset($min_temp);
         unset($max_warn_temp);
@@ -247,20 +316,76 @@ class CronCommand extends CConsoleCommand {
     }
 
     /**
+     * If needed and we're able to control an AC Unit, we use this method to
+     * call the remote utils.
+     * @param $temp = temperature after turning on...
+     * @param $on (If temperature is set, and on is set, it'll be turned on, and temp set after)
+     * if $temp == null and on = false, turns it off.
+     */
+    public function useIRControlAC($temp, $on) {
+        $irman = new InfraredManager();
+        // If not configured, cannot be used.
+        if ($irman->checkIRConfigured()) {
+            $this->debug("Error checking with IR Manager..., check log...\n", false);
+            return null;
+        }
+        
+        $model = Setting::model()->findByAttributes(array('setting_id' => 'ir_util_name', 'extended' => 'AirConditioner'));
+        $flag = Yii::app()->functions->getFlag("ir:" + $model->setting);
+        $event = "";
+
+        // Turns on the AC if it's not on.
+        if ($on && Yii::app()->functions->textInArray($flag, "on") == false) {
+            $irman->irPower($model->setting);
+            Yii::app()->functions->writeFlag("ir:" + $model->setting, "on");
+            $event += "IR: $model->setting turning on;";
+        }
+
+        // Turns off the AC if it's not on.
+        if (!$on && Yii::app()->functions->textInArray($flag, "on") >= 0) {
+            $irman->irPower($model->setting);
+            Yii::app()->functions->writeFlag("ir:" + $model->setting, "off");
+            $event += "IR: $model->setting turning off;";
+        }
+
+        // Set temperature if chosen to
+        if ($on && $temp != null && $temp >= intval(Yii::app()->functions->yiiparam('min_ac_temp', null))) {
+            $irman->setTemperature($model->setting, $temp);
+            $event += "setting temperature: $temp";
+        }
+        $this->email("IR Change: $event", "IR Event");
+        // Set the event
+        $ir = new InfraredEvents();
+        $ir->device = $model->setting;
+        $ir->event = $event;
+        $ir->extended = "Autosetting AC by cron control.";
+        if ($ir->save()) {
+            $this->debug("IR Event saved, $event");
+        } else {
+            $this->debug("Error saving event... logged.");
+        }
+        Yii::app()->functions->addToWebLog($event);
+        unset($irman);
+        unset($model);
+        unset($flag);
+        unset($event);
+    }
+
+    /**
      * Sends email alerting of change
      * @param alert Sends message.
      * @param subject Subject to be sent on email.
      * @param force (If we ignore the supress time)
      */
-    public function email($alert, $subject, $force = false){
-        if(!$this->supress_mail){
+    public function email($alert, $subject, $force = false) {
+        if (!$this->supress_mail) {
             // Time since supress
             $this->to_time = strtotime(date("Y-m-d H:i:s", time() + intval(Yii::app()->params['mail_antispam'])));
         }
-        if($this->supress_mail && round(abs(strtotime(date("Y-m-d H:i:s", time())) - $this->from_time) / 60,2) <= 0){
+        if ($this->supress_mail && round(abs(strtotime(date("Y-m-d H:i:s", time())) - $this->from_time) / 60, 2) <= 0) {
             $this->supress_mail = false;
         }
-        if(!$this->supress_mail || $force){
+        if (!$this->supress_mail || $force) {
             $mail = new YiiMailer();
             //$mail->clearLayout();//if layout is already set in config
             $mail->setFrom('alerts@derekdemuro.com', 'Raspberry Alert System.');
@@ -273,22 +398,38 @@ class CronCommand extends CConsoleCommand {
         }
         unset($mail);
     }
-    
-    // Log the actual status of the relay board
+
+    /**
+     * Log the actual status of the relay board
+     * @param type $force
+     * @return type
+     */
     public function logRelayStatus($force) {
+        $crelay = Yii::app()->functions->yiiparam('crelay', NULL);
+        if ($crelay === NULL || Yii::app()->RelayController->checkCRelay() != true) {
+            $this->debug("Error checking with CRelay..., check log...\n", false);
+            return NULL;
+        }
         $res = Yii::app()->RelayController->getRelayStatus(NULL, true);
         $flag = Yii::app()->functions->getFlag("relay_status");
-        if ($flag != NULL && strcmp("relay_status", $res) == 0 && $force != false) {
+        if ($flag != NULL && Yii::app()->functions->textInArray($flag, $res) == 0 && !$force) {
             return;
         }
         Yii::app()->functions->removeFlag('relay_status');
         Yii::app()->functions->writeFlag('relay_status', $res);
         $relay = new RelayChanges();
-        //array('date, relay_number, action, log', 'required'),
-        //$relay->
-        //Yii::app()->RelayController->changeRelayStatus(1, 1);
-        //$this->debug("Relay info: $relayInfo", false);
-        //var_dump($relayInfo);
+        $relay->relay_number = -1;
+        $relay->action = $res;
+        $relay->log = "Logging status of relays for informational purposes only.";
+        $this->debug("Relay info: $res", false);
+        if($relay->save()){
+            $this->debug("New relay status saved.", true);
+        }else{
+            $this->debug("Error saving new relay status.", true);
+        }
+        unset($res);
+        unset($flag);
+        unset($relay);
     }
 
     /**
@@ -299,7 +440,7 @@ class CronCommand extends CConsoleCommand {
     private function debug($msg, $log = true) {
         if ($this->debug) {
             if ($log) {
-                Yii::log($msg, CLogger::LEVEL_ERROR);
+                Yii::app()->functions->addToWebLog($log);
             } else {
                 echo $msg;
             }

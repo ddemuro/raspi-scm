@@ -18,6 +18,13 @@ class TemperatureController extends CApplicationComponent {
     }
 
     /**
+     * Returns if a configuration was found for an external sensor.
+     */
+    public function checkExternalSensorConfigured(){
+        return Yii::app()->functions->yiiparam('external_sensor_program', NULL) != null;
+    }
+    
+    /**
      * Gets Humidity and Temperature as array on DHT sensors.
      * @param type $datapin
      * @return type
@@ -26,15 +33,24 @@ class TemperatureController extends CApplicationComponent {
         $tempprog = Yii::app()->functions->yiiparam('external_sensor_program', NULL);
         $this->debug("DataPin: $datapin, Program: $tempprog");
         $res = NULL;
+        $maxErrCnt = 10;
         if ($tempprog == NULL) {
             Yii::log('No temperature sensor configured, cannot sense externally...', CLogger::LEVEL_ERROR, "info");
             return NULL;
         }
         do {
+            if($maxErrCnt == 0)
+                return NULL;
+            sleep(1);
             $res = Yii::app()->RootElevator->executeRoot("$tempprog -MJP $datapin $extended 2>&1", false);
+            $maxErrCnt--;
         } while (Yii::app()->functions->textInArray($res,"Error"));
         $this->debug("Humidity Temp Return: $res");
         $respli = explode(" ", $res);
+        $respli[0] = (float)preg_replace('/\s+/', '', $respli[0]);
+        $respli[1] = (float)preg_replace('/\s+/', '', $respli[1]);
+        if($respli[0] == 0 || $respli[1] == 0)
+            return NULL;
         return $respli;
     }
 

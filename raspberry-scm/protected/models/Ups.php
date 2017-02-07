@@ -1,27 +1,14 @@
-
 <?php
 
 /**
  * This is the model class for table "ups".
  *
  * The followings are the available columns in table 'ups':
- * @property integer $id
- * @property string $location
- * @property string $name
+ * @property string $ups_details
+ * @property string $date
  * @property string $setting
- *
- * The followings are the available model relations:
- * @property UpsStatus[] $upsStatuses
  */
 class Ups extends TKActiveRecord {
-
-    /**
-     * Returns the static model of the specified AR class.
-     * @param string $className active record class name.
-     */
-    public static function model($className = __CLASS__) {
-        return parent::model($className);
-    }
 
     /**
      * @return string the associated database table name
@@ -37,11 +24,11 @@ class Ups extends TKActiveRecord {
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('location, name', 'required'),
+            array('ups_details, date', 'required'),
             array('setting', 'safe'),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
-            array('id, location, name, setting', 'safe', 'on' => 'search'),
+            array('ups_details, date, setting', 'safe', 'on' => 'search'),
         );
     }
 
@@ -52,8 +39,16 @@ class Ups extends TKActiveRecord {
         // NOTE: you may need to adjust the relation name and the related
         // class name for the relations automatically generated below.
         return array(
-            'upsStatuses' => array(self::HAS_MANY, 'UpsStatus', 'id'),
         );
+    }
+
+    /**
+     * Save date and password before saving
+     */
+    public function beforeSave() {
+        parent::beforeSave();
+        $this->date = date('Y-m-d H:m:s');
+	return true;
     }
 
     /**
@@ -61,9 +56,8 @@ class Ups extends TKActiveRecord {
      */
     public function attributeLabels() {
         return array(
-            'id' => 'ID',
-            'location' => 'Location',
-            'name' => 'Name',
+            'ups_details' => 'Ups Details',
+            'date' => 'Date',
             'setting' => 'Setting',
         );
     }
@@ -85,14 +79,23 @@ class Ups extends TKActiveRecord {
 
         $criteria = new CDbCriteria;
 
-        $criteria->compare('id', $this->id);
-        $criteria->compare('location', $this->location, true);
-        $criteria->compare('name', $this->name, true);
+        $criteria->compare('ups_details', $this->ups_details, true);
+        $criteria->compare('date', $this->date, true);
         $criteria->compare('setting', $this->setting, true);
 
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
         ));
+    }
+
+    /**
+     * Returns the static model of the specified AR class.
+     * Please note that you should have this exact method in all your CActiveRecord descendants!
+     * @param string $className active record class name.
+     * @return Ups the static model class
+     */
+    public static function model($className = __CLASS__) {
+        return parent::model($className);
     }
 
 }
