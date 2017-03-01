@@ -20,7 +20,7 @@ while true; do
     if ps -p $PID > /dev/null; then
         echo "$PID is running"
     else
-        php7.0 $CMD > /dev/null &disown
+        php $CMD > /dev/null &disown
         echo "Wasn't running on $PID"
     fi
   echo "Sleeping $SECONDS"
