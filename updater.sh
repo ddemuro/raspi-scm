@@ -1,49 +1,57 @@
 #!/bin/bash
 
-DATE=`date "+%Y-%m-%d"`
-LOG='../updater.log'
-USER='www-data'
-DIR_MAKE='raspberry-scm/assets raspberry-scm/protected/assets raspberry-scm/protected/runtime'
-PERMISSION='755'
+####################################
+# Update script for raspberry scm. #
+####################################
+LOGGER="/tmp/updater.log"
+URLVERSION="https://www.derekdemuro.com/versions/raspiscm.txt"
+URLDOWNLOAD="https://www.derekdemuro.com/versions/raspiscm.zip"
+OUTPUTLOCATION="/tmp/updater/"
+UPDATEFILENAME="/var/raspiscmver.txt"
+CDNS1='8.8.8.8'
+CDNS2='8.8.4.4'
 
-echo " Starting Updater... "
-echo ""
-echo ""
-# fetch changes, git stores them in FETCH_HEAD
-git fetch
-echo "Fetch completed."
-# check for remote changes in origin repository
-new_updates_available=`git diff HEAD FETCH_HEAD`
-if [ "$new_updates_available" != "" ]
-then
-        echo "Creating fallback branch"
-		git stash
-		# create the fallback
-        git branch fallbacks
-        git checkout fallbacks
-		
-        git add .
-        git add -u
-        git commit -m "$DATE"
-        echo "Fallback created" >> $LOG
- 
-        git checkout master
-        git pop
-		git pull
-        git merge FETCH_HEAD
-        echo "Merged updates" >> $LOG
-        for branch in $(git for-each-ref --format '%(refname:short)' refs/heads/)
-        do
-            git merge-base --is-ancestor ${branch} HEAD -m "Automerging" && git branch -d ${branch}
-        done
-		mkdir -p $DIR_MAKE > /dev/null 2>&1
-        chown $USER:$USER * -R > /dev/null 2>&1
-        chmod $PERMISSION * -R > /dev/null 2>&1
-else
-        echo "No updates available" >> $LOG
+# Check the version file exits
+if [ ! -f $UPDATEFILENAME ]; then
+    echo "Missing local version... not continuing..."
+    SYSTEMVERSION=`cat $UPDATEFILENAME`
 fi
-mkdir -p $DIR_MAKE > /dev/null 2>&1
-chown $USER:$USER * -R > /dev/null 2>&1
-chmod $PERMISSION * -R > /dev/null 2>&1
 
-echo "Updater finished, you should be running the latest version..."
+echo "Updating raspi-scm system." >> $LOGGER
+ver=`curl $URLVERSION`
+echo "Version on server: $ver" >> $LOGGER
+echo "Version on system: $SYSTEMVERSION" >> $LOGGER
+
+echo "Packages required for updater script." >> $LOGGER
+apt-get install -qq --force-yes -y unzip rsync curl
+
+if [[ $SYSTEMVERSION -lt $ver ]]; then
+    # Crating temporal directory.
+    echo "Crating temporal directory" >> $LOGGER
+    mkdir -p $OUTPUTLOCATION
+    mkdir -p $OUTPUTLOCATION/new
+
+    # To avoid custom dns resolver issues. - 8.8.8.8 Google's Primary and 8.8.4.4 Google's secondary.
+    wget -t 3 -T 5 -O "$OUTPUTLOCATION$UPDATEFILENAME" $URLDOWNLOAD ||
+    curl --resolve $URLDOWNLOAD:$CDNS1 $URLDOWNLOAD -o "$OUTPUTLOCATION$UPDATEFILENAME" ||
+    curl --resolve $URLDOWNLOAD:$CDNS2 $URLDOWNLOAD -o "$OUTPUTLOCATION$UPDATEFILENAME"
+
+    # Unzip new version to updater location.
+    unzip "$OUTPUTLOCATION$UPDATEFILENAME" -d $OUTPUTLOCATION/new >> $LOGGER
+
+    if [ ! -f "$OUTPUTLOCATION/new/var/raspiscm.txt" ]; then
+        echo "Missing version file in new version... ERROR!." >> $LOGGER
+        rm -rf $OUTPUTLOCATION
+        exit 1
+    fi
+
+    # Run updater scripts.
+    $OUTPUTLOCATION/new/updater.sh >> $LOGGER
+
+    # Sync system with update.
+    rsync -avz $OUTPUTLOCATION/new /
+
+    # Removing updater script.
+    rm /updater.sh
+fi
+exit 0
