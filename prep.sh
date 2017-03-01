@@ -8,8 +8,8 @@
 echo "Updating repos."
 apt-get update
 echo "Installing dependencies."
-apt-get install nginx php-apc php5 php5-fpm php5-gd php5-curl php5-mysql php5-sqlite vim \
- php5-mysqli php5-rrd php5-readline php5-redis php5-ssh2 php5-xmlrpc php5-memcache php5-json php5-geoip php5-apcu git openvpn
+apt-get install -qq -y nginx php-apc php5 php5-fpm php5-gd php5-curl php5-mysql php5-sqlite vim \
+ php5-rrd php5-readline php5-redis php5-ssh2 php5-xmlrpc php5-memcache php5-json php5-geoip php5-apcu git openvpn
 
 # Make sure OPT exists
 echo "Cloning raspberrypi project."
@@ -53,61 +53,54 @@ sudo service php5-fpm restart
 echo "Configuring nginx default to raspi-scm."
 # Nginx default conf changes:
 echo "server {
-        listen   80;
+  server {
+          listen   80;
 
-        root /usr/share/nginx/html/raspberry-scm;
-        set $yii_bootstrap "index.php";
-        index index.php index.html index.htm;
+          root /usr/share/nginx/html/raspberry-scm;
+          index index.php index.html index.htm;
 
-        server_name _;
-        charset utf-8;
+          charset utf-8;
 
-        error_page 404 /404.html;
+          error_page 404 /404.html;
 
-        error_page 500 502 503 504 /50x.html;
-        location = /50x.html {
-              root /usr/share/nginx/www;
-        }
+          error_page 500 502 503 504 /50x.html;
+          location = /50x.html {
+                root /usr/share/nginx/www;
+          }
 
-        # pass the PHP scripts to FastCGI server listening on the php-fpm socket
-        location ~ \.php$ {
-                try_files $uri =404;
-            		fastcgi_pass unix:/var/run/php5-fpm.sock;
-                #fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
-                fastcgi_index index.php;
-                fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-                include fastcgi_params;
+          # pass the PHP scripts to FastCGI server listening on the php-fpm socket
+          location ~ \.php$ {
+                  fastcgi_pass unix:/var/run/php5-fpm.sock;
+                  #fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
+                  fastcgi_index index.php;
+                  include fastcgi_params;
 
-        }
-        autoindex off;
-        #avoid processing of calls to unexisting static files by yii
-        location ~ \.(js|css|png|jpg|gif|swf|ico|pdf|mov|fla|zip|rar)$ {
-            try_files $uri =404;
-        }
+          }
+          autoindex off;
 
-        location ~ \.svn/.* {
-          deny all;
-        }
-
-        location /.htaccess {
-          deny all;
-        }
-
-        location ~ /(protected|framework|nbproject) {
+          location ~ \.svn/.* {
             deny all;
-            access_log off;
-            log_not_found off;
-        }
+          }
 
-        location ~ ^/(protected|framework|themes/\w+/views) {
-            deny  all;
-        }
+          location /.htaccess {
+            deny all;
+          }
 
-        location / {
-            index  index.html $yii_bootstrap;
-            try_files $uri $uri/ /$yii_bootstrap?$args;
-        }
-}" > /etc/nginx/sites-available/default
+          location ~ /(protected|framework|nbproject) {
+              deny all;
+              access_log off;
+              log_not_found off;
+          }
+
+          location ~ ^/(protected|framework|themes/\w+/views) {
+              deny  all;
+          }
+
+          location / {
+              index  index.html ;
+              try_files  / /?;
+          }
+  }" > /etc/nginx/sites-available/default
 
 echo "Configuring nginx fastcgi config."
 # Nginx fastcgi conf changes:
