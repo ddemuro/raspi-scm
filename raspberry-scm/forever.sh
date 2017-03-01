@@ -4,7 +4,7 @@
 # The process didn't die.                                   #
 #############################################################
 # Command to ensure we're running (This call should create the file with the PID...)
-CMD='/usr/share/nginx/html/raspi-scm/command.php cron'
+CMD='/usr/share/nginx/html/raspberry-scm/command.php cron'
 
 # Location of the file with the PID inside.
 PIDLOC='/tmp/raspi-scm.pid'
