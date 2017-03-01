@@ -8,7 +8,7 @@
 echo "Updating repos."
 apt-get update
 echo "Installing dependencies."
-apt-get install nginx php-apc php5 php5-fpm php5-gd php5-curl php5-mysql php5-sqlite \
+apt-get install nginx php-apc php5 php5-fpm php5-gd php5-curl php5-mysql php5-sqlite vim \
  php5-mysqli php5-rrd php5-readline php5-redis php5-ssh2 php5-xmlrpc php5-memcache php5-json php5-geoip php5-apcu git openvpn
 
 # Make sure OPT exists
