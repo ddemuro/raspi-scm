@@ -7,7 +7,7 @@
 CMD='/usr/share/nginx/html/raspberry-scm/command.php cron'
 
 # Location of the file with the PID inside.
-PIDLOC='/mnt/pendrive/raspi-scm.pid'
+PIDLOC='/tmp/raspi-scm.pid'
 
 # Every how long to checks
 SECONDS=60
