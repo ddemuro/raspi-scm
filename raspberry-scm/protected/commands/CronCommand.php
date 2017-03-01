@@ -41,7 +41,7 @@ class CronCommand extends CConsoleCommand {
         $this->email("Starting test... - Any alert past this e-mail are ACTUAL alerts.", 'ALERT: Raspberry system check has started.');
         $this->start = date("Y-m-d H:i:s", time());
         $this->mypid = getmypid();
-        Yii::app()->functions->writeToFile('/mnt/pendrive/raspi-scm.pid',$this->mypid);
+        Yii::app()->functions->writeToFile('/tmp/raspi-scm.pid',$this->mypid);
         while (true) {
             // Every 12 hours
             if (round(abs(strtotime(date("Y-m-d H:i:s", time())) - $this->start) / 60, 2) >= 720) {
