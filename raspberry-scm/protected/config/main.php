@@ -29,13 +29,13 @@ if (function_exists('xcache_isset') &&
 // Yii::setPathOfAlias('local','path/to/local-folder');
 // This is the main Web application configuration. Any writable
 // CWebApplication properties can be configured here.
-Yii::setPathOfAlias('chartjs', dirname(__FILE__).'/../extensions/yii-chartjs');
+Yii::setPathOfAlias('chartjs', dirname(__FILE__) . '/../extensions/yii-chartjs');
 return array(
     'basePath' => dirname(__FILE__) . DIRECTORY_SEPARATOR . '..',
     'name' => 'Raspberry Remote Management System',
     // preloading 'log' component
     'preload' => array('log', 'session', 'db', 'cache', 'phpseclib', 'chartjs'),
-    'theme'=>'blackboot',
+    'theme' => 'blackboot',
     // autoloading model and component classes
     'import' => array(
         'application.models.*',
@@ -49,7 +49,7 @@ return array(
             'class' => 'system.gii.GiiModule',
             'password' => 'test',
             // If removed, Gii defaults to localhost only. Edit carefully to taste.
-            'ipFilters' => array('10.*.*.*','192.168.1.*', '::1'),
+            'ipFilters' => array('10.*.*.*', '192.168.1.*', '::1'),
         ),
     ),
     // application components
@@ -97,7 +97,7 @@ return array(
                 ),
             ),
         ),
-        'chartjs'=>array('class' => 'chartjs.components.ChartJs',),
+        'chartjs' => array('class' => 'chartjs.components.ChartJs',),
         'functions' => array('class' => 'application.components.Functions',),
         'TemperatureController' => array('class' => 'application.components.TemperatureController',),
         'UpsManager' => array('class' => 'application.components.UpsManager',),

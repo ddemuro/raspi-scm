@@ -7,25 +7,28 @@ LOGGER="/tmp/updater.log"
 URLVERSION="https://www.derekdemuro.com/versions/raspiscm.txt"
 URLDOWNLOAD="https://www.derekdemuro.com/versions/raspiscm.zip"
 OUTPUTLOCATION="/tmp/updater/"
-UPDATEFILENAME="/var/raspiscmver.txt"
+UPDATEFILENAME="raspiscmver.txt"
 CDNS1='8.8.8.8'
 CDNS2='8.8.4.4'
 
 # Check the version file exits
-if [ ! -f $UPDATEFILENAME ]; then
+if [ ! -f "/var/$UPDATEFILENAME" ]; then
     echo "Missing local version... not continuing..."
-    SYSTEMVERSION=`cat $UPDATEFILENAME`
+    exit 1
 fi
 
+SYSTEMVERSION=$(</var/$UPDATEFILENAME)
 echo "Updating raspi-scm system." >> $LOGGER
+# Checking external version
 ver=`curl $URLVERSION`
+ver=${ver//$'\n'/} # Remove all newlines.
 echo "Version on server: $ver" >> $LOGGER
 echo "Version on system: $SYSTEMVERSION" >> $LOGGER
 
 echo "Packages required for updater script." >> $LOGGER
 apt-get install -qq --force-yes -y unzip rsync curl
 
-if [[ $SYSTEMVERSION -lt $ver ]]; then
+if [[ "$SYSTEMVERSION" -lt "$ver" ]]; then
     # Crating temporal directory.
     echo "Crating temporal directory" >> $LOGGER
     mkdir -p $OUTPUTLOCATION
@@ -46,12 +49,18 @@ if [[ $SYSTEMVERSION -lt $ver ]]; then
     fi
 
     # Run updater scripts.
-    $OUTPUTLOCATION/new/updater.sh >> $LOGGER
-
+    chmod +x $OUTPUTLOCATION/new/preupdater.sh
+    chmod +x $OUTPUTLOCATION/new/postupdater.sh
+    # Before the system is synced
+    $OUTPUTLOCATION/new/preupdater.sh >> $LOGGER
     # Sync system with update.
     rsync -avz $OUTPUTLOCATION/new /
+    # After the new system has been synced
+    $OUTPUTLOCATION/new/postupdater.sh >> $LOGGER
 
     # Removing updater script.
     rm /updater.sh
+else
+    echo "All up to date!."
 fi
 exit 0

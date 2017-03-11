@@ -322,14 +322,14 @@ class File_ASN1 {
             } elseif ($length & 0x80) { // definite length, long form
                 // technically, the long form of the length can be represented by up to 126 octets (bytes), but we'll only
                 // support it up to four.
-                $length&= 0x7F;
+                $length &= 0x7F;
                 $temp = $this->_string_shift($encoded, $length);
                 // tags of indefinite length don't really have a header length; this length includes the tag
-                $current+= array('headerlength' => $length + 2);
-                $start+= $length;
+                $current += array('headerlength' => $length + 2);
+                $start += $length;
                 extract(unpack('Nlength', substr(str_pad($temp, 4, chr(0), STR_PAD_LEFT), -4)));
             } else {
-                $current+= array('headerlength' => 2);
+                $current += array('headerlength' => 2);
             }
 
             // End-of-content, see paragraphs 8.1.1.3, 8.1.3.2, 8.1.3.6, 8.1.5, and (for an example) 8.6.4.2
@@ -358,11 +358,11 @@ class File_ASN1 {
                         'content' => $constructed ? $this->_decode_ber($content, $start) : $content,
                         'length' => $length + $start - $current['start']
                             ) + $current;
-                    $start+= $length;
+                    $start += $length;
                     continue 2;
             }
 
-            $current+= array('type' => $tag);
+            $current += array('type' => $tag);
 
             // decode UNIVERSAL tags
             switch ($tag) {
@@ -387,14 +387,14 @@ class File_ASN1 {
                         $current['content'] = $content;
                     } else {
                         $temp = $this->_decode_ber($content, $start);
-                        $length-= strlen($content);
+                        $length -= strlen($content);
                         $last = count($temp) - 1;
                         for ($i = 0; $i < $last; $i++) {
                             // all subtags should be bit strings
                             //if ($temp[$i]['type'] != FILE_ASN1_TYPE_BIT_STRING) {
                             //    return false;
                             //}
-                            $current['content'].= substr($temp[$i]['content'], 1);
+                            $current['content'] .= substr($temp[$i]['content'], 1);
                         }
                         // all subtags should be bit strings
                         //if ($temp[$last]['type'] != FILE_ASN1_TYPE_BIT_STRING) {
@@ -408,13 +408,13 @@ class File_ASN1 {
                         $current['content'] = $content;
                     } else {
                         $temp = $this->_decode_ber($content, $start);
-                        $length-= strlen($content);
+                        $length -= strlen($content);
                         for ($i = 0, $size = count($temp); $i < $size; $i++) {
                             // all subtags should be octet strings
                             //if ($temp[$i]['type'] != FILE_ASN1_TYPE_OCTET_STRING) {
                             //    return false;
                             //}
-                            $current['content'].= $temp[$i]['content'];
+                            $current['content'] .= $temp[$i]['content'];
                         }
                         // $length =
                     }
@@ -439,7 +439,7 @@ class File_ASN1 {
                         $valuen <<= 7;
                         $valuen |= $temp & 0x7F;
                         if (~$temp & 0x80) {
-                            $current['content'].= ".$valuen";
+                            $current['content'] .= ".$valuen";
                             $valuen = 0;
                         }
                     }
@@ -484,7 +484,7 @@ class File_ASN1 {
                 default:
             }
 
-            $start+= $length;
+            $start += $length;
             $decoded[] = $current + array('length' => $start - $current['start']);
         }
 
@@ -834,7 +834,7 @@ class File_ASN1 {
         switch ($tag) {
             case FILE_ASN1_TYPE_SET:    // Children order is not important, thus process in sequence.
             case FILE_ASN1_TYPE_SEQUENCE:
-                $tag|= 0x20; // set the constructed bit
+                $tag |= 0x20; // set the constructed bit
                 $value = '';
 
                 // ignore the min and max
@@ -846,7 +846,7 @@ class File_ASN1 {
                         if ($temp === false) {
                             return false;
                         }
-                        $value.= $temp;
+                        $value .= $temp;
                     }
                     break;
                 }
@@ -889,7 +889,7 @@ class File_ASN1 {
                             $temp = $subtag . substr($temp, 1);
                         }
                     }
-                    $value.= $temp;
+                    $value .= $temp;
                 }
                 break;
             case FILE_ASN1_TYPE_CHOICE:
@@ -953,7 +953,7 @@ class File_ASN1 {
             case FILE_ASN1_TYPE_UTC_TIME:
             case FILE_ASN1_TYPE_GENERALIZED_TIME:
                 $format = $mapping['type'] == FILE_ASN1_TYPE_UTC_TIME ? 'y' : 'Y';
-                $format.= 'mdHis';
+                $format .= 'mdHis';
                 $value = @gmdate($format, strtotime($source)) . 'Z';
                 break;
             case FILE_ASN1_TYPE_BIT_STRING:
@@ -979,7 +979,7 @@ class File_ASN1 {
                     $bits = implode('', array_pad($bits, $size + $offset + 1, 0));
                     $bytes = explode(' ', rtrim(chunk_split($bits, 8, ' ')));
                     foreach ($bytes as $byte) {
-                        $value.= chr(bindec($byte));
+                        $value .= chr(bindec($byte));
                     }
 
                     break;
@@ -1011,7 +1011,7 @@ class File_ASN1 {
                         }
                         $temp[strlen($temp) - 1] = $temp[strlen($temp) - 1] & chr(0x7F);
                     }
-                    $value.= $temp;
+                    $value .= $temp;
                 }
                 break;
             case FILE_ASN1_TYPE_ANY:

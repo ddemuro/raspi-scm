@@ -1,4 +1,5 @@
 <?php
+
 // change the following paths if necessary
 $yii = dirname(__FILE__) . '/../framework/yii.php';
 $config = dirname(__FILE__) . '/protected/config/';
@@ -18,5 +19,5 @@ $configFile = 'production.php';
 //We load YII
 require_once($yii);
 
-Yii::createConsoleApplication($config.$configFile)->run();
+Yii::createConsoleApplication($config . $configFile)->run();
 

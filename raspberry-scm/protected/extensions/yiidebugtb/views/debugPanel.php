@@ -204,7 +204,7 @@
         foreach ($items as $item):
             ?>
             <li>[&nbsp;
-    <?php echo (isset($item['content']) && !is_null($item['content'])) ? '<a href="#" class="yiiLinkItem" onclick="return yiiWebDebugToggle(\'__yiiWDP' . $index . '\');">' . $item['title'] . '</a>' : $item['title'] ?>
+                <?php echo (isset($item['content']) && !is_null($item['content'])) ? '<a href="#" class="yiiLinkItem" onclick="return yiiWebDebugToggle(\'__yiiWDP' . $index . '\');">' . $item['title'] . '</a>' : $item['title'] ?>
                 &nbsp;]
             </li>
             <?php
@@ -214,11 +214,11 @@
         ?>
     </ul>
 
-<?php if ($alignLeft): ?>
+    <?php if ($alignLeft): ?>
         <ul>
             <li><a href="#" class="yiiLink" onclick="return yiiWebDebugToggle('yiiWebDebugToolbarItems');">Yii</a></li>
         </ul>
-<?php endif ?>
+    <?php endif ?>
 </div>
 
 <div id="yiiWebDebugPanel">
@@ -230,18 +230,18 @@
 
         <div id="__yiiWDP<?php echo $index ?>" style="display: none">
             <div class="panelHeadInfo">
-    <?php if ($alignLeft) echo "<br/>" ?> <?php echo (isset($item['headinfo']) && !is_null($item['headinfo'])) ? $item['headinfo'] : '<br/><br/>' ?>
+                <?php if ($alignLeft) echo "<br/>" ?> <?php echo (isset($item['headinfo']) && !is_null($item['headinfo'])) ? $item['headinfo'] : '<br/><br/>' ?>
             </div>
 
             <center>
                 <div class="gridContainer">
                     <div class="panelTitle">
-    <?php if (isset($item['panelTitle']) && !is_null($item['panelTitle'])) echo $item['panelTitle'] ?>
+                        <?php if (isset($item['panelTitle']) && !is_null($item['panelTitle'])) echo $item['panelTitle'] ?>
                     </div>
 
                     <div class="panelGrid" id="panelGridH__yiiWDP<?php echo $index ?>">
                         <div id="panelGH__yiiWDP<?php echo $index ?>">
-    <?php echo $item['content'] ?>
+                            <?php echo $item['content'] ?>
                         </div>
                     </div>
                 </div>

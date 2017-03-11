@@ -3,7 +3,8 @@
 class SiteController extends BaseController {
 
     public $layout = '//layouts/column1';
-     /**
+
+    /**
      * Class constructor
      *
      */
@@ -11,7 +12,7 @@ class SiteController extends BaseController {
         /* Run init */
         parent::init();
     }
-    
+
     /**
      * Declares class-based actions.
      */

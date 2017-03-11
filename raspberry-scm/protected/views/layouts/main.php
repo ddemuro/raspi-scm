@@ -28,7 +28,7 @@
 
             <div id="mainmenu">
                 <?php
-                $this->widget('zii.widgets.CMenu', [ 'items' => $this->extraMenu ]);
+                $this->widget('zii.widgets.CMenu', ['items' => $this->extraMenu]);
                 ?>
             </div><!-- mainmenu -->
             <?php if (isset($this->breadcrumbs)): ?>

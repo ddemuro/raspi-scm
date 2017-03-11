@@ -1228,7 +1228,7 @@ class Crypt_Rijndael extends Crypt_Base {
             $c = $this->c;
 
             // Generating encrypt code:
-            $init_encrypt.= '
+            $init_encrypt .= '
                 static $t0, $t1, $t2, $t3, $sbox;
                 if (!$t0) {
                     for ($i = 0; $i < 256; ++$i) {
@@ -1255,8 +1255,7 @@ class Crypt_Rijndael extends Crypt_Base {
             for ($round = 1; $round < $Nr; ++$round) {
                 list($s, $e) = array($e, $s);
                 for ($i = 0; $i < $Nb; ++$i) {
-                    $encrypt_block.=
-                            '$' . $e . $i . ' =
+                    $encrypt_block .= '$' . $e . $i . ' =
                         $t0[($' . $s . $i . ' >> 24) & 0xff] ^
                         $t1[($' . $s . (($i + $c[1]) % $Nb) . ' >> 16) & 0xff] ^
                         $t2[($' . $s . (($i + $c[2]) % $Nb) . ' >>  8) & 0xff] ^
@@ -1267,8 +1266,7 @@ class Crypt_Rijndael extends Crypt_Base {
 
             // Finalround: subWord + shiftRows + addRoundKey
             for ($i = 0; $i < $Nb; ++$i) {
-                $encrypt_block.=
-                        '$' . $e . $i . ' =
+                $encrypt_block .= '$' . $e . $i . ' =
                      $sbox[ $' . $e . $i . '        & 0xff]        |
                     ($sbox[($' . $e . $i . ' >>  8) & 0xff] <<  8) |
                     ($sbox[($' . $e . $i . ' >> 16) & 0xff] << 16) |
@@ -1276,7 +1274,7 @@ class Crypt_Rijndael extends Crypt_Base {
             }
             $encrypt_block .= '$in = pack("N*"' . "\n";
             for ($i = 0; $i < $Nb; ++$i) {
-                $encrypt_block.= ',
+                $encrypt_block .= ',
                     ($' . $e . $i . ' & 0xFF000000) ^
                     ($' . $e . (($i + $c[1]) % $Nb) . ' & 0x00FF0000) ^
                     ($' . $e . (($i + $c[2]) % $Nb) . ' & 0x0000FF00) ^
@@ -1286,7 +1284,7 @@ class Crypt_Rijndael extends Crypt_Base {
             $encrypt_block .= ');';
 
             // Generating decrypt code:
-            $init_decrypt.= '
+            $init_decrypt .= '
                 static $dt0, $dt1, $dt2, $dt3, $isbox;
                 if (!$dt0) {
                     for ($i = 0; $i < 256; ++$i) {
@@ -1313,8 +1311,7 @@ class Crypt_Rijndael extends Crypt_Base {
             for ($round = 1; $round < $Nr; ++$round) {
                 list($s, $e) = array($e, $s);
                 for ($i = 0; $i < $Nb; ++$i) {
-                    $decrypt_block.=
-                            '$' . $e . $i . ' =
+                    $decrypt_block .= '$' . $e . $i . ' =
                         $dt0[($' . $s . $i . ' >> 24) & 0xff] ^
                         $dt1[($' . $s . (($Nb + $i - $c[1]) % $Nb) . ' >> 16) & 0xff] ^
                         $dt2[($' . $s . (($Nb + $i - $c[2]) % $Nb) . ' >>  8) & 0xff] ^
@@ -1325,8 +1322,7 @@ class Crypt_Rijndael extends Crypt_Base {
 
             // Finalround: subWord + shiftRows + addRoundKey
             for ($i = 0; $i < $Nb; ++$i) {
-                $decrypt_block.=
-                        '$' . $e . $i . ' =
+                $decrypt_block .= '$' . $e . $i . ' =
                      $isbox[ $' . $e . $i . '        & 0xff]        |
                     ($isbox[($' . $e . $i . ' >>  8) & 0xff] <<  8) |
                     ($isbox[($' . $e . $i . ' >> 16) & 0xff] << 16) |
@@ -1334,7 +1330,7 @@ class Crypt_Rijndael extends Crypt_Base {
             }
             $decrypt_block .= '$in = pack("N*"' . "\n";
             for ($i = 0; $i < $Nb; ++$i) {
-                $decrypt_block.= ',
+                $decrypt_block .= ',
                     ($' . $e . $i . ' & 0xFF000000) ^
                     ($' . $e . (($Nb + $i - $c[1]) % $Nb) . ' & 0x00FF0000) ^
                     ($' . $e . (($Nb + $i - $c[2]) % $Nb) . ' & 0x0000FF00) ^

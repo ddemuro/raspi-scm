@@ -534,7 +534,7 @@ class Crypt_Twofish extends Crypt_Base {
             case 16:
                 list ($s7, $s6, $s5, $s4) = $this->_mdsrem($le_longs[1], $le_longs[2]);
                 list ($s3, $s2, $s1, $s0) = $this->_mdsrem($le_longs[3], $le_longs[4]);
-                for ($i = 0, $j = 1; $i < 40; $i+= 2, $j+= 2) {
+                for ($i = 0, $j = 1; $i < 40; $i += 2, $j += 2) {
                     $A = $m0[$q0[$q0[$i] ^ $key[9]] ^ $key[1]] ^
                             $m1[$q0[$q1[$i] ^ $key[10]] ^ $key[2]] ^
                             $m2[$q1[$q0[$i] ^ $key[11]] ^ $key[3]] ^
@@ -544,8 +544,8 @@ class Crypt_Twofish extends Crypt_Base {
                             $m2[$q1[$q0[$j] ^ $key[15]] ^ $key[7]] ^
                             $m3[$q1[$q1[$j] ^ $key[16]] ^ $key[8]];
                     $B = ($B << 8) | ($B >> 24 & 0xff);
-                    $K[] = $A+= $B;
-                    $K[] = (($A+= $B) << 9 | $A >> 23 & 0x1ff);
+                    $K[] = $A += $B;
+                    $K[] = (($A += $B) << 9 | $A >> 23 & 0x1ff);
                 }
                 for ($i = 0; $i < 256; ++$i) {
                     $S0[$i] = $m0[$q0[$q0[$i] ^ $s4] ^ $s0];
@@ -558,7 +558,7 @@ class Crypt_Twofish extends Crypt_Base {
                 list ($sb, $sa, $s9, $s8) = $this->_mdsrem($le_longs[1], $le_longs[2]);
                 list ($s7, $s6, $s5, $s4) = $this->_mdsrem($le_longs[3], $le_longs[4]);
                 list ($s3, $s2, $s1, $s0) = $this->_mdsrem($le_longs[5], $le_longs[6]);
-                for ($i = 0, $j = 1; $i < 40; $i+= 2, $j+= 2) {
+                for ($i = 0, $j = 1; $i < 40; $i += 2, $j += 2) {
                     $A = $m0[$q0[$q0[$q1[$i] ^ $key[17]] ^ $key[9]] ^ $key[1]] ^
                             $m1[$q0[$q1[$q1[$i] ^ $key[18]] ^ $key[10]] ^ $key[2]] ^
                             $m2[$q1[$q0[$q0[$i] ^ $key[19]] ^ $key[11]] ^ $key[3]] ^
@@ -568,8 +568,8 @@ class Crypt_Twofish extends Crypt_Base {
                             $m2[$q1[$q0[$q0[$j] ^ $key[23]] ^ $key[15]] ^ $key[7]] ^
                             $m3[$q1[$q1[$q0[$j] ^ $key[24]] ^ $key[16]] ^ $key[8]];
                     $B = ($B << 8) | ($B >> 24 & 0xff);
-                    $K[] = $A+= $B;
-                    $K[] = (($A+= $B) << 9 | $A >> 23 & 0x1ff);
+                    $K[] = $A += $B;
+                    $K[] = (($A += $B) << 9 | $A >> 23 & 0x1ff);
                 }
                 for ($i = 0; $i < 256; ++$i) {
                     $S0[$i] = $m0[$q0[$q0[$q1[$i] ^ $s8] ^ $s4] ^ $s0];
@@ -583,7 +583,7 @@ class Crypt_Twofish extends Crypt_Base {
                 list ($sb, $sa, $s9, $s8) = $this->_mdsrem($le_longs[3], $le_longs[4]);
                 list ($s7, $s6, $s5, $s4) = $this->_mdsrem($le_longs[5], $le_longs[6]);
                 list ($s3, $s2, $s1, $s0) = $this->_mdsrem($le_longs[7], $le_longs[8]);
-                for ($i = 0, $j = 1; $i < 40; $i+= 2, $j+= 2) {
+                for ($i = 0, $j = 1; $i < 40; $i += 2, $j += 2) {
                     $A = $m0[$q0[$q0[$q1[$q1[$i] ^ $key[25]] ^ $key[17]] ^ $key[9]] ^ $key[1]] ^
                             $m1[$q0[$q1[$q1[$q0[$i] ^ $key[26]] ^ $key[18]] ^ $key[10]] ^ $key[2]] ^
                             $m2[$q1[$q0[$q0[$q0[$i] ^ $key[27]] ^ $key[19]] ^ $key[11]] ^ $key[3]] ^
@@ -593,8 +593,8 @@ class Crypt_Twofish extends Crypt_Base {
                             $m2[$q1[$q0[$q0[$q0[$j] ^ $key[31]] ^ $key[23]] ^ $key[15]] ^ $key[7]] ^
                             $m3[$q1[$q1[$q0[$q1[$j] ^ $key[32]] ^ $key[24]] ^ $key[16]] ^ $key[8]];
                     $B = ($B << 8) | ($B >> 24 & 0xff);
-                    $K[] = $A+= $B;
-                    $K[] = (($A+= $B) << 9 | $A >> 23 & 0x1ff);
+                    $K[] = $A += $B;
+                    $K[] = (($A += $B) << 9 | $A >> 23 & 0x1ff);
                 }
                 for ($i = 0; $i < 256; ++$i) {
                     $S0[$i] = $m0[$q0[$q0[$q1[$q1[$i] ^ $sc] ^ $s8] ^ $s4] ^ $s0];
@@ -627,27 +627,27 @@ class Crypt_Twofish extends Crypt_Base {
 
             // Shift the others up.
             $B = ($B << 8) | (0xff & ($A >> 24));
-            $A<<= 8;
+            $A <<= 8;
 
             $u = $t << 1;
 
             // Subtract the modular polynomial on overflow.
             if ($t & 0x80) {
-                $u^= 0x14d;
+                $u ^= 0x14d;
             }
 
             // Remove t * (a * x^2 + 1).
             $B ^= $t ^ ($u << 16);
 
             // Form u = a*t + t/a = t*(a + 1/a).
-            $u^= 0x7fffffff & ($t >> 1);
+            $u ^= 0x7fffffff & ($t >> 1);
 
             // Add the modular polynomial on underflow.
             if ($t & 0x01)
-                $u^= 0xa6;
+                $u ^= 0xa6;
 
             // Remove t * (a + 1/a) * (x^3 + x).
-            $B^= ($u << 24) | ($u << 8);
+            $B ^= ($u << 24) | ($u << 8);
         }
 
         return array(
@@ -687,7 +687,7 @@ class Crypt_Twofish extends Crypt_Base {
                     $S1[$R1 & 0xff] ^
                     $S2[($R1 >> 8) & 0xff] ^
                     $S3[($R1 >> 16) & 0xff];
-            $R2^= $t0 + $t1 + $K[++$ki];
+            $R2 ^= $t0 + $t1 + $K[++$ki];
             $R2 = ($R2 >> 1 & 0x7fffffff) | ($R2 << 31);
             $R3 = ((($R3 >> 31) & 1) | ($R3 << 1)) ^ ($t0 + ($t1 << 1) + $K[++$ki]);
 
@@ -699,7 +699,7 @@ class Crypt_Twofish extends Crypt_Base {
                     $S1[$R3 & 0xff] ^
                     $S2[($R3 >> 8) & 0xff] ^
                     $S3[($R3 >> 16) & 0xff];
-            $R0^= ($t0 + $t1 + $K[++$ki]);
+            $R0 ^= ($t0 + $t1 + $K[++$ki]);
             $R0 = ($R0 >> 1 & 0x7fffffff) | ($R0 << 31);
             $R1 = ((($R1 >> 31) & 1) | ($R1 << 1)) ^ ($t0 + ($t1 << 1) + $K[++$ki]);
         }
@@ -737,7 +737,7 @@ class Crypt_Twofish extends Crypt_Base {
                     $S1[$R1 & 0xff] ^
                     $S2[$R1 >> 8 & 0xff] ^
                     $S3[$R1 >> 16 & 0xff];
-            $R3^= $t0 + ($t1 << 1) + $K[--$ki];
+            $R3 ^= $t0 + ($t1 << 1) + $K[--$ki];
             $R3 = $R3 >> 1 & 0x7fffffff | $R3 << 31;
             $R2 = ($R2 >> 31 & 0x1 | $R2 << 1) ^ ($t0 + $t1 + $K[--$ki]);
 
@@ -749,7 +749,7 @@ class Crypt_Twofish extends Crypt_Base {
                     $S1[$R3 & 0xff] ^
                     $S2[$R3 >> 8 & 0xff] ^
                     $S3[$R3 >> 16 & 0xff];
-            $R1^= $t0 + ($t1 << 1) + $K[--$ki];
+            $R1 ^= $t0 + ($t1 << 1) + $K[--$ki];
             $R1 = $R1 >> 1 & 0x7fffffff | $R1 << 31;
             $R0 = ($R0 >> 31 & 0x1 | $R0 << 1) ^ ($t0 + $t1 + $K[--$ki]);
         }
@@ -818,7 +818,7 @@ class Crypt_Twofish extends Crypt_Base {
                 $R3 = ' . $K[3] . ' ^ $in[4];
             ';
             for ($ki = 7, $i = 0; $i < 8; ++$i) {
-                $encrypt_block.= '
+                $encrypt_block .= '
                     $t0 = $S0[ $R0        & 0xff] ^
                           $S1[($R0 >>  8) & 0xff] ^
                           $S2[($R0 >> 16) & 0xff] ^
@@ -844,7 +844,7 @@ class Crypt_Twofish extends Crypt_Base {
                     $R1 = ((($R1 >> 31) & 1) | ($R1 << 1)) ^ ($t0 + ($t1 << 1) + ' . $K[++$ki] . ');
                 ';
             }
-            $encrypt_block.= '
+            $encrypt_block .= '
                 $in = pack("V4", ' . $K[4] . ' ^ $R2,
                                  ' . $K[5] . ' ^ $R3,
                                  ' . $K[6] . ' ^ $R0,
@@ -860,7 +860,7 @@ class Crypt_Twofish extends Crypt_Base {
                 $R3 = ' . $K[7] . ' ^ $in[4];
             ';
             for ($ki = 40, $i = 0; $i < 8; ++$i) {
-                $decrypt_block.= '
+                $decrypt_block .= '
                     $t0 = $S0[$R0       & 0xff] ^
                           $S1[$R0 >>  8 & 0xff] ^
                           $S2[$R0 >> 16 & 0xff] ^
@@ -886,7 +886,7 @@ class Crypt_Twofish extends Crypt_Base {
                     $R0 = ($R0 >> 31 & 0x1 | $R0 << 1) ^ ($t0 + $t1 + ' . $K[--$ki] . ');
                 ';
             }
-            $decrypt_block.= '
+            $decrypt_block .= '
                 $in = pack("V4", ' . $K[0] . ' ^ $R2,
                                  ' . $K[1] . ' ^ $R3,
                                  ' . $K[2] . ' ^ $R0,

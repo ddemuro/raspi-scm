@@ -1,4 +1,5 @@
 <?php
+
 /**
  * YiiMailer class - wrapper for PHPMailer
  * Yii extension for sending emails using views and layouts
@@ -26,560 +27,503 @@
  * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
  * @version 1.6, 2014-07-09
  */
-
-
-
 /**
  * Include the the PHPMailer autoloader.
  */
-require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'PHPMailer'.DIRECTORY_SEPARATOR.'PHPMailerAutoload.php');
-
+require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'PHPMailer' . DIRECTORY_SEPARATOR . 'PHPMailerAutoload.php');
 
 class YiiMailer extends PHPMailer {
 
-	/**
-	 * Sets the CharSet of the message.
-	 * @var string
-	 */
-	public $CharSet='UTF-8';
+    /**
+     * Sets the CharSet of the message.
+     * @var string
+     */
+    public $CharSet = 'UTF-8';
 
-	/**
-	 * Sets the text-only body of the message.
-	 * @var string
-	 */
-	public $AltBody='';
+    /**
+     * Sets the text-only body of the message.
+     * @var string
+     */
+    public $AltBody = '';
 
-	/**
-	 * Default paths and private properties
-	 */
-	protected $viewPath='application.views.mail';
+    /**
+     * Default paths and private properties
+     */
+    protected $viewPath = 'application.views.mail';
+    protected $layoutPath = 'application.views.mail.layouts';
+    protected $baseDirPath = 'webroot.images.mail';
+    protected $testMode = false;
+    protected $savePath = 'webroot.assets.mail';
+    protected $layout;
+    protected $view;
+    protected $data;
 
-	protected $layoutPath='application.views.mail.layouts';
+    /**
+     * Constants
+     */
+    const CONFIG_FILE = 'mail.php'; //Define the name of the config file
+    const CONFIG_PARAMS = 'YiiMailer'; //Define the key of the Yii params for the config array
 
-	protected $baseDirPath='webroot.images.mail';
+    /**
+     * Set and configure initial parameters
+     * @param string $view View name
+     * @param array $data Data array
+     * @param string $layout Layout name
+     */
 
-	protected $testMode=false;
+    public function __construct($view = '', $data = array(), $layout = '') {
+        //initialize config
+        if (isset(Yii::app()->params[self::CONFIG_PARAMS]))
+            $config = Yii::app()->params[self::CONFIG_PARAMS];
+        else
+            $config = require(Yii::getPathOfAlias('application.config') . DIRECTORY_SEPARATOR . self::CONFIG_FILE);
+        //set config
+        $this->setConfig($config);
+        //set view
+        $this->setView($view);
+        //set data
+        $this->setData($data);
+        //set layout
+        $this->setLayout($layout);
+    }
 
-	protected $savePath='webroot.assets.mail';
+    /**
+     * Configure parameters
+     * @param array $config Config parameters
+     * @throws CException
+     */
+    private function setConfig($config) {
+        if (!is_array($config))
+            throw new CException("Configuration options must be an array!");
+        foreach ($config as $key => $val) {
+            $this->$key = $val;
+        }
+    }
 
-	protected $layout;
+    /**
+     * Set the view to be used
+     * @param string $view View file
+     * @throws CException
+     */
+    public function setView($view) {
+        if ($view != '') {
+            if (!is_file($this->getViewFile($this->viewPath . '.' . $view)))
+                throw new CException('View "' . $view . '" not found');
+            $this->view = $view;
+        }
+    }
 
-	protected $view;
+    /**
+     * Get currently used view
+     * @return string View filename
+     */
+    public function getView() {
+        return $this->view;
+    }
 
-	protected $data;
+    /**
+     * Clear currently used view
+     */
+    public function clearView() {
+        $this->view = null;
+    }
 
-	/**
-	 * Constants
-	 */
-	const CONFIG_FILE='mail.php'; //Define the name of the config file
+    /**
+     * Send data to be used in mail body
+     * @param array $data Data array
+     */
+    public function setData($data) {
+        $this->data = $data;
+    }
 
-	const CONFIG_PARAMS='YiiMailer'; //Define the key of the Yii params for the config array
+    /**
+     * Get current data array
+     * @return array Data array
+     */
+    public function getData() {
+        return $this->data;
+    }
 
-	/**
-	 * Set and configure initial parameters
-	 * @param string $view View name
-	 * @param array $data Data array
-	 * @param string $layout Layout name
-	 */
-	public function __construct($view='', $data=array(), $layout='')
-	{
-		//initialize config
-		if(isset(Yii::app()->params[self::CONFIG_PARAMS]))
-			$config=Yii::app()->params[self::CONFIG_PARAMS];
-		else
-			$config=require(Yii::getPathOfAlias('application.config').DIRECTORY_SEPARATOR.self::CONFIG_FILE);
-		//set config
-		$this->setConfig($config);
-		//set view
-		$this->setView($view);
-		//set data
-		$this->setData($data);
-		//set layout
-		$this->setLayout($layout);
-	}
+    /**
+     * Clear current data array
+     */
+    public function clearData() {
+        $this->data = array();
+    }
 
-	/**
-	 * Configure parameters
-	 * @param array $config Config parameters
-	 * @throws CException
-	 */
-	private function setConfig($config)
-	{
-		if(!is_array($config))
-			throw new CException("Configuration options must be an array!");
-		foreach($config as $key=>$val)
-		{
-			$this->$key=$val;
-		}
-	}
+    /**
+     * Set layout file to be used
+     * @param string $layout Layout filename
+     * @throws CException
+     */
+    public function setLayout($layout) {
+        if ($layout != '') {
+            if (!is_file($this->getViewFile($this->layoutPath . '.' . $layout)))
+                throw new CException('Layout "' . $layout . '" not found!');
+            $this->layout = $layout;
+        }
+    }
 
-	/**
-	 * Set the view to be used
-	 * @param string $view View file
-	 * @throws CException
-	 */
-	public function setView($view)
-	{
-		if($view!='')
-		{
-			if(!is_file($this->getViewFile($this->viewPath.'.'.$view)))
-				throw new CException('View "'.$view.'" not found');
-			$this->view=$view;
-		}
-	}
+    /**
+     * Get current layout
+     * @return string Layout filename
+     */
+    public function getLayout() {
+        return $this->layout;
+    }
 
-	/**
-	 * Get currently used view
-	 * @return string View filename
-	 */
-	public function getView()
-	{
-		return $this->view;
-	}
+    /**
+     * Clear current layout
+     */
+    public function clearLayout() {
+        $this->layout = null;
+    }
 
-	/**
-	 * Clear currently used view
-	 */
-	public function clearView()
-	{
-		$this->view=null;
-	}
+    /**
+     * Set path for email views
+     * @param string $path Yii path
+     * @throws CException
+     */
+    public function setViewPath($path) {
+        if (!is_string($path) && !preg_match("/[a-z0-9\.]/i", $path))
+            throw new CException('Path "' . $path . '" not valid!');
+        $this->viewPath = $path;
+    }
 
-	/**
-	 * Send data to be used in mail body
-	 * @param array $data Data array
-	 */
-	public function setData($data)
-	{
-		$this->data=$data;
-	}
+    /**
+     * Get path for email views
+     * @return string Yii path
+     */
+    public function getViewPath() {
+        return $this->viewPath;
+    }
 
-	/**
-	 * Get current data array
-	 * @return array Data array
-	 */
-	public function getData()
-	{
-		return $this->data;
-	}
+    /**
+     * Set path for email layouts
+     * @param string $path Yii path
+     * @throws CException
+     */
+    public function setLayoutPath($path) {
+        if (!is_string($path) && !preg_match("/[a-z0-9\.]/i", $path))
+            throw new CException('Path "' . $path . '" not valid!');
+        $this->layoutPath = $path;
+    }
 
-	/**
-	 * Clear current data array
-	 */
-	public function clearData()
-	{
-		$this->data=array();
-	}
+    /**
+     * Get path for email layouts
+     * @return string Yii path
+     */
+    public function getLayoutPath() {
+        return $this->layoutPath;
+    }
 
-	/**
-	 * Set layout file to be used
-	 * @param string $layout Layout filename
-	 * @throws CException
-	 */
-	public function setLayout($layout)
-	{
-		if($layout!='')
-		{
-			if(!is_file($this->getViewFile($this->layoutPath.'.'.$layout)))
-				throw new CException('Layout "'.$layout.'" not found!');
-			$this->layout=$layout;
-		}
-	}
+    /**
+     * Set path for images to embed in email messages
+     * @param string $path Yii path
+     * @throws CException
+     */
+    public function setBaseDirPath($path) {
+        if (!is_string($path) && !preg_match("/[a-z0-9\.]/i", $path))
+            throw new CException('Path "' . $path . '" not valid!');
+        $this->baseDirPath = $path;
+    }
 
-	/**
-	 * Get current layout
-	 * @return string Layout filename
-	 */
-	public function getLayout()
-	{
-		return $this->layout;
-	}
+    /**
+     * Get path for email images
+     * @return string Yii path
+     */
+    public function getBaseDirPath() {
+        return $this->baseDirPath;
+    }
 
-	/**
-	 * Clear current layout
-	 */
-	public function clearLayout()
-	{
-		$this->layout=null;
-	}
+    /**
+     * Set From address and name
+     * @param string $address Email address of the sender
+     * @param string $name Name of the sender
+     * @param boolean $auto Also set the Reply-To
+     * @return boolean True on success, false if address not valid
+     */
+    public function setFrom($address, $name = '', $auto = true) {
+        return parent::SetFrom($address, $name, (int) $auto);
+    }
 
-	/**
-	 * Set path for email views
-	 * @param string $path Yii path
-	 * @throws CException
-	 */
-	public function setViewPath($path)
-	{
-		if (!is_string($path) && !preg_match("/[a-z0-9\.]/i",$path))
-			throw new CException('Path "'.$path.'" not valid!');
-		$this->viewPath=$path;
-	}
+    /**
+     * Set one or more email addresses to send to
+     * Valid arguments:
+     * $mail->setTo('john@example.com');
+     * $mail->setTo(array('john@example.com','jane@example.com'));
+     * $mail->setTo(array('john@example.com'=>'John Doe','jane@example.com'));
+     * @param mixed $addresses Email address or array of email addresses
+     * @return boolean True on success, false if addresses not valid
+     */
+    public function setTo($addresses) {
+        $this->ClearAddresses();
+        return $this->setAddresses('to', $addresses);
+    }
 
-	/**
-	 * Get path for email views
-	 * @return string Yii path
-	 */
-	public function getViewPath()
-	{
-		return $this->viewPath;
-	}
+    /**
+     * Set one or more CC email addresses
+     * @param mixed $addresses Email address or array of email addresses
+     * @return boolean True on success, false if addresses not valid
+     */
+    public function setCc($addresses) {
+        $this->ClearCCs();
+        return $this->setAddresses('cc', $addresses);
+    }
 
-	/**
-	 * Set path for email layouts
-	 * @param string $path Yii path
-	 * @throws CException
-	 */
-	public function setLayoutPath($path)
-	{
-		if (!is_string($path) && !preg_match("/[a-z0-9\.]/i",$path))
-			throw new CException('Path "'.$path.'" not valid!');
-		$this->layoutPath=$path;
-	}
+    /**
+     * Set one or more BCC email addresses
+     * @param mixed $addresses Email address or array of email addresses
+     * @return boolean True on success, false if addresses not valid
+     */
+    public function setBcc($addresses) {
+        $this->ClearBCCs();
+        return $this->setAddresses('bcc', $addresses);
+    }
 
-	/**
-	 * Get path for email layouts
-	 * @return string Yii path
-	 */
-	public function getLayoutPath()
-	{
-		return $this->layoutPath;
-	}
+    /**
+     * Set one or more Reply-To email addresses
+     * @param mixed $addresses Email address or array of email addresses
+     * @return boolean True on success, false if addresses not valid
+     */
+    public function setReplyTo($addresses) {
+        $this->ClearReplyTos();
+        return $this->setAddresses('Reply-To', $addresses);
+    }
 
-	/**
-	 * Set path for images to embed in email messages
-	 * @param string $path Yii path
-	 * @throws CException
-	 */
-	public function setBaseDirPath($path)
-	{
-		if (!is_string($path) && !preg_match("/[a-z0-9\.]/i",$path))
-			throw new CException('Path "'.$path.'" not valid!');
-		$this->baseDirPath=$path;
-	}
+    /**
+     * Set one or more email addresses of different kinds
+     * @param string $type Type of the recipient (to, cc, bcc or Reply-To)
+     * @param mixed $addresses Email address or array of email addresses
+     * @return boolean True on success, false if addresses not valid
+     */
+    private function setAddresses($type, $addresses) {
+        if (!is_array($addresses)) {
+            $addresses = (array) $addresses;
+        }
 
-	/**
-	 * Get path for email images
-	 * @return string Yii path
-	 */
-	public function getBaseDirPath()
-	{
-		return $this->baseDirPath;
-	}
+        $result = true;
+        foreach ($addresses as $key => $value) {
+            if (is_int($key))
+                $r = $this->AddAnAddress($type, $value);
+            else
+                $r = $this->AddAnAddress($type, $key, $value);
+            if ($result && !$r)
+                $result = false;
+        }
 
-	/**
-	 * Set From address and name
-	 * @param string $address Email address of the sender
-	 * @param string $name Name of the sender
-	 * @param boolean $auto Also set the Reply-To
-	 * @return boolean True on success, false if address not valid
-	 */
-	public function setFrom($address, $name = '', $auto = true)
-	{
-		return parent::SetFrom($address, $name, (int)$auto);
-	}
+        return $result;
+    }
 
-	/**
-	 * Set one or more email addresses to send to
-	 * Valid arguments:
-	 * $mail->setTo('john@example.com');
-	 * $mail->setTo(array('john@example.com','jane@example.com'));
-	 * $mail->setTo(array('john@example.com'=>'John Doe','jane@example.com'));
-	 * @param mixed $addresses Email address or array of email addresses
-	 * @return boolean True on success, false if addresses not valid
-	 */
-	public function setTo($addresses)
-	{
-		$this->ClearAddresses();
-		return $this->setAddresses('to',$addresses);
-	}
+    /**
+     * Set subject of the email
+     * @param string $subject Subject of the email
+     */
+    public function setSubject($subject) {
+        $this->Subject = $subject;
+    }
 
-	/**
-	 * Set one or more CC email addresses
-	 * @param mixed $addresses Email address or array of email addresses
-	 * @return boolean True on success, false if addresses not valid
-	 */
-	public function setCc($addresses)
-	{
-		$this->ClearCCs();
-		return $this->setAddresses('cc',$addresses);
-	}
+    /**
+     * Set text body of the email
+     * @param string $body Textual body of the email
+     */
+    public function setBody($body) {
+        $this->Body = $body;
+    }
 
-	/**
-	 * Set one or more BCC email addresses
-	 * @param mixed $addresses Email address or array of email addresses
-	 * @return boolean True on success, false if addresses not valid
-	 */
-	public function setBcc($addresses)
-	{
-		$this->ClearBCCs();
-		return $this->setAddresses('bcc',$addresses);
-	}
+    /**
+     * Set one or more email attachments
+     * Valid arguments:
+     * $mail->setAttachment('something.pdf');
+     * $mail->setAttachment(array('something.pdf','something_else.pdf','another.doc'));
+     * $mail->setAttachment(array('something.pdf'=>'Some file','something_else.pdf'=>'Another file'));
+     * @param mixed $attachments Path to the file or array of files to attach
+     * @return boolean True on success, false if addresses not valid
+     */
+    public function setAttachment($attachments) {
+        if (!is_array($attachments))
+            $attachments = (array) $attachments;
 
-	/**
-	 * Set one or more Reply-To email addresses
-	 * @param mixed $addresses Email address or array of email addresses
-	 * @return boolean True on success, false if addresses not valid
-	 */
-	public function setReplyTo($addresses)
-	{
-		$this->ClearReplyTos();
-		return $this->setAddresses('Reply-To',$addresses);
-	}
+        $result = true;
+        foreach ($attachments as $key => $value) {
+            if (is_int($key))
+                $r = $this->AddAttachment($value);
+            else
+                $r = $this->AddAttachment($key, $value);
+            if ($result && !$r)
+                $result = false;
+        }
 
-	/**
-	 * Set one or more email addresses of different kinds
-	 * @param string $type Type of the recipient (to, cc, bcc or Reply-To)
-	 * @param mixed $addresses Email address or array of email addresses
-	 * @return boolean True on success, false if addresses not valid
-	 */
-	private function setAddresses($type,$addresses)
-	{
-		if(!is_array($addresses))
-		{
-			$addresses=(array)$addresses;
-		}
+        return $result;
+    }
 
-		$result=true;
-		foreach ($addresses as $key => $value) {
-			if(is_int($key))
-				$r=$this->AddAnAddress($type,$value);
-			else
-				$r=$this->AddAnAddress($type,$key,$value);
-			if($result && !$r)
-				$result=false;
-		}
+    /**
+     * Clear all recipients and attachments
+     */
+    public function clear() {
+        $this->ClearAllRecipients();
+        $this->ClearReplyTos();
+        $this->ClearAttachments();
+    }
 
-		return $result;
-	}
+    /**
+     * Get current error message
+     * @return string Error message
+     */
+    public function getError() {
+        return $this->ErrorInfo;
+    }
 
-	/**
-	 * Set subject of the email
-	 * @param string $subject Subject of the email
-	 */
-	public function setSubject($subject)
-	{
-		$this->Subject=$subject;
-	}
+    /**
+     * Find the view file for the given view name
+     * @param string $viewName Name of the view
+     * @return string The file path or false if the file does not exist
+     */
+    public function getViewFile($viewName) {
+        //In web application, use existing method
+        if (isset(Yii::app()->controller))
+            return Yii::app()->controller->getViewFile($viewName);
+        //resolve the view file
+        //TODO: support for themes in console applications
+        if (empty($viewName))
+            return false;
 
-	/**
-	 * Set text body of the email
-	 * @param string $body Textual body of the email
-	 */
-	public function setBody($body)
-	{
-		$this->Body=$body;
-	}
+        $viewFile = Yii::getPathOfAlias($viewName);
+        if (is_file($viewFile . '.php'))
+            return Yii::app()->findLocalizedFile($viewFile . '.php');
+        else
+            return false;
+    }
 
-	/**
-	 * Set one or more email attachments
-	 * Valid arguments:
-	 * $mail->setAttachment('something.pdf');
-	 * $mail->setAttachment(array('something.pdf','something_else.pdf','another.doc'));
-	 * $mail->setAttachment(array('something.pdf'=>'Some file','something_else.pdf'=>'Another file'));
-	 * @param mixed $attachments Path to the file or array of files to attach
-	 * @return boolean True on success, false if addresses not valid
-	 */
-	public function setAttachment($attachments)
-	{
-		if(!is_array($attachments))
-			$attachments=(array)$attachments;
+    /**
+     * Render the view file
+     * @param string $viewName Name of the view
+     * @param array $viewData Data for extraction
+     * @return string The rendered result
+     * @throws CException
+     */
+    public function renderView($viewName, $viewData = null) {
+        //resolve the file name
+        if (($viewFile = $this->getViewFile($viewName)) !== false) {
+            //use controller instance if available or create dummy controller for console applications
+            if (isset(Yii::app()->controller))
+                $controller = Yii::app()->controller;
+            else
+                $controller = new CController(__CLASS__);
 
-		$result=true;
-		foreach ($attachments as $key => $value) {
-			if(is_int($key))
-				$r=$this->AddAttachment($value);
-			else
-				$r=$this->AddAttachment($key,$value);
-			if($result && !$r)
-				$result=false;
-		}
+            //render and return the result
+            return $controller->renderInternal($viewFile, $viewData, true);
+        }
+        else {
+            //file name does not exist
+            throw new CException('View "' . $viewName . '" does not exist!');
+        }
+    }
 
-		return $result;
-	}
+    /**
+     * Generates HTML email, with or without layout
+     */
+    public function render() {
+        //render view as body if specified
+        if (isset($this->view))
+            $this->setBody($this->renderView($this->viewPath . '.' . $this->view, $this->data));
 
-	/**
-	 * Clear all recipients and attachments
-	 */
-	public function clear()
-	{
-		$this->ClearAllRecipients();
-		$this->ClearReplyTos();
-		$this->ClearAttachments();
-	}
+        //render with layout if given
+        if ($this->layout) {
+            //has layout
+            $this->MsgHTMLWithLayout($this->Body, Yii::getPathOfAlias($this->baseDirPath));
+        } else {
+            //no layout
+            $this->MsgHTML($this->Body, Yii::getPathOfAlias($this->baseDirPath));
+        }
+    }
 
-	/**
-	 * Get current error message
-	 * @return string Error message
-	 */
-	public function getError()
-	{
-		return $this->ErrorInfo;
-	}
+    /**
+     * Render HTML email message with layout
+     * @param string $message Email message
+     * @param string $basedir Path for images to embed in message
+     */
+    protected function MsgHTMLWithLayout($message, $basedir = '') {
+        $this->MsgHTML($this->renderView($this->layoutPath . '.' . $this->layout, array('content' => $message, 'data' => $this->data)), $basedir);
+    }
 
-	/**
-	 * Find the view file for the given view name
-	 * @param string $viewName Name of the view
-	 * @return string The file path or false if the file does not exist
-	 */
-	public function getViewFile($viewName)
-	{
-		//In web application, use existing method
-		if(isset(Yii::app()->controller))
-			return Yii::app()->controller->getViewFile($viewName);
-		//resolve the view file
-		//TODO: support for themes in console applications
-		if(empty($viewName))
-			return false;
+    /**
+     * Render message and send emails
+     * @return boolean True if sent successfully, false otherwise
+     */
+    public function send() {
+        //render message
+        $this->render();
 
-		$viewFile=Yii::getPathOfAlias($viewName);
-		if(is_file($viewFile.'.php'))
-			return Yii::app()->findLocalizedFile($viewFile.'.php');
-		else
-			return false;
-	}
+        //send the message
+        try {
+            //prepare the message
+            if (!$this->PreSend())
+                return false;
 
-	/**
-	 * Render the view file
-	 * @param string $viewName Name of the view
-	 * @param array $viewData Data for extraction
-	 * @return string The rendered result
-	 * @throws CException
-	 */
-	public function renderView($viewName,$viewData=null)
-	{
-		//resolve the file name
-		if(($viewFile=$this->getViewFile($viewName))!==false)
-		{
-			//use controller instance if available or create dummy controller for console applications
-			if(isset(Yii::app()->controller))
-				$controller=Yii::app()->controller;
-			else
-				$controller=new CController(__CLASS__);
+            //in test mode, save message as a file
+            if ($this->testMode)
+                return $this->save();
+            else
+                return $this->PostSend();
+        } catch (phpmailerException $e) {
+            $this->mailHeader = '';
+            $this->SetError($e->getMessage());
+            if ($this->exceptions) {
+                throw $e;
+            }
+            return false;
+        }
+    }
 
-			//render and return the result
-			return $controller->renderInternal($viewFile,$viewData,true);
-		}
-		else
-		{
-			//file name does not exist
-			throw new CException('View "'.$viewName.'" does not exist!');
-		}
+    /**
+     * Save message as eml file
+     * @return boolean True if saved successfully, false otherwise
+     */
+    public function save() {
+        $filename = date('YmdHis') . '_' . uniqid() . '.eml';
+        $dir = Yii::getPathOfAlias($this->savePath);
 
-	}
+        // Create a directory
+        if (!is_dir($dir)) {
+            $oldmask = @umask(0);
+            $result = @mkdir($dir, 0777);
+            @umask($oldmask);
+            if (!$result) {
+                throw new CException('Unable to create the directory ' . $dir);
+            }
+        }
 
-	/**
-	 * Generates HTML email, with or without layout
-	 */
-	public function render()
-	{
-		//render view as body if specified
-		if(isset($this->view))
-			$this->setBody($this->renderView($this->viewPath.'.'.$this->view, $this->data));
+        try {
+            $file = fopen($dir . DIRECTORY_SEPARATOR . $filename, 'w+');
+            fwrite($file, $this->GetSentMIMEMessage());
+            fclose($file);
 
-		//render with layout if given
-		if($this->layout)
-		{
-			//has layout
-			$this->MsgHTMLWithLayout($this->Body, Yii::getPathOfAlias($this->baseDirPath));
-		}
-		else
-		{
-			//no layout
-			$this->MsgHTML($this->Body, Yii::getPathOfAlias($this->baseDirPath));
-		}
-	}
+            return true;
+        } catch (Exception $e) {
+            $this->SetError($e->getMessage());
 
-	/**
-	 * Render HTML email message with layout
-	 * @param string $message Email message
-	 * @param string $basedir Path for images to embed in message
-	 */
-	protected function MsgHTMLWithLayout($message, $basedir = '')
-	{
-		$this->MsgHTML($this->renderView($this->layoutPath.'.'.$this->layout, array('content'=>$message,'data'=>$this->data)), $basedir);
-	}
+            return false;
+        }
+    }
 
-	/**
-	 * Render message and send emails
-	 * @return boolean True if sent successfully, false otherwise
-	 */
-	public function send()
-	{
-		//render message
-		$this->render();
+    /**
+     * Setup SMTP and use it to send email
+     * @param string $host SMTP hosts, either a single hostname or multiple semicolon-delimited hostnames
+     * @param int $port The default SMTP server port
+     * @param string $secure The secure connection prefix. Options: "", "ssl" or "tls"
+     * @param boolean $auth Whether to use SMTP authentication
+     * @param string $username SMTP username
+     * @param string $password SMTP password
+     */
+    public function setSmtp($host = 'localhost', $port = 25, $secure = '', $auth = false, $username = '', $password = '') {
+        $this->isSMTP();
+        $this->Host = $host;
+        $this->Port = $port;
+        $this->SMTPSecure = $secure;
+        $this->SMTPAuth = $auth;
+        $this->Username = $username;
+        $this->Password = $password;
+    }
 
-		//send the message
-		try{
-			//prepare the message
-			if(!$this->PreSend())
-				return false;
-
-			//in test mode, save message as a file
-			if($this->testMode)
-				return $this->save();
-			else
-				return $this->PostSend();
-		} catch (phpmailerException $e) {
-			$this->mailHeader = '';
-			$this->SetError($e->getMessage());
-			if ($this->exceptions) {
-				throw $e;
-			}
-			return false;
-		}
-	}
-
-	/**
-	 * Save message as eml file
-	 * @return boolean True if saved successfully, false otherwise
-	 */
-	public function save()
-	{
-		$filename = date('YmdHis') . '_' . uniqid() . '.eml';
-		$dir = Yii::getPathOfAlias($this->savePath);
-
-		// Create a directory
-		if(!is_dir($dir))
-		{
-			$oldmask = @umask(0);
-			$result = @mkdir($dir, 0777);
-			@umask($oldmask);
-			if (!$result)
-			{
-				throw new CException('Unable to create the directory '.$dir);
-			}
-		}
-
-		try {
-			$file = fopen($dir . DIRECTORY_SEPARATOR . $filename,'w+');
-			fwrite($file, $this->GetSentMIMEMessage());
-			fclose($file);
-
-			return true;
-		} catch(Exception $e) {
-			$this->SetError($e->getMessage());
-
-			return false;
-		}
-	}
-	
-	/**
-	 * Setup SMTP and use it to send email
-	 * @param string $host SMTP hosts, either a single hostname or multiple semicolon-delimited hostnames
-	 * @param int $port The default SMTP server port
-	 * @param string $secure The secure connection prefix. Options: "", "ssl" or "tls"
-	 * @param boolean $auth Whether to use SMTP authentication
-	 * @param string $username SMTP username
-	 * @param string $password SMTP password
-	 */
-	public function setSmtp($host='localhost',$port=25, $secure='', $auth=false, $username='', $password='')
-	{
-		$this->isSMTP();
-		$this->Host = $host;
-		$this->Port = $port;
-		$this->SMTPSecure = $secure;
-		$this->SMTPAuth = $auth;
-		$this->Username = $username;
-		$this->Password = $password;
-	}
 }

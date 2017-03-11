@@ -59,9 +59,9 @@ class RelayController extends CApplicationComponent {
         $resp = explode("\n", $resp);
         $resp_count = count($resp);
         // Remove last element, since its an empty line
-        unset($resp[$resp_count-1]);
+        unset($resp[$resp_count - 1]);
         if ($relnumber != NULL && $relnumber > -1 && !$toString) {
-            $pieces = explode(' ', $resp[$relnumber-1]);
+            $pieces = explode(' ', $resp[$relnumber - 1]);
             $state = explode(':', $pieces[1]);
             $relay_number = intval(trim($state[0]));
             return intval(trim($state[1]));
@@ -97,7 +97,7 @@ class RelayController extends CApplicationComponent {
         $req_status = $this->getRelayStatus($relay_number, false);
         Yii::log("Relay: $relay_number, Status trying to be set: $status", CLogger::LEVEL_INFO, "info");
         if ($req_status == -1 || $req_status === NULL) {
-            Yii::log('Error getting status of the requested relay.'+$relay_number, CLogger::LEVEL_INFO, "info");
+            Yii::log('Error getting status of the requested relay.' + $relay_number, CLogger::LEVEL_INFO, "info");
             return -1;
         }
         if ($req_status == $status) {
@@ -121,4 +121,5 @@ class RelayController extends CApplicationComponent {
             return $resp;
         }
     }
+
 }

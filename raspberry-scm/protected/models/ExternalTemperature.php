@@ -67,10 +67,11 @@ class ExternalTemperature extends TKActiveRecord {
     /**
      * Save date and password before saving
      */
-    public function beforeSave() {
-        parent::beforeSave();
+    public function beforeValidate() {
+        sleep(rand(1,3)+1);
         $this->date = date('Y-m-d H:m:s');
-	return true;
+        parent::beforeValidate();
+        return true;
     }
 
     /**

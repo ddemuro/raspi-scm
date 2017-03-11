@@ -15,11 +15,7 @@ class InfraredManager extends CApplicationComponent {
         if(!$this->checkIRConfigured())
             return null;
         $irprog = Yii::app()->functions->yiiparam('infrared_prog', NULL);
-        if ($irprog = Yii::app()->functions->writeFlag('infrared_on', 1))
-            return Yii::app()->RootElevator->executeRoot("$irprog  SEND_ONCE $utilname KEY_POWER", null, true);
-        else {
-            Yii::log('Infrared already sent that status', CLogger::LEVEL_ERROR, "info");
-        }
+        return Yii::app()->RootElevator->executeRoot("$irprog  SEND_ONCE $utilname KEY_POWER", null, true);
     }
 
     /**
@@ -31,8 +27,8 @@ class InfraredManager extends CApplicationComponent {
         if(!$this->checkIRConfigured())
             return null;
         $irprog = Yii::app()->functions->yiiparam('infrared_prog', NULL);
-        return Yii::app()->RootElevator->executeRoot("$irprog  SEND_ONCE $utilname KEY_VOLUMEUP", null, true);
         Yii::log('Infrared volume went up.', CLogger::LEVEL_INFO, "info");
+        return Yii::app()->RootElevator->executeRoot("$irprog  SEND_ONCE $utilname KEY_VOLUMEUP", null, true);
     }
 
     /**
@@ -44,15 +40,16 @@ class InfraredManager extends CApplicationComponent {
         if(!$this->checkIRConfigured())
             return null;
         $irprog = Yii::app()->functions->yiiparam('infrared_prog', NULL);
-        return Yii::app()->RootElevator->executeRoot("$temoprog  SEND_ONCE $utilname KEY_VOLUMEDOWN", null, true);
         Yii::log('Infrared volume went up.', CLogger::LEVEL_INFO, "info");
+        return Yii::app()->RootElevator->executeRoot("$temoprog  SEND_ONCE $utilname KEY_VOLUMEDOWN", null, true);
     }
+
 
     /**
      * Set minimal temperature on AC
      */
     public function setMinTempAC($utilname) {
-        if(!$this->checkIRConfigured())
+        if (!$this->checkIRConfigured())
             return null;
         $mintemp = Yii::app()->functions->yiiparam('min_ac_temp', 16);
         $maxtemp = Yii::app()->functions->yiiparam('max_ac_temp', 31);
@@ -61,6 +58,7 @@ class InfraredManager extends CApplicationComponent {
             $status = Yii::app()->RootElevator->executeRoot("$temoprog  SEND_ONCE $utilname KEY_VOLUMEDOWN", null, true) == 0;
             sleep(1);
         }
+        Yii::app()->functions->writeToFile("/opt/scripts/ac_tmp", $mintemp);
         return $status;
     }
 
@@ -68,7 +66,7 @@ class InfraredManager extends CApplicationComponent {
      * Set minimal temperature on AC
      */
     public function setMaxTempAC($utilname) {
-        if(!$this->checkIRConfigured())
+        if (!$this->checkIRConfigured())
             return null;
         $mintemp = Yii::app()->functions->yiiparam('min_temp', 16);
         $maxtemp = Yii::app()->functions->yiiparam('max_temp', 31);
@@ -77,15 +75,15 @@ class InfraredManager extends CApplicationComponent {
             $status = Yii::app()->RootElevator->executeRoot("$temoprog  SEND_ONCE $utilname KEY_VOLUMEUP", null, true) == 0;
             sleep(1);
         }
+        Yii::app()->functions->writeToFile("/opt/scripts/ac_tmp", $maxtemp);
         return $status;
     }
 
-    
     /**
      * Set minimal temperature on AC
      */
     public function setTemperature($utilname, $temp) {
-        if(!$this->checkIRConfigured())
+        if (!$this->checkIRConfigured())
             return null;
         $mintemp = Yii::app()->functions->yiiparam('min_ac_temp', 16);
         $maxtemp = Yii::app()->functions->yiiparam('max_ac_temp', 31);
@@ -95,14 +93,14 @@ class InfraredManager extends CApplicationComponent {
             $status = Yii::app()->RootElevator->executeRoot("$temoprog  SEND_ONCE $utilname KEY_VOLUMEDOWN", null, true) == 0;
             sleep(1);
         }
-        
+
         for ($i = 0; $i <= $tempset; $i++) {
             $status = Yii::app()->RootElevator->executeRoot("$temoprog  SEND_ONCE $utilname KEY_VOLUMEUP", null, true) == 0;
             sleep(1);
         }
+        Yii::app()->functions->writeToFile("/opt/scripts/ac_tmp", $temp);
         return $status;
     }
-
     
     /**
      * Returns true if IR is configured for use, false otherwise.

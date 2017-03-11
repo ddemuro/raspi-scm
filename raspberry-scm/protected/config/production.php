@@ -4,7 +4,7 @@
 $main = include_once('main.php');
 
 // Remove if console operation
-if(CONSOLE){
+if (CONSOLE) {
     unset($main['components']['errorHandler']);
     unset($main['components']['user']);
     unset($main['components']['urlManager']);
@@ -15,7 +15,7 @@ if(CONSOLE){
 }
 
 // Production configurations
-$production = array(    
+$production = array(
     // application-level parameters that can be accessed
     // using Yii::app()->params['paramName']
     'params' => array(
@@ -31,7 +31,6 @@ $production = array(
         'infrared_prog' => 'irsend',
         'min_ac_temp' => 16,
         'min_ac_temp' => 31,
-        
         // Exceeded this temperature/humidity alerts will resume every half the anti-spam.
         'max_temp' => '30',
         'min_temp' => '10',

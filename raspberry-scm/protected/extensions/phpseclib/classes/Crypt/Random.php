@@ -225,7 +225,7 @@ function crypt_random_string($length) {
             $i = pack('H*', sha1(microtime()));
             $r = pack('H*', sha1($i ^ $v));
             $v = pack('H*', sha1($r ^ $i));
-            $result.= $r;
+            $result .= $r;
         }
         return substr($result, 0, $length);
     }
@@ -237,7 +237,7 @@ function crypt_random_string($length) {
         $i = $crypto->encrypt(microtime());
         $r = $crypto->encrypt($i ^ $v);
         $v = $crypto->encrypt($r ^ $i);
-        $result.= $r;
+        $result .= $r;
     }
     return substr($result, 0, $length);
 }

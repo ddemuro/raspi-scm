@@ -9,7 +9,7 @@ class BaseController extends CController {
      * @var array context menu items. This property will be assigned to {@link CMenu::items}.
      */
     public $menu = array();
-    
+
     /**
      * This is the general page title, We use this instead of the
      * applications pageTitle since it's not designed to be a string
@@ -23,16 +23,15 @@ class BaseController extends CController {
      * @var array - array of {@link CBreadCrumbs} link
      */
     public $breadcrumbs = array();
-    
+
     /**
      * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
      * using two-column layout. See 'protected/views/layouts/column2.php'.
      */
     public $layout = '//layouts/column2';
-
     // Available menu if options exist
     public $extraMenu = array();
-    
+
     /**
      * Class constructor
      *
@@ -42,19 +41,19 @@ class BaseController extends CController {
         /* Run init */
         parent::init();
     }
-    
+
     /**
      * If options exist, we load them.
      */
-    public function menuExtras(){
+    public function menuExtras() {
         $this->extraMenu = array(
-                array('label' => 'Home', 'url' => array('/site/index')),
-                array('label' => 'About', 'url' => array('/site/page', 'view' => 'about')),
-                array('label' => 'Contact', 'url' => array('/site/contact')),
-                array('label' => 'Login', 'url' => array('/site/login'), 'visible' => Yii::app()->user->isGuest),
-                array('label' => 'Users', 'url' => array('/User'), 'visible' => !Yii::app()->user->isGuest),
-                array('label' => 'Settings', 'url' => array('/Setting'), 'visible' => !Yii::app()->user->isGuest),
-                array('label' => 'Logger', 'url' => array('/logger'), 'visible' => !Yii::app()->user->isGuest),
+            array('label' => 'Home', 'url' => array('/site/index')),
+            array('label' => 'About', 'url' => array('/site/page', 'view' => 'about')),
+            array('label' => 'Contact', 'url' => array('/site/contact')),
+            array('label' => 'Login', 'url' => array('/site/login'), 'visible' => Yii::app()->user->isGuest),
+            array('label' => 'Users', 'url' => array('/User'), 'visible' => !Yii::app()->user->isGuest),
+            array('label' => 'Settings', 'url' => array('/Setting'), 'visible' => !Yii::app()->user->isGuest),
+            array('label' => 'Logger', 'url' => array('/logger'), 'visible' => !Yii::app()->user->isGuest),
         );
         if (Yii::app()->functions->yiiparam('ups_status') !== null) {
             array_push($this->extraMenu, array('label' => 'UPS', 'url' => array('/ups'), 'visible' => !Yii::app()->user->isGuest));
@@ -73,21 +72,21 @@ class BaseController extends CController {
         }
         array_push($this->extraMenu, array('label' => 'Logout', 'url' => array('/site/logout'), 'visible' => !Yii::app()->user->isGuest));
     }
-    
+
     /**
      * Return data to browser as JSON and end application.
      * @param array $data
      */
-    protected function renderJSON($data)
-    {
+    protected function renderJSON($data) {
         header('Content-type: application/json');
         echo CJSON::encode($data);
 
         foreach (Yii::app()->log->routes as $route) {
-            if($route instanceof CWebLogRoute) {
+            if ($route instanceof CWebLogRoute) {
                 $route->enabled = false; // disable any weblogroutes
             }
         }
         Yii::app()->end();
     }
+
 }

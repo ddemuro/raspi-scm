@@ -27,7 +27,7 @@
         <?php echo $form->label($model, 'type'); ?>
         <?php echo $form->textField($model, 'type', array('size' => 3, 'maxlength' => 3)); ?>
     </div>
-    
+
     <div class="row buttons">
         <?php echo CHtml::submitButton('Search'); ?>
     </div>

@@ -38,7 +38,7 @@ class UpsManager extends CApplicationComponent {
         'ups.type',
         'ups.vendorid'
     );
-    
+
     /**
      * If we're running in debug, we want to log the input.
      * @param type $datapin
@@ -55,28 +55,28 @@ class UpsManager extends CApplicationComponent {
      * Returns if there's a UPS program configured
      * @return boolean
      */
-    public function checkUPSConfigured(){
+    public function checkUPSConfigured() {
         return Yii::app()->functions->yiiparam('ups_status', NULL) != null;
     }
-    
+
     /**
      * Gets Humidity and Temperature as array on DHT sensors.
      * @param type $name [upsname]
      * @param type $setting [localhost ... params]
      */
     public function getUPSStatus($name, $setting) {
-        if(!$this->checkUPSConfigured())
+        if (!$this->checkUPSConfigured())
             return null;
         $upsprog = Yii::app()->functions->yiiparam('ups_status', NULL);
         $this->debug("Setting: $settings, UPS Name: $name, Program: $upsprog");
         $res = Yii::app()->RootElevator->executeRoot("$upsprog $name@$setting ups.status 2>&1", false);
         array_splice($res, 0, 1);
         $this->debug("UPS Status Return: $res");
-        if(strcmp($res[0], 'Error: Unknown UPS') == 0)
+        if (strcmp($res[0], 'Error: Unknown UPS') == 0)
             return -100;
         return strcmp("OL", $res[1]) == 0;
     }
-    
+
     /**
      * Gets Humidity and Temperature as array on DHT sensors.
      * @param type $name [upsname]
@@ -84,14 +84,14 @@ class UpsManager extends CApplicationComponent {
      * @param type $status == ups.online, ups.voltage...
      */
     public function getAllStatuses($name, $setting, $status) {
-        if(!$this->checkUPSConfigured())
+        if (!$this->checkUPSConfigured())
             return null;
         $upsprog = Yii::app()->functions->yiiparam('ups_status', NULL);
         $this->debug("Setting: $settings, UPS Name: $name, Program: $upsprog");
         $res = Yii::app()->RootElevator->executeRoot("$upsprog $name@$setting $status 2>&1", false);
         array_splice($res, 0, 1);
         $this->debug("UPS Status Return: $res");
-        if(strcmp($res[0], 'Error: Unknown UPS') == 0)
+        if (strcmp($res[0], 'Error: Unknown UPS') == 0)
             return -100;
         return utf8_encode($res);
     }
@@ -100,9 +100,9 @@ class UpsManager extends CApplicationComponent {
      * Gets Humidity and Temperature as array on DHT sensors.
      * @param type $name [upsname]
      * @param type $setting [localhost ... params]
-     */    
-    public function getAll($name, $setting){
-        if(!$this->checkUPSConfigured())
+     */
+    public function getAll($name, $setting) {
+        if (!$this->checkUPSConfigured())
             return null;
         $upsprog = Yii::app()->functions->yiiparam('ups_status', NULL);
         $this->debug("Setting: $setting, UPS Name: $name, Program: $upsprog");
@@ -117,21 +117,21 @@ class UpsManager extends CApplicationComponent {
      * @param type $key
      */
     public function obtainDataFromUPS($data, $key) {
-        if(!$this->checkUPSConfigured())
+        if (!$this->checkUPSConfigured())
             return null;
         $allvals = array();
         $vals = null;
         $multi = strpos($key, ',') != false;
-        if($multi)
+        if ($multi)
             $vals = explode(',', $key);
-        
+
         $possible_vals = preg_split('/\n|\r\n?/', $data);
-        foreach($possible_vals as $line){
-            if(!$multi && strpos($line, $key) != false)
+        foreach ($possible_vals as $line) {
+            if (!$multi && strpos($line, $key) != false)
                 return explode(':', $string);
-            
+
             $lexp = explode(':', $line);
-            if(in_array($lexp[0], $vals)){
+            if (in_array($lexp[0], $vals)) {
                 array_push($allvals, $lexp);
             }
         }

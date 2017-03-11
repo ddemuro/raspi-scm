@@ -123,15 +123,15 @@ class UpsController extends BaseController {
             // Filter data
             foreach ($data_filtered as $df) {
                 if (strcmp($df[0], 'battery.charge') == 0)
-                    array_push($batt_charge, (int)preg_replace('/\s+/', '', $df[1]));
+                    array_push($batt_charge, (int) preg_replace('/\s+/', '', $df[1]));
                 if (strcmp($df[0], 'ups.temperature') == 0)
-                    array_push($temperature, (int)preg_replace('/\s+/', '', $df[1]));
+                    array_push($temperature, (int) preg_replace('/\s+/', '', $df[1]));
                 if (strcmp($df[0], 'input.voltage') == 0)
-                    array_push($input_voltage, (int)preg_replace('/\s+/', '', $df[1]));
+                    array_push($input_voltage, (int) preg_replace('/\s+/', '', $df[1]));
                 if (strcmp($df[0], 'battery.voltage') == 0)
-                    array_push($batt_voltage, (int)preg_replace('/\s+/', '', $df[1]));
+                    array_push($batt_voltage, (int) preg_replace('/\s+/', '', $df[1]));
                 if (strcmp($df[0], 'ups.load') == 0)
-                    array_push($load, (int)preg_replace('/\s+/', '', $df[1]));
+                    array_push($load, (int) preg_replace('/\s+/', '', $df[1]));
             }
             $get_time = explode(' ', $u->date);
             array_push($times, $get_time[1]);

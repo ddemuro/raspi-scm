@@ -11,7 +11,7 @@ class InternalTemperatureController extends BaseController {
         /* Run init */
         parent::init();
     }
-    
+
     /**
      * Displays a particular model.
      * @param integer $id the ID of the model to be displayed
@@ -126,37 +126,36 @@ class InternalTemperatureController extends BaseController {
     public function actionIndex() {
         $startOfDay = date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s') . "-7 days"));
         $endOfDay = date('Y-m-d H:i:s');
-        $criteria = new CDbCriteria(array('order'=>'date DESC'));
+        $criteria = new CDbCriteria(array('order' => 'date DESC'));
         $criteria->addBetweenCondition('date', $startOfDay, $endOfDay);
         $today = InternalTemperature::model()->findAll($criteria);
-        
+
         $times = array();
         $tempsCPU = array();
         $tempsGPU = array();
         // Filter data
         foreach ($today as $t) {
             array_push($times, $t->date);
-            if(strcmp($t->type, "CPU") == 0){
-                array_push($tempsCPU, (int)$t->temperature);
-            }else{
-                array_push($tempsGPU, (int)$t->temperature);                
+            if (strcmp($t->type, "CPU") == 0) {
+                array_push($tempsCPU, (int) $t->temperature);
+            } else {
+                array_push($tempsGPU, (int) $t->temperature);
             }
         }
-        
+
         $dataProvider = new CActiveDataProvider('InternalTemperature', array(
             'criteria' => array(
                 'order' => 'date DESC',
             ),
             'pagination' => array(
                 'pageSize' => 3)));
-        
+
         $this->render('index', array(
             'dataProvider' => $dataProvider,
             'times' => $times,
             'tempsCPU' => $tempsCPU,
             'tempsGPU' => $tempsGPU,
         ));
-        
     }
 
     /**

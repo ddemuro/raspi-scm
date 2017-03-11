@@ -122,7 +122,7 @@ class ExternalTemperatureController extends BaseController {
     public function actionIndex() {
         $startOfDay = date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s') . "-7 days"));
         $endOfDay = date('Y-m-d H:i:s');
-        $criteria = new CDbCriteria(array('order'=>'date DESC'));
+        $criteria = new CDbCriteria(array('order' => 'date DESC'));
         $criteria->addBetweenCondition('date', $startOfDay, $endOfDay);
         $today = ExternalTemperature::model()->findAll($criteria);
         $times = array();

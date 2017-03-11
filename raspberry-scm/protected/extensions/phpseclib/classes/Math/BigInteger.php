@@ -369,7 +369,7 @@ class Math_BigInteger {
 
                         $x = str_pad($x, $len, chr(0), STR_PAD_LEFT);
 
-                        for ($i = 0; $i < $len; $i+= 4) {
+                        for ($i = 0; $i < $len; $i += 4) {
                             $this->value = bcmul($this->value, '4294967296', 0); // 4294967296 == 2**32
                             $this->value = bcadd($this->value, 0x1000000 * ord($x[$i]) + ((ord($x[$i + 1]) << 16) | (ord($x[$i + 2]) << 8) | ord($x[$i + 3])), 0);
                         }
@@ -482,7 +482,7 @@ class Math_BigInteger {
                 $str = '0x';
                 while (strlen($x)) {
                     $part = substr($x, 0, 4);
-                    $str.= dechex(bindec($part));
+                    $str .= dechex(bindec($part));
                     $x = substr($x, 4);
                 }
 
@@ -647,7 +647,7 @@ class Math_BigInteger {
     function toBits($twos_compliment = false) {
         $hex = $this->toHex($twos_compliment);
         $bits = '';
-        for ($i = strlen($hex) - 8, $start = strlen($hex) & 7; $i >= $start; $i-=8) {
+        for ($i = strlen($hex) - 8, $start = strlen($hex) & 7; $i >= $start; $i -= 8) {
             $bits = str_pad(decbin(hexdec(substr($hex, $i, 8))), 32, '0', STR_PAD_LEFT) . $bits;
         }
         if ($start) { // hexdec('') == 0
@@ -906,7 +906,7 @@ class Math_BigInteger {
         $value[] = 0; // just in case the carry adds an extra digit
 
         $carry = 0;
-        for ($i = 0, $j = 1; $j < $size; $i+=2, $j+=2) {
+        for ($i = 0, $j = 1; $j < $size; $i += 2, $j += 2) {
             $sum = $x_value[$j] * MATH_BIGINTEGER_BASE_FULL + $x_value[$i] + $y_value[$j] * MATH_BIGINTEGER_BASE_FULL + $y_value[$i] + $carry;
             $carry = $sum >= MATH_BIGINTEGER_MAX_DIGIT2; // eg. floor($sum / 2**52); only possible values (in any base) are 0 and 1
             $sum = $carry ? $sum - MATH_BIGINTEGER_MAX_DIGIT2 : $sum;
@@ -1040,7 +1040,7 @@ class Math_BigInteger {
         // at this point, $x_value should be at least as big as - if not bigger than - $y_value
 
         $carry = 0;
-        for ($i = 0, $j = 1; $j < $y_size; $i+=2, $j+=2) {
+        for ($i = 0, $j = 1; $j < $y_size; $i += 2, $j += 2) {
             $sum = $x_value[$j] * MATH_BIGINTEGER_BASE_FULL + $x_value[$i] - $y_value[$j] * MATH_BIGINTEGER_BASE_FULL - $y_value[$i] - $carry;
             $carry = $sum < 0; // eg. floor($sum / 2**52); only possible values (in any base) are 0 and 1
             $sum = $carry ? $sum + MATH_BIGINTEGER_MAX_DIGIT2 : $sum;
@@ -1145,8 +1145,8 @@ class Math_BigInteger {
 
         return array(
             MATH_BIGINTEGER_VALUE => min($x_length, $y_length) < 2 * MATH_BIGINTEGER_KARATSUBA_CUTOFF ?
-                    $this->_trim($this->_regularMultiply($x_value, $y_value)) :
-                    $this->_trim($this->_karatsuba($x_value, $y_value)),
+            $this->_trim($this->_regularMultiply($x_value, $y_value)) :
+            $this->_trim($this->_karatsuba($x_value, $y_value)),
             MATH_BIGINTEGER_SIGN => $x_negative != $y_negative
         );
     }
@@ -1702,7 +1702,7 @@ class Math_BigInteger {
             if ($n->value[$i]) {
                 $temp = decbin($n->value[$i]);
                 $j = strlen($temp) - strrpos($temp, '1') - 1;
-                $j+= 26 * $i;
+                $j += 26 * $i;
                 break;
             }
         }
@@ -1768,7 +1768,7 @@ class Math_BigInteger {
         $e_length = count($e_value) - 1;
         $e_bits = decbin($e_value[$e_length]);
         for ($i = $e_length - 1; $i >= 0; --$i) {
-            $e_bits.= str_pad(decbin($e_value[$i]), MATH_BIGINTEGER_BASE, '0', STR_PAD_LEFT);
+            $e_bits .= str_pad(decbin($e_value[$i]), MATH_BIGINTEGER_BASE, '0', STR_PAD_LEFT);
         }
 
         $e_length = strlen($e_bits);
@@ -1813,7 +1813,7 @@ class Math_BigInteger {
 
                 $result = $this->_multiplyReduce($result, $powers[bindec(substr($e_bits, $i, $j + 1))], $n_value, $mode);
 
-                $i+=$j + 1;
+                $i += $j + 1;
             }
         }
 
@@ -2730,7 +2730,7 @@ class Math_BigInteger {
         $result->value = array_slice($result->value, 0, $length);
 
         for ($i = 0; $i < $length; ++$i) {
-            $result->value[$i]&= $x->value[$i];
+            $result->value[$i] &= $x->value[$i];
         }
 
         return $this->_normalize($result);
@@ -2769,7 +2769,7 @@ class Math_BigInteger {
         $x->value = array_pad($x->value, $length, 0);
 
         for ($i = 0; $i < $length; ++$i) {
-            $result->value[$i]|= $x->value[$i];
+            $result->value[$i] |= $x->value[$i];
         }
 
         return $this->_normalize($result);
@@ -2808,7 +2808,7 @@ class Math_BigInteger {
         $x->value = array_pad($x->value, $length, 0);
 
         for ($i = 0; $i < $length; ++$i) {
-            $result->value[$i]^= $x->value[$i];
+            $result->value[$i] ^= $x->value[$i];
         }
 
         return $this->_normalize($result);
@@ -2952,9 +2952,9 @@ class Math_BigInteger {
         }
 
         if ($shift < 0) {
-            $shift+= $precision;
+            $shift += $precision;
         }
-        $shift%= $precision;
+        $shift %= $precision;
 
         if (!$shift) {
             return $this->copy();
@@ -3009,13 +3009,13 @@ class Math_BigInteger {
             $random = '';
 
             if ($size & 1) {
-                $random.= chr(mt_rand(0, 255));
+                $random .= chr(mt_rand(0, 255));
             }
 
             $blocks = $size >> 1;
             for ($i = 0; $i < $blocks; ++$i) {
                 // mt_rand(-2147483648, 0x7FFFFFFF) always produces -2147483648 on some systems
-                $random.= pack('n', mt_rand(0, 0xFFFF));
+                $random .= pack('n', mt_rand(0, 0xFFFF));
             }
         }
 

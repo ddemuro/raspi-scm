@@ -44,9 +44,9 @@ class User extends TKActiveRecord {
         $code = '';
         for ($i = 0; $i < $length; ++$i) {
             if ($i % 2 && rand(0, 10) > 2 || !($i % 2) && rand(0, 10) > 9)
-                $code.=$vowels[rand(0, 4)];
+                $code .= $vowels[rand(0, 4)];
             else
-                $code.=$letters[rand(0, 20)];
+                $code .= $letters[rand(0, 20)];
         }
 
         return $code;
@@ -67,7 +67,7 @@ class User extends TKActiveRecord {
         if (($this->scenario == 'update' && $this->password)) {
             $this->password = $this->hashPassword($this->password, $this->email);
         }
-        
+
         return parent::beforeSave();
     }
 

@@ -76,9 +76,9 @@ Yii::app()->clientscript
                     ));
                     ?>
                     <!-- breadcrumbs -->
-<?php endif ?>
+                <?php endif ?>
 
-<?php echo $content ?>
+                <?php echo $content ?>
 
 
             </div><!--/.fluid-container-->

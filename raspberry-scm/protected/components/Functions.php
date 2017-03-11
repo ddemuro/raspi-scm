@@ -14,12 +14,12 @@ class Functions extends CApplicationComponent {
      * You're thrown a 403 error.
      * @throws CHttpException
      */
-    public function simpleAccessProvision(){
+    public function simpleAccessProvision() {
         if (Yii::app()->user->isGuest) {
             throw new CHttpException(403, Yii::t('error', 'Sorry, You don\'t have the required permissions to enter this section'));
         }
     }
-    
+
     /**
      * Function to compress and encode strings
      * @property @string array to encode
@@ -70,12 +70,12 @@ class Functions extends CApplicationComponent {
      * @param type $arr
      * @param type $text
      */
-    public function textInArray($arr, $text){
-        if(is_string($arr))
-            return strcmp($arr, $text) == 0;
+    public function textInArray($arr, $text) {
+        if (is_string($arr))
+            return strpos($arr, $text) !== false;
         return in_array($text, $arr, true);
     }
-    
+
     /**
      * To check if there's a process already running.
      * @param type $processName
@@ -93,17 +93,23 @@ class Functions extends CApplicationComponent {
      * Writes flag to database
      */
     public function writeFlag($name, $status) {
-        $existingFlags = Flags::model()->findAll('flag_name=:flgname', array(':flgname' => $name));
-        if (count($existingFlags) > 0) {
-            $criteria = new CDbCriteria;
-            $criteria->addInCondition('flag_name',$name);
-            Flags::model()->deleteAll($criteria);
+        //$existingFlags = Flags::model()->findAll('flag_name=:flgname', array(':flgname' => $name));
+        $record = Flags::model()->find(array(
+            'select' => 'flag_name',
+            'condition' => 'flag_name=:flgname',
+            'params' => array(':flgname' => $name))
+        );
+
+        if ($record != null) {
+            $record->delete();
             $newFlag = new Flags();
             $newFlag->flag_name = $name;
+            $newFlag->setIsNewRecord(true);
             $newFlag->status = $status;
             return $newFlag->save();
         } else {
             $newFlag = new Flags();
+            $newFlag->setIsNewRecord(true);
             $newFlag->flag_name = $name;
             $newFlag->status = $status;
             return $newFlag->save();
@@ -115,20 +121,21 @@ class Functions extends CApplicationComponent {
      * @param type $name
      */
     public function getFlag($name) {
-        return Flags::model()->findAll('flag_name=:flgname', array(':flgname' => $name));
+        return Flags::model()->find('flag_name=:flgname', array(':flgname' => $name));
     }
 
     /**
      * Removes flag to database
      */
     public function removeFlag($name) {
-        $time = date('Y-m-d H:m:s');
-        $existingFlags = Flags::model()->findAll('flag_name=:flgname', array(':flgname' => $name));
-        if ($existingFlags != NULL && count($existingFlags) > 0)
-            return $existingFlags->delete();
+        $existingFlags = Flags::model()->find('flag_name=:flgname', array(':flgname' => $name));
+        if ($existingFlags != NULL && count($existingFlags) > 0) {
+            $existingFlags->delete();
+            return true;
+        }
         return false;
     }
-    
+
     /**
      * Manages the weblog
      * @param type $name
@@ -137,8 +144,8 @@ class Functions extends CApplicationComponent {
     public function addToWebLog($logline) {
         $res = false;
         $log = new Logger();
-        $log->setIsNewRecord(true);
         $log->log = $logline;
+        $log->setIsNewRecord(true);
         $res = $log->save();
         unset($date);
         unset($log);
@@ -150,11 +157,43 @@ class Functions extends CApplicationComponent {
      * @param type $file
      * @param type $towrite
      */
-    public function writeToFile($file, $towrite){
-        $myfile = fopen($file, "w");
-        fwrite($myfile, $towrite);
-        fclose($myfile);
+    public function writeToFile($file, $towrite) {
+        try {
+            $myfile = fopen($file, "w");
+            fwrite($myfile, $towrite);
+        } catch (Exception $ex) {
+            $this->addToWebLog("Error writing to $file, " . var_dump($towrite));
+        } finally {
+            fclose($myfile);
+        }
     }
-    
-}
 
+    /**
+     * Reads file
+     * @param type $file
+     */
+    public function readFromFile($file) {
+        try {
+            $myfile = fopen($file, "r");
+            $res = fread($myfile, filesize($file));
+        } catch (Exception $e) {
+            return null;
+        } finally {
+            fclose($myfile);
+        }
+        return $res;
+    }
+
+    /**
+     * Reads file
+     * @param type $file
+     */
+    public function checkFileExists($file) {
+        try {
+            return file_exists($file);
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+}

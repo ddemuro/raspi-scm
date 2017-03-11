@@ -53,7 +53,6 @@ sudo service php5-fpm restart
 echo "Configuring nginx default to raspi-scm."
 # Nginx default conf changes:
 echo "server {
-  server {
           listen   80;
 
           root /usr/share/nginx/html/raspberry-scm;
@@ -198,8 +197,6 @@ http {
 
 echo "Setting timezone:"
 echo "Etc/UTC" > /etc/timezone
-
-echo ""
 
 echo "Configuring run forever."
 # Nginx fastcgi conf changes:

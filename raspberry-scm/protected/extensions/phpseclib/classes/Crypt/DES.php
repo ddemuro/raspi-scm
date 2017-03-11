@@ -1316,7 +1316,7 @@ class Crypt_DES extends Crypt_Base {
                 CRYPT_DES_ENCRYPT => array(),
                 CRYPT_DES_DECRYPT => array_fill(0, 32, 0)
             );
-            for ($i = 0, $ki = 31; $i < 16; ++$i, $ki-= 2) {
+            for ($i = 0, $ki = 31; $i < 16; ++$i, $ki -= 2) {
                 $c <<= $shifts[$i];
                 $c = ($c | ($c >> 28)) & 0x0FFFFFFF;
                 $d <<= $shifts[$i];
@@ -1475,7 +1475,7 @@ class Crypt_DES extends Crypt_Base {
                         // start of "the Feistel (F) function" - see the following URL:
                         // http://en.wikipedia.org/wiki/Image:Data_Encryption_Standard_InfoBox_Diagram.png
                         // Merge key schedule.
-                        $crypt_block[$c].= '
+                        $crypt_block[$c] .= '
                             $b1 = ((' . $r . ' >>  3) & 0x1FFFFFFF)  ^ (' . $r . ' << 29) ^ ' . $k[$c][++$ki] . ';
                             $b2 = ((' . $r . ' >> 31) & 0x00000001)  ^ (' . $r . ' <<  1) ^ ' . $k[$c][++$ki] . ';' .
                                 /* S-box indexing. */
@@ -1492,7 +1492,7 @@ class Crypt_DES extends Crypt_Base {
                 }
 
                 // Perform the inverse IP permutation.
-                $crypt_block[$c].= '$in =
+                $crypt_block[$c] .= '$in =
                     ($shuffleinvip[($l >> 24) & 0xFF] & "\x80\x80\x80\x80\x80\x80\x80\x80") |
                     ($shuffleinvip[($r >> 24) & 0xFF] & "\x40\x40\x40\x40\x40\x40\x40\x40") |
                     ($shuffleinvip[($l >> 16) & 0xFF] & "\x20\x20\x20\x20\x20\x20\x20\x20") |

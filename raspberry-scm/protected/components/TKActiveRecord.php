@@ -25,7 +25,7 @@ class TKActiveRecord extends CActiveRecord {
         $attributes = $this->attributeLabels();
         $returnString = '';
         foreach ($attributes as $key => $value) {
-            $returnString.=' ' . $value . ' ' . $this->$key;
+            $returnString .= ' ' . $value . ' ' . $this->$key;
         }
         return $returnString;
     }

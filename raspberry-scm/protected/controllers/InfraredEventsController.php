@@ -11,7 +11,7 @@ class InfraredEventsController extends BaseController {
         /* Run init */
         parent::init();
     }
-    
+
     /**
      * Displays a particular model.
      * @param integer $id the ID of the model to be displayed
@@ -39,7 +39,7 @@ class InfraredEventsController extends BaseController {
         $res = Yii::app()->RootElevator->executeRoot("$temoprog  SEND_ONCE $util $command", false);
         return $res;
     }
-    
+
     /**
      * Creates a new model.
      * If creation is successful, the browser will be redirected to the 'view' page.

@@ -331,7 +331,7 @@ class Crypt_Hash {
                     $temp .= $text;                                // step 3
                     $temp = call_user_func($this->hash, $temp);   // step 4
                     $output = $this->opad ^ $key;                   // step 5
-                    $output.= $temp;                                // step 6
+                    $output .= $temp;                                // step 6
                     $output = call_user_func($this->hash, $output); // step 7
             }
         } else {
@@ -412,14 +412,14 @@ class Crypt_Hash {
 
         // Step 1. Append Padding Bytes
         $pad = 16 - (strlen($m) & 0xF);
-        $m.= str_repeat(chr($pad), $pad);
+        $m .= str_repeat(chr($pad), $pad);
 
         $length = strlen($m);
 
         // Step 2. Append Checksum
         $c = str_repeat(chr(0), 16);
         $l = chr(0);
-        for ($i = 0; $i < $length; $i+= 16) {
+        for ($i = 0; $i < $length; $i += 16) {
             for ($j = 0; $j < 16; $j++) {
                 // RFC1319 incorrectly states that C[j] should be set to S[c xor L]
                 //$c[$j] = chr($s[ord($m[$i + $j] ^ $l)]);
@@ -428,15 +428,15 @@ class Crypt_Hash {
                 $l = $c[$j];
             }
         }
-        $m.= $c;
+        $m .= $c;
 
-        $length+= 16;
+        $length += 16;
 
         // Step 3. Initialize MD Buffer
         $x = str_repeat(chr(0), 48);
 
         // Step 4. Process Message in 16-Byte Blocks
-        for ($i = 0; $i < $length; $i+= 16) {
+        for ($i = 0; $i < $length; $i += 16) {
             for ($j = 0; $j < 16; $j++) {
                 $x[$j + 16] = $m[$i + $j];
                 $x[$j + 32] = $x[$j + 16] ^ $x[$j];
@@ -488,10 +488,10 @@ class Crypt_Hash {
         // Pre-processing
         $length = strlen($m);
         // to round to nearest 56 mod 64, we'll add 64 - (length + (64 - 56)) % 64
-        $m.= str_repeat(chr(0), 64 - (($length + 8) & 0x3F));
+        $m .= str_repeat(chr(0), 64 - (($length + 8) & 0x3F));
         $m[$length] = chr(0x80);
         // we don't support hashing strings 512MB long
-        $m.= pack('N2', 0, $length << 3);
+        $m .= pack('N2', 0, $length << 3);
 
         // Process the message in successive 512-bit chunks
         $chunks = str_split($m, 64);
@@ -626,10 +626,10 @@ class Crypt_Hash {
         // Pre-processing
         $length = strlen($m);
         // to round to nearest 112 mod 128, we'll add 128 - (length + (128 - 112)) % 128
-        $m.= str_repeat(chr(0), 128 - (($length + 16) & 0x7F));
+        $m .= str_repeat(chr(0), 128 - (($length + 16) & 0x7F));
         $m[$length] = chr(0x80);
         // we don't support hashing strings 512MB long
-        $m.= pack('N4', 0, 0, 0, $length << 3);
+        $m .= pack('N4', 0, 0, 0, $length << 3);
 
         // Process the message in successive 1024-bit chunks
         $chunks = str_split($m, 128);
@@ -736,7 +736,7 @@ class Crypt_Hash {
         $temp = $hash[0]->toBytes() . $hash[1]->toBytes() . $hash[2]->toBytes() . $hash[3]->toBytes() .
                 $hash[4]->toBytes() . $hash[5]->toBytes();
         if ($this->l != 48) {
-            $temp.= $hash[6]->toBytes() . $hash[7]->toBytes();
+            $temp .= $hash[6]->toBytes() . $hash[7]->toBytes();
         }
 
         return $temp;
@@ -803,7 +803,7 @@ class Crypt_Hash {
         $result = 0;
         $arguments = func_get_args();
         foreach ($arguments as $argument) {
-            $result+= $argument < 0 ? ($argument & 0x7FFFFFFF) + 0x80000000 : $argument;
+            $result += $argument < 0 ? ($argument & 0x7FFFFFFF) + 0x80000000 : $argument;
         }
 
         return fmod($result, $mod);

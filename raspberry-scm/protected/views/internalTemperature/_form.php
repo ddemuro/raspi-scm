@@ -38,7 +38,7 @@
         <?php echo $form->textField($model, 'type', array('size' => 3, 'maxlength' => 3)); ?>
         <?php echo $form->error($model, 'type'); ?>
     </div>
-    
+
     <div class="row buttons">
         <?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
     </div>

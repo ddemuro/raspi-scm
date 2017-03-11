@@ -496,15 +496,15 @@ class Crypt_Blowfish extends Crypt_Base {
         $l = $in[1];
         $r = $in[2];
 
-        for ($i = 0; $i < 16; $i+= 2) {
-            $l^= $p[$i];
-            $r^= ($sb_0[$l >> 24 & 0xff] +
+        for ($i = 0; $i < 16; $i += 2) {
+            $l ^= $p[$i];
+            $r ^= ($sb_0[$l >> 24 & 0xff] +
                     $sb_1[$l >> 16 & 0xff] ^
                     $sb_2[$l >> 8 & 0xff]) +
                     $sb_3[$l & 0xff];
 
-            $r^= $p[$i + 1];
-            $l^= ($sb_0[$r >> 24 & 0xff] +
+            $r ^= $p[$i + 1];
+            $l ^= ($sb_0[$r >> 24 & 0xff] +
                     $sb_1[$r >> 16 & 0xff] ^
                     $sb_2[$r >> 8 & 0xff]) +
                     $sb_3[$r & 0xff];
@@ -530,15 +530,15 @@ class Crypt_Blowfish extends Crypt_Base {
         $l = $in[1];
         $r = $in[2];
 
-        for ($i = 17; $i > 2; $i-= 2) {
-            $l^= $p[$i];
-            $r^= ($sb_0[$l >> 24 & 0xff] +
+        for ($i = 17; $i > 2; $i -= 2) {
+            $l ^= $p[$i];
+            $r ^= ($sb_0[$l >> 24 & 0xff] +
                     $sb_1[$l >> 16 & 0xff] ^
                     $sb_2[$l >> 8 & 0xff]) +
                     $sb_3[$l & 0xff];
 
-            $r^= $p[$i - 1];
-            $l^= ($sb_0[$r >> 24 & 0xff] +
+            $r ^= $p[$i - 1];
+            $l ^= ($sb_0[$r >> 24 & 0xff] +
                     $sb_1[$r >> 16 & 0xff] ^
                     $sb_2[$r >> 8 & 0xff]) +
                     $sb_3[$r & 0xff];
@@ -600,8 +600,8 @@ class Crypt_Blowfish extends Crypt_Base {
                 $l = $in[1];
                 $r = $in[2];
             ';
-            for ($i = 0; $i < 16; $i+= 2) {
-                $encrypt_block.= '
+            for ($i = 0; $i < 16; $i += 2) {
+                $encrypt_block .= '
                     $l^= ' . $p[$i] . ';
                     $r^= ($sb_0[$l >> 24 & 0xff]  +
                           $sb_1[$l >> 16 & 0xff]  ^
@@ -615,7 +615,7 @@ class Crypt_Blowfish extends Crypt_Base {
                           $sb_3[$r       & 0xff];
                 ';
             }
-            $encrypt_block.= '
+            $encrypt_block .= '
                 $in = pack("N*",
                     $r ^ ' . $p[17] . ',
                     $l ^ ' . $p[16] . '
@@ -629,8 +629,8 @@ class Crypt_Blowfish extends Crypt_Base {
                 $r = $in[2];
             ';
 
-            for ($i = 17; $i > 2; $i-= 2) {
-                $decrypt_block.= '
+            for ($i = 17; $i > 2; $i -= 2) {
+                $decrypt_block .= '
                     $l^= ' . $p[$i] . ';
                     $r^= ($sb_0[$l >> 24 & 0xff]  +
                           $sb_1[$l >> 16 & 0xff]  ^
@@ -645,7 +645,7 @@ class Crypt_Blowfish extends Crypt_Base {
                 ';
             }
 
-            $decrypt_block.= '
+            $decrypt_block .= '
                 $in = pack("N*",
                     $r ^ ' . $p[0] . ',
                     $l ^ ' . $p[1] . '

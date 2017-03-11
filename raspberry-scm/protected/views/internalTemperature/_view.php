@@ -12,7 +12,7 @@
     <b><?php echo CHtml::encode($data->getAttributeLabel('temperature')); ?>:</b>
     <?php echo CHtml::encode($data->temperature); ?>
     <br />
-    
+
     <b><?php echo CHtml::encode($data->getAttributeLabel('type')); ?>:</b>
     <?php echo CHtml::encode($data->type); ?>
     <br />

@@ -276,7 +276,7 @@ class File_ANSI {
     function appendString($source) {
         for ($i = 0; $i < strlen($source); $i++) {
             if (strlen($this->ansi)) {
-                $this->ansi.= $source[$i];
+                $this->ansi .= $source[$i];
                 $chr = ord($source[$i]);
                 // http://en.wikipedia.org/wiki/ANSI_escape_code#Sequence_elements
                 // single character CSI's not currently supported
@@ -346,13 +346,13 @@ class File_ANSI {
                                             $this->attrs[$this->y][$this->x] = '';
 
                                             if ($this->bold)
-                                                $this->attrs[$this->y][$this->x].= '</b>';
+                                                $this->attrs[$this->y][$this->x] .= '</b>';
                                             if ($this->underline)
-                                                $this->attrs[$this->y][$this->x].= '</u>';
+                                                $this->attrs[$this->y][$this->x] .= '</u>';
                                             if ($this->blink)
-                                                $this->attrs[$this->y][$this->x].= '</blink>';
+                                                $this->attrs[$this->y][$this->x] .= '</blink>';
                                             if ($this->color)
-                                                $this->attrs[$this->y][$this->x].= '</span>';
+                                                $this->attrs[$this->y][$this->x] .= '</span>';
 
                                             if ($this->reverse) {
                                                 $temp = $this->background;
@@ -464,7 +464,7 @@ class File_ANSI {
                 case "\x0F": // shift
                     break;
                 case "\x1B": // start ANSI escape code
-                    $this->ansi.= "\x1B";
+                    $this->ansi .= "\x1B";
                     break;
                 default:
                     $this->screen[$this->y] = substr_replace(
@@ -521,13 +521,13 @@ class File_ANSI {
         for ($i = 0; $i <= $this->max_y; $i++) {
             for ($j = 0; $j <= $this->max_x + 1; $j++) {
                 if (isset($this->attrs[$i][$j])) {
-                    $output.= $this->attrs[$i][$j];
+                    $output .= $this->attrs[$i][$j];
                 }
                 if (isset($this->screen[$i][$j])) {
-                    $output.= htmlspecialchars($this->screen[$i][$j]);
+                    $output .= htmlspecialchars($this->screen[$i][$j]);
                 }
             }
-            $output.= "\r\n";
+            $output .= "\r\n";
         }
         return rtrim($output);
     }
@@ -553,15 +553,15 @@ class File_ANSI {
         for ($i = 0; $i < count($this->history); $i++) {
             for ($j = 0; $j <= $this->max_x + 1; $j++) {
                 if (isset($this->history_attrs[$i][$j])) {
-                    $scrollback.= $this->history_attrs[$i][$j];
+                    $scrollback .= $this->history_attrs[$i][$j];
                 }
                 if (isset($this->history[$i][$j])) {
-                    $scrollback.= htmlspecialchars($this->history[$i][$j]);
+                    $scrollback .= htmlspecialchars($this->history[$i][$j]);
                 }
             }
-            $scrollback.= "\r\n";
+            $scrollback .= "\r\n";
         }
-        $scrollback.= $this->_getScreen();
+        $scrollback .= $this->_getScreen();
 
         return '<pre style="color: white; background: black" width="' . ($this->max_x + 1) . '">' . $scrollback . '</pre>';
     }
